@@ -50,7 +50,7 @@ install() {
 }
 
 vimify() {
-  $INSTALLDIR="$HOME/.dotfiles"
+  INSTALLDIR="$HOME/.dotfiles"
   if [ -d "$INSTALLDIR/.vimified" ]; then
     if [ -d $HOME/.vim ] && [ ! -L $HOME/.vim ]; then
       cp -Rf "$HOME/.vim" "$backupdir/.vim"
