@@ -1,8 +1,11 @@
 # Load things
 [[ -f "$HOME/.exports" ]] && source "$HOME/.exports"
 
+# Aliases
 [[ -f "$HOME/.aliases" ]] && source "$HOME/.aliases"
 
+# Functions
 [[ -f "$HOME/.functions" ]] && source "$HOME/.functions"
 
-
+# Powerline
+source /usr/local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
