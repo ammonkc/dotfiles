@@ -109,7 +109,7 @@ vimify() {
 zsh_themes() {
   local themes=( $(ls .themes) )
   for theme in "${themes[@]}"; do
-      cp -Rf "$theme" ".oh-my-zsh/themes/$theme"
+      cp -Rf ".themes/$theme" ".oh-my-zsh/themes/$theme"
   done
 }
 
