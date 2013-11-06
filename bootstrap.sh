@@ -50,7 +50,7 @@ install() {
 }
 
 vimify() {
-  if [ -d "$HOME/.dotfiles/.vimified" ]
+  if [ -d "$HOME/.dotfiles/.vimified" ]; then
     ln -sfn "$HOME/.dotfiles/.vimified" ~/.vim
     ln -sfn "$HOME/.dotfiles/.vimified/vimrc" ~/.vimrc
     cd "$HOME/.dotfiles/.vimified"
