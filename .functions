@@ -24,9 +24,34 @@ function toggleiTerm() {
   done
 }
 
-# Vimified
-function vimified() {
-  curl -L https://raw.github.com/zaiste/vimified/master/install.sh | sh
+# Toggle autostart mysql
+function toggleMysql() {
+  LAGENT='~/Library/LaunchAgents/homebrew.mxcl.mysql.plist'
+  PLIST='/usr/local/opt/mysql/homebrew.mxcl.mysql.plist'
+  echo "Do you wish to hide iTerm in Dock?"
+  select ync in "Load" "Unload" "Cancel"; do
+    case $ync in
+      'Load' )
+        if [ ! -f "$LAGENT" ]; then
+          ln -sfv "$PLIST" "$LAGENT"
+        fi
+        launchctl load -w "$LAGENT"
+        echo "MySQL LaunchAgent loaded"
+        break
+        ;;
+      'Unload' )
+        launchctl unload -w "$LAGENT"
+        if [ -f "$LAGENT" ]; then
+          rm -Rf "$LAGENT"
+        fi
+        echo "MySQL LaunchAgent unloaded"
+        break
+        ;;
+      'Cancel' )
+        break
+        ;;
+      esac
+  done
 }
 
 # Simple calculator
