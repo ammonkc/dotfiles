@@ -58,19 +58,13 @@ in_array() {
   return 1
 }
 
-vimify() {
-  if [ -d ".vimified" ] then
-    .vimified/install.sh | sh
-  fi
-}
-
 #-----------------------------------------------------------------------------
 # Initialize
 #-----------------------------------------------------------------------------
 
 backupdir="$HOME/.dotfiles-backup/$(date "+%Y%m%d%H%M.%S")"
 dependencies=(git tree vim)
-excluded=(. .. .git .gitignore .gitmodules .vimified bootstrap.sh install-deps.sh README.md)
+excluded=(. .. .git .gitignore .gitmodules .osx .brew .vimified bootstrap.sh install-deps.sh README.md)
 
 
 #-----------------------------------------------------------------------------
@@ -116,7 +110,7 @@ if [ -d $HOME/.dotfiles ]; then
 else
   # Clone Repo
   notice "Downloading"
-  git clone --recursive git://github.com/ammonkc/dotfiles.git $HOME/.dotfiles
+  git clone --recursive git@github.com:ammonkc/dotfiles.git $HOME/.dotfiles
 
   pushd $HOME/.dotfiles
 
