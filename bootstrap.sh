@@ -106,6 +106,13 @@ vimify() {
   fi
 }
 
+zsh_themes() {
+  local themes=( $(ls .themes) )
+  for theme in "${themes[@]}"; do
+      cp -Rf "$theme" ".oh-my-zsh/themes/$theme"
+  done
+}
+
 in_array() {
   local hay needle=$1
   shift
@@ -121,7 +128,7 @@ in_array() {
 
 backupdir="$HOME/.dotfiles-backup/$(date "+%Y%m%d%H%M.%S")"
 dependencies=(git tree vim)
-excluded=(. .. .git .gitignore .gitmodules .osx .brew .vimified bootstrap.sh install-deps.sh README.md)
+excluded=(. .. .git .gitignore .gitmodules .osx .brew .themes .vimified bootstrap.sh install-deps.sh README.md)
 
 
 #-----------------------------------------------------------------------------
@@ -163,6 +170,7 @@ if [ -d $HOME/.dotfiles ]; then
 
   # Install
   notice "Installing"
+  zsh_themes
   install
 else
   # Clone Repo
@@ -177,6 +185,7 @@ else
 
   # Install
   notice "Installing"
+  zsh_themes
   install
   vimify
   vim +BundleInstall +qall 2>/dev/null
