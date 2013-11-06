@@ -1,0 +1,6 @@
+[submodule ".oh-my-zsh"]
+	path = .oh-my-zsh
+	url = git://github.com/robbyrussell/oh-my-zsh.git
+[submodule ".vimified"]
+	path = .vimified
+	url = https://github.com/zaiste/vimified.git
