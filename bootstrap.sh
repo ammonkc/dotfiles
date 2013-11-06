@@ -59,7 +59,6 @@ vimify() {
     git clone https://github.com/gmarik/vundle.git bundle/vundle
     echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > local.vimrc
     cd "$HOME/.dotfiles"
-    vim +BundleInstall +qall
   fi
 }
 
