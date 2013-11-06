@@ -4,6 +4,13 @@
 # Functions
 #-----------------------------------------------------------------------------
 
+# xterm colors
+if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+    export TERM=gnome-256color
+elif infocmp xterm-256color >/dev/null 2>&1; then
+    export TERM=xterm-256color
+fi
+
 # Notice title
 notice() { echo  "\033[1;32m=> $1\033[0m"; }
 
@@ -86,6 +93,13 @@ vimify() {
     if [ ! -f local.vimrc ]; then
       echo "Let's create a 'local.vimrc' file so you have some bundles by default."
       echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > 'local.vimrc'
+      echo 'if &term == "xterm-ipad"' >> 'local.vimrc'
+      echo 'nnoremap <Tab> <Esc>' >> 'local.vimrc'
+      echo 'vnoremap <Tab> <Esc>gV' >> 'local.vimrc'
+      echo 'onoremap <Tab> <Esc>' >> 'local.vimrc'
+      echo 'inoremap <Tab> <Esc>`^' >> 'local.vimrc'
+      echo 'inoremap <Leader><Tab> <Tab>' >> 'local.vimrc'
+      echo 'endif' >> 'local.vimrc'
     fi
 
     cd "$INSTALLDIR"
