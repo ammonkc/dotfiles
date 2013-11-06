@@ -60,6 +60,9 @@ alias reinstall='brew reinstall'
 alias update='brew update'
 alias upgrade='brew upgrade'
 
+# Dotfiles update
+alias dotfilesUpdate='bash < <( curl https://raw.github.com/ammonkc/dotfiles/master/bootstrap.sh )'
+
 # Vundle InstallBundle
 alias vundleUpdate="vim +BundleInstall! +BundleClean +qall"
 alias vundleInstall='vim +BundleInstall +qall'
