@@ -36,7 +36,7 @@ $ ~/.dotfiles/bootstrap.sh
 ```
 
 
-Vim
+Vimified
 ===
 
 Overview of the vim setup. Sensible defaults for all the things!
