@@ -61,7 +61,6 @@ vimify() {
     cd "$HOME/.dotfiles"
     vim +BundleInstall +qall
   fi
-  done
 }
 
 in_array() {
