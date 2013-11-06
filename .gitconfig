@@ -6,9 +6,6 @@
 	excludesfile = /Users/ammonkc/.gitignore_global
 	editor = /usr/bin/vim
 	autocrlf = input
-[github]
-	user = ammonkc
-	token = 9424b3f8fa0e98eae4c65d0228671113
 [credential]
     helper = osxkeychain
 [difftool "Kaleidoscope"]
