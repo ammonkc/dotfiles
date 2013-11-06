@@ -29,6 +29,10 @@ alias myip='curl ifconfig.me/ip'
 #alias spotify="osascript ~/code/SpotifyControl/SpotifyControl.scpt"
 #alias vlc="osascript ~/code/VLCControl/VLCControl.scpt"
 
+# Develop shortcuts
+alias repos='cd ~/Develop/Repos'
+alias www='cd /Library/WebServer/Documents'
+
 # Apache Shortcuts
 alias httpd='sudo apachectl'
 
