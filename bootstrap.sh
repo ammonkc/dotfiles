@@ -50,15 +50,45 @@ install() {
 }
 
 vimify() {
-  if [ -d "$HOME/.dotfiles/.vimified" ]; then
-    ln -sfn "$HOME/.dotfiles/.vimified" ~/.vim
-    ln -sfn "$HOME/.dotfiles/.vimified/vimrc" ~/.vimrc
-    cd "$HOME/.dotfiles/.vimified"
-    mkdir "bundle"
-    mkdir -p "tmp/backup" "tmp/swap" "tmp/undo"
-    git clone https://github.com/gmarik/vundle.git bundle/vundle
-    echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > local.vimrc
-    cd "$HOME/.dotfiles"
+  $INSTALLDIR="$HOME/.dotfiles"
+  if [ -d "$INSTALLDIR/.vimified" ]; then
+    if [ -d $HOME/.vim ] && [ ! -L $HOME/.vim ]; then
+      cp -Rf "$HOME/.vim" "$backupdir/.vim"
+      [ -d "$HOME/.vim" ] && rm -rf "$HOME/.vim"
+    fi
+    if [ -f $HOME/.vimrc ] && [ ! -L $HOME/.vimrc ]; then
+      cp -Rf "$HOME/.vimrc" "$backupdir/.vimrc"
+      [ -f "$HOME/.vimrc" ] && rm -rf "$HOME/.vimrc"
+    fi
+
+    if [ ! -f ~/.vim ]; then
+        echo "Now, we will create ~/.vim and ~/.vimrc files to configure Vim."
+        ln -sfn "$INSTALLDIR/.vimified" "$HOME/.vim"
+    fi
+
+    if [ ! -f ~/.vimrc ]; then
+        ln -sfn "$INSTALLDIR/.vimified/vimrc" "$HOME/.vimrc"
+    fi
+
+    cd "$INSTALLDIR/.vimified"
+
+    if [ ! -d "bundle" ]; then
+      echo "Now, we will create a separate directory to store the bundles Vim will use."
+      mkdir bundle
+      mkdir -p tmp/backup tmp/swap tmp/undo
+    fi
+
+    if [ ! -d "bundle/vundle" ]; then
+        echo "Then, we install Vundle (https://github.com/gmarik/vundle)."
+        git clone https://github.com/gmarik/vundle.git bundle/vundle
+    fi
+
+    if [ ! -f local.vimrc ]; then
+      echo "Let's create a 'local.vimrc' file so you have some bundles by default."
+      echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > 'local.vimrc'
+    fi
+
+    cd "$INSTALLDIR"
   fi
 }
 
@@ -135,6 +165,7 @@ else
   notice "Installing"
   install
   vimify
+  vim +BundleInstall +qall 2>/dev/null
 fi
 
 
