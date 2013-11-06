@@ -49,6 +49,21 @@ install() {
   done
 }
 
+vimify() {
+  if [ -d "$HOME/.dotfiles/.vimified" ]
+    ln -sfn "$HOME/.dotfiles/.vimified" ~/.vim
+    ln -sfn "$HOME/.dotfiles/.vimified/vimrc" ~/.vimrc
+    cd "$HOME/.dotfiles/.vimified"
+    mkdir "bundle"
+    mkdir -p "tmp/backup" "tmp/swap" "tmp/undo"
+    git clone https://github.com/gmarik/vundle.git bundle/vundle
+    echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > local.vimrc
+    cd "$HOME/.dotfiles"
+    vim +BundleInstall +qall
+  fi
+  done
+}
+
 in_array() {
   local hay needle=$1
   shift
@@ -121,6 +136,7 @@ else
   # Install
   notice "Installing"
   install
+  vimify
 fi
 
 
