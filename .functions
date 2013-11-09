@@ -28,7 +28,7 @@ function toggleiTerm() {
 function toggleMysql() {
   LAGENT='~/Library/LaunchAgents/homebrew.mxcl.mysql.plist'
   PLIST='/usr/local/opt/mysql/homebrew.mxcl.mysql.plist'
-  echo "Do you wish to hide iTerm in Dock?"
+  echo "Do you wish to load MySQL?"
   select ync in "Load" "Unload" "Cancel"; do
     case $ync in
       'Load' )
