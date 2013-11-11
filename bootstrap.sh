@@ -211,6 +211,7 @@ fi
 #-----------------------------------------------------------------------------
 
 popd
+notice "Don't forget to set your API Keys in $HOME/.private_env"
 notice "Done"
 exec $SHELL -l
 
