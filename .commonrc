@@ -6,3 +6,4 @@
 
 # Functions
 [[ -f "$HOME/.functions" ]] && source "$HOME/.functions"
+

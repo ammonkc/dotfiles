@@ -4,8 +4,11 @@
 [core]
 	quotepath = false
 	excludesfile = /Users/ammonkc/.gitignore_global
-	editor = /usr/bin/vim
+	editor = /usr/local/bin/vim
 	autocrlf = input
+[github]
+    user = $GITHUB_USER
+    token = $GITHUB_TOKEN
 [credential]
     helper = osxkeychain
 [difftool "Kaleidoscope"]

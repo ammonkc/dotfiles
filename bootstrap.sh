@@ -93,13 +93,27 @@ vimify() {
     if [ ! -f local.vimrc ]; then
       echo "Let's create a 'local.vimrc' file so you have some bundles by default."
       echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > 'local.vimrc'
-      echo 'if &term == "xterm-ipad"' >> 'local.vimrc'
-      echo 'nnoremap <Tab> <Esc>' >> 'local.vimrc'
-      echo 'vnoremap <Tab> <Esc>gV' >> 'local.vimrc'
-      echo 'onoremap <Tab> <Esc>' >> 'local.vimrc'
-      echo 'inoremap <Tab> <Esc>`^' >> 'local.vimrc'
-      echo 'inoremap <Leader><Tab> <Tab>' >> 'local.vimrc'
-      echo 'endif' >> 'local.vimrc'
+    fi
+
+    if [ ! -f after.vimrc ]; then
+      echo '" Colorscheme' >> 'after.vimrc'
+      echo 'syntax enable' >> 'after.vimrc'
+      echo 'set background=dark' >> 'after.vimrc'
+      echo 'colorscheme solarized' >> 'after.vimrc'
+
+      echo '" Map arrow keys' >> 'after.vimrc'
+      echo 'nmap <Left> <Left>' >> 'after.vimrc'
+      echo 'nmap <Right> <Right>' >> 'after.vimrc'
+      echo 'nmap <Up> <Up>' >> 'after.vimrc'
+      echo 'nmap <Down> <Down>' >> 'after.vimrc'
+
+      echo 'if &term == "xterm-ipad"' >> 'after.vimrc'
+      echo 'nnoremap <Tab> <Esc>' >> 'after.vimrc'
+      echo 'vnoremap <Tab> <Esc>gV' >> 'after.vimrc'
+      echo 'onoremap <Tab> <Esc>' >> 'after.vimrc'
+      echo 'inoremap <Tab> <Esc>`^' >> 'after.vimrc'
+      echo 'inoremap <Leader><Tab> <Tab>' >> 'after.vimrc'
+      echo 'endif' >> 'after.vimrc'
     fi
 
     cd "$INSTALLDIR"

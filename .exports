@@ -49,3 +49,6 @@ export PURPLE
 export WHITE
 export BOLD
 export RESET
+
+# Private env variables
+[[ -f "$HOME/.private_env" ]] && source "$HOME/.private_env"

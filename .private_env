@@ -1,0 +1,11 @@
+# Homebrew Github API Token
+# export HOMEBREW_GITHUB_API_TOKEN=""
+
+# Github API Token
+# export GITHUB_USER=""
+# export GITHUB_TOKEN=""
+
+# Rackspace Novaclient API Token
+# export NOVA_USERNAME=""
+# export NOVA_APIKEY=""
+
