@@ -7,3 +7,5 @@
 # Functions
 [[ -f "$HOME/.functions" ]] && source "$HOME/.functions"
 
+# Rackspace novaclient
+[[ -f "$HOME/.novarc" ]] && source "$HOME/.novarc"
