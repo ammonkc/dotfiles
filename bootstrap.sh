@@ -151,7 +151,7 @@ vimify() {
           inoremap <Tab> <Esc>\`^
           inoremap <Leader><Tab> <Tab>
         endif
-      EOF
+EOF
     fi
 
     cd "$INSTALLDIR"
