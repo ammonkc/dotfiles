@@ -12,16 +12,16 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
 fi
 
 # Notice title
-notice() { printf  "\033[1;32m=> $1\033[0m"; }
+notice() { printf  "\033[1;32m=> $1\033[0m \n"; }
 
 # Error title
-error() { printf "\033[1;31m=> Error: $1\033[0m"; }
+error() { printf "\033[1;31m=> Error: $1\033[0m \n"; }
 
 # List item
-c_list() { printf  "  \033[1;32m✔\033[0m $1"; }
+c_list() { printf  "  \033[1;32m✔\033[0m $1 \n"; }
 
 # Error list item
-e_list() { printf  "  \033[1;31m✖\033[0m $1"; }
+e_list() { printf  "  \033[1;31m✖\033[0m $1 \n"; }
 
 # Check for dependency
 dep() {
