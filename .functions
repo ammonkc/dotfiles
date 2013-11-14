@@ -1,3 +1,17 @@
+# Create a git.io short URL
+function rsaKey() {
+  if [ -z "${1}" ]; then
+    echo "Usage: \`rsaKey file \"Your Comments\"\`"
+    return 1
+  fi
+  if [ "$2" ]; then
+    keyComment="-C \"${2}\""
+  else
+    keyComment=""
+  fi
+  ssh-keygen -t rsa -b 2048 -f "~/.ssh/${1}" "${keyComment}"
+}
+
 # toggle iTerm2 Dock icon
 # add this to your .bash_profile or .zshrc
 function toggleiTerm() {
