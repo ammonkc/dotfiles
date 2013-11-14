@@ -56,6 +56,19 @@ install() {
   done
 }
 
+update() {
+  local files=( $(ls -a) )
+  excluded+=(".private_env")
+  for file in "${files[@]}"; do
+    in_array $file "${excluded[@]}"
+    should_install=$?
+    if [ $should_install -gt 0 ]; then
+      [ -d "$HOME/$file" ] && rm -rf "$HOME/$file"
+      cp -Rf "$file" "$HOME/$file"
+    fi
+  done
+}
+
 vimify() {
   INSTALLDIR="$HOME/.dotfiles"
   if [ -d "$INSTALLDIR/.vimified" ]; then
@@ -180,7 +193,7 @@ in_array() {
 
 backupdir="$HOME/.dotfiles-backup/$(date "+%Y%m%d%H%M.%S")"
 dependencies=(git tree vim)
-excluded=(. .. .git .gitignore .gitmodules .osx .brew .themes .vimified bootstrap.sh install-deps.sh README.md)
+excluded=(. .. .DS_Store .git .gitignore .gitmodules .osx .brew .themes .vimified bootstrap.sh install-deps.sh README.md)
 
 
 #-----------------------------------------------------------------------------
@@ -223,7 +236,7 @@ if [ -d $HOME/.dotfiles ]; then
   # Install
   notice "Installing"
   zsh_themes
-  install
+  update
 else
   # Clone Repo
   notice "Downloading"
