@@ -1,4 +1,4 @@
-# Create a git.io short URL
+# Generate rsa keys
 function rsaKey() {
   if [ -z "${1}" ]; then
     echo "Usage: \`rsaKey file \"Your Comments\"\`"
@@ -10,6 +10,29 @@ function rsaKey() {
     keyComment=""
   fi
   ssh-keygen -t rsa -b 2048 -f "~/.ssh/${1}" "${keyComment}"
+}
+
+# Generate dsa keys
+function dsaKey() {
+  if [ -z "${1}" ]; then
+    echo "Usage: \`dsaKey file \"Your Comments\"\`"
+    return 1
+  fi
+  if [ "$2" ]; then
+    keyComment="-C \"${2}\""
+  else
+    keyComment=""
+  fi
+  ssh-keygen -t dsa -f "~/.ssh/${1}" "${keyComment}"
+}
+
+# Install keys
+function installKey() {
+  if [ -z "${1}" -o -z "${2}" ]; then
+    echo "Usage: \`installKey key root@example.com\`"
+    return 1
+  fi
+  cat "~/.ssh/${1}.pub" | ssh "${2}" 'cat - >> ~/.ssh/authorized_keys'
 }
 
 # toggle iTerm2 Dock icon
