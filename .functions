@@ -91,6 +91,28 @@ function toggleMysql() {
   done
 }
 
+# Clean old .dotfiles-backups
+clean_dotfiles-backup() {
+  if [ -z "${1}" ]; then
+    local keep="5"
+  else
+    local keep=$1
+  fi
+  local dir="$HOME/.dotfiles-backup"
+  [[ $dir = -* ]] && gdir=./$dir
+  while IFS='' read -r -d '' entry; do
+    if ((--keep < 0)); then
+      filename=${entry#*$'\t'}
+      rm -rf "$dir/$filename"
+    fi
+  done < <(gfind "$dir" \
+             -mindepth 1 \
+             -maxdepth 1 \
+             -type d \
+             -printf '%T@\t%P\0' \
+           | sort -rnz)
+}
+
 # Simple calculator
 function calc() {
   local result=""
