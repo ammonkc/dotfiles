@@ -242,6 +242,8 @@ defaults write com.apple.frameworks.diskimages skip-verify true
 defaults write com.apple.dock mouse-over-hilte-stack -bool true
 
 # Enable pinning of the dock to the bottom of the side position
+#defaults write com.apple.dock pinning -string start
+#defaults write com.apple.dock pinning -string middle
 defaults write com.apple.dock pinning -string end
 
 # Enable spring loading for all Dock items
