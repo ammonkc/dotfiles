@@ -241,6 +241,9 @@ defaults write com.apple.frameworks.diskimages skip-verify true
 # Enable highlight hover effect for the grid view of a stack (Dock)
 defaults write com.apple.dock mouse-over-hilte-stack -bool true
 
+# Enable pinning of the dock to the bottom of the side position
+defaults write com.apple.dock pinning -string end
+
 # Enable spring loading for all Dock items
 defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true
 
