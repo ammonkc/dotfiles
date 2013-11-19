@@ -227,7 +227,7 @@ if [ -d $HOME/.dotfiles ]; then
   notice "Updating"
   git pull origin master
   git submodule init
-  git submodule update
+  git submodule update --remote
 
   # Backup
   notice "Backup up old files ($backupdir)"
