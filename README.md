@@ -11,6 +11,7 @@ Prerequisites
 Optional, but recommended:
 
 * [Homebrew](http://mxcl.github.com/homebrew/) (OS X only)
+* zsh
 
 
 Bootstrapper
