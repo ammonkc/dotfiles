@@ -17,7 +17,7 @@ npm install -g nave
 
 # homebrew!
 # you need the code CLI tools YOU FOOL.
-# ruby <(curl -fsSkL raw.github.com/mxcl/homebrew/go)
+ruby <(curl -fsSkL raw.github.com/mxcl/homebrew/go)
 
 # oh-my-zsh
 # curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
@@ -56,7 +56,7 @@ git clone git://github.com/jeroenbegyn/VLCControl.git
 
 
 # for the c alias (syntax highlighted cat)
-# sudo easy_install Pygments
+sudo easy_install Pygments
 
 
 # chrome canary as default
