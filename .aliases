@@ -70,9 +70,6 @@ alias vundleInstall='vim +BundleInstall +qall'
 # OSX system shortcuts
 alias mnt-vmshare='sudo mount -o resvport -t nfs ptnas1.local:/vmshare /private/mnt/nfs'
 
-# Remote commands
-alias updateBS='ssh git.websrv1.local "cd repo/bootstrap && git pull origin master"'
-
 # Utilities
 # Quick way to rebuild the Launch Services database and get rid
 # of duplicates in the Open With submenu.

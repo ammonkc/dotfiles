@@ -35,6 +35,16 @@ function installKey() {
   cat "~/.ssh/${1}.pub" | ssh "${2}" 'cat - >> ~/.ssh/authorized_keys'
 }
 
+# Update Remote Bootstrap docs
+function updateBS() {
+  remoteHost="git.websrv1.local"
+  ssh $remoteHost << EOF
+    cd repo/bootstrap
+    pwd
+    git pull origin master
+EOF
+}
+
 # toggle iTerm2 Dock icon
 # add this to your .bash_profile or .zshrc
 function toggleiTerm() {
