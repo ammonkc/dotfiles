@@ -82,7 +82,7 @@ vimify() {
     fi
 
     if [ ! -f ~/.vim ]; then
-        echo "Now, we will create ~/.vim and ~/.vimrc files to configure Vim."
+        notice "Now, we will create ~/.vim and ~/.vimrc files to configure Vim."
         ln -sfn "$INSTALLDIR/.vimified" "$HOME/.vim"
     fi
 
@@ -93,18 +93,18 @@ vimify() {
     cd "$INSTALLDIR/.vimified"
 
     if [ ! -d "bundle" ]; then
-      echo "Now, we will create a separate directory to store the bundles Vim will use."
+      notice "Now, we will create a separate directory to store the bundles Vim will use."
       mkdir bundle
       mkdir -p tmp/backup tmp/swap tmp/undo
     fi
 
     if [ ! -d "bundle/vundle" ]; then
-        echo "Then, we install Vundle (https://github.com/gmarik/vundle)."
+        notice "Then, we install Vundle (https://github.com/gmarik/vundle)."
         git clone https://github.com/gmarik/vundle.git bundle/vundle
     fi
 
     if [ ! -f local.vimrc ]; then
-      echo "Let's create a 'local.vimrc' file so you have some bundles by default."
+      notice "Let's create a 'local.vimrc' file so you have some bundles by default."
       echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > 'local.vimrc'
     fi
 
@@ -240,7 +240,7 @@ if [ -d $HOME/.dotfiles ]; then
 else
   # Clone Repo
   notice "Downloading"
-  git clone --recursive git@github.com:ammonkc/dotfiles.git $HOME/.dotfiles
+  git clone --recursive https://github.com:ammonkc/dotfiles.git $HOME/.dotfiles
 
   pushd $HOME/.dotfiles
 
