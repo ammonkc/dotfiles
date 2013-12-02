@@ -240,7 +240,7 @@ if [ -d $HOME/.dotfiles ]; then
 else
   # Clone Repo
   notice "Downloading"
-  git clone --recursive https://github.com:ammonkc/dotfiles.git $HOME/.dotfiles
+  git clone --recursive https://github.com/ammonkc/dotfiles.git $HOME/.dotfiles
 
   pushd $HOME/.dotfiles
 
