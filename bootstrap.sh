@@ -105,10 +105,30 @@ vimify() {
 
     if [ ! -f local.vimrc ]; then
       notice "Let's create a 'local.vimrc' file so you have some bundles by default."
-      echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > 'local.vimrc'
+      cat << EOF > 'local.vimrc'
+        " local.vimrc
+        let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']
+        Bundle 'tpope/vim-git'
+        Bundle 'markwu/vim-laravel-snippets'
+        Bundle 'airblade/vim-gitgutter‎'
+        Bundle 'mattn/webapi-vim'
+        Bundle 'mattn/gist-vim'
+        Bundle 'vim-scripts/restore_view.vim'
+
+        " restore_view.vim configs
+        set viewoptions=cursor,folds,slash,unix
+        " let g:skipview_files = ['*\.vim']
+EOF
     fi
 
+    if [ ! -f before.vimrc ]; then
+      notice "Creating'before.vimrc' file"
+      cat << EOF > 'before.vimrc'
+        " before.vimrc
+EOF
+
     if [ ! -f after.vimrc ]; then
+      notice "Creating'after.vimrc' file"
       cat << EOF > 'after.vimrc'
         " Colorscheme
         syntax enable
