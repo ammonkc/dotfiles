@@ -126,6 +126,7 @@ EOF
       cat << EOF > 'before.vimrc'
         " before.vimrc
 EOF
+    fi
 
     if [ ! -f after.vimrc ]; then
       notice "Creating'after.vimrc' file"
