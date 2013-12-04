@@ -52,7 +52,8 @@ alias status='git status'
 alias branches='git branch -a'
 
 # Laravel artisan
-alias artisan='/usr/local/bin/artisan --env=local'
+# alias artisan='/usr/local/bin/artisan --env=local'
+alias artisan='php artisan'
 
 # Homebrew aliases
 alias install='brew install'
