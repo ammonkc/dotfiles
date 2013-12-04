@@ -109,11 +109,11 @@ vimify() {
         " local.vimrc
         let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']
         Bundle 'tpope/vim-git'
-        Bundle 'markwu/vim-laravel-snippets'
         Bundle 'airblade/vim-gitgutter‎'
-        Bundle 'mattn/webapi-vim'
-        Bundle 'mattn/gist-vim'
         Bundle 'vim-scripts/restore_view.vim'
+        " Bundle 'markwu/vim-laravel-snippets'
+        " Bundle 'mattn/webapi-vim'
+        " Bundle 'mattn/gist-vim'
 
         " restore_view.vim configs
         set viewoptions=cursor,folds,slash,unix
