@@ -186,9 +186,9 @@ EOF
           inoremap <Leader><Tab> <Tab>
         endif
 EOF
-    fi
+      fi
 
-    cd "$INSTALLDIR"
+      cd "$INSTALLDIR"
   fi
 }
 
