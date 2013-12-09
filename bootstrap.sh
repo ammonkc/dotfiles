@@ -106,85 +106,85 @@ vimify() {
     if [ ! -f local.vimrc ]; then
       notice "Let's create a 'local.vimrc' file so you have some bundles by default."
       cat << EOF > 'local.vimrc'
-        " local.vimrc
-        let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']
-        Bundle 'tpope/vim-git'
-        Bundle 'airblade/vim-gitgutter‎'
-        Bundle 'vim-scripts/restore_view.vim'
-        " Bundle 'markwu/vim-laravel-snippets'
-        " Bundle 'mattn/webapi-vim'
-        " Bundle 'mattn/gist-vim'
+" local.vimrc
+let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']
+Bundle 'tpope/vim-git'
+Bundle 'airblade/vim-gitgutter‎'
+Bundle 'vim-scripts/restore_view.vim'
+" Bundle 'markwu/vim-laravel-snippets'
+" Bundle 'mattn/webapi-vim'
+" Bundle 'mattn/gist-vim'
 
-        " restore_view.vim configs
-        set viewoptions=cursor,folds,slash,unix
-        " let g:skipview_files = ['*\.vim']
+" restore_view.vim configs
+set viewoptions=cursor,folds,slash,unix
+" let g:skipview_files = ['*\.vim']
 EOF
     fi
 
     if [ ! -f before.vimrc ]; then
       notice "Creating'before.vimrc' file"
       cat << EOF > 'before.vimrc'
-        " before.vimrc
+" before.vimrc
 EOF
     fi
 
     if [ ! -f after.vimrc ]; then
       notice "Creating'after.vimrc' file"
       cat << EOF > 'after.vimrc'
-        " Colorscheme
-        syntax enable
-        set background=dark
-        colorscheme solarized
+" Colorscheme
+syntax enable
+set background=dark
+colorscheme solarized
 
-        if !exists('g:airline_symbols')
-          let g:airline_symbols = {}
-        endif
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
 
-        " unicode symbols
-        "let g:airline_left_sep = '»'
-        "let g:airline_left_sep = '▶'
-        "let g:airline_right_sep = '«'
-        "let g:airline_right_sep = '◀'
-        "let g:airline_symbols.linenr = '␊'
-        "let g:airline_symbols.linenr = '␤'
-        "let g:airline_symbols.linenr = '¶'
-        "let g:airline_symbols.branch = '⎇'
-        "let g:airline_symbols.paste = 'ρ'
-        "let g:airline_symbols.paste = 'Þ'
-        "let g:airline_symbols.paste = '∥'
-        "let g:airline_symbols.whitespace = 'Ξ'
+" unicode symbols
+"let g:airline_left_sep = '»'
+"let g:airline_left_sep = '▶'
+"let g:airline_right_sep = '«'
+"let g:airline_right_sep = '◀'
+"let g:airline_symbols.linenr = '␊'
+"let g:airline_symbols.linenr = '␤'
+"let g:airline_symbols.linenr = '¶'
+"let g:airline_symbols.branch = '⎇'
+"let g:airline_symbols.paste = 'ρ'
+"let g:airline_symbols.paste = 'Þ'
+"let g:airline_symbols.paste = '∥'
+"let g:airline_symbols.whitespace = 'Ξ'
 
-        " powerline symbols
-        "let g:airline_left_sep = ''
-        "let g:airline_left_alt_sep = ''
-        "let g:airline_right_sep = ''
-        "let g:airline_right_alt_sep = ''
-        "let g:airline_symbols.branch = ''
-        "let g:airline_symbols.readonly = ''
-        "let g:airline_symbols.linenr = ''
+" powerline symbols
+"let g:airline_left_sep = ''
+"let g:airline_left_alt_sep = ''
+"let g:airline_right_sep = ''
+"let g:airline_right_alt_sep = ''
+"let g:airline_symbols.branch = ''
+"let g:airline_symbols.readonly = ''
+"let g:airline_symbols.linenr = ''
 
-        " old vim-powerline symbols
-        let g:airline_left_sep = '⮀'
-        let g:airline_left_alt_sep = '⮁'
-        let g:airline_right_sep = '⮂'
-        let g:airline_right_alt_sep = '⮃'
-        let g:airline_symbols.branch = '⭠'
-        let g:airline_symbols.readonly = '⭤'
-        let g:airline_symbols.linenr = '⭡'
+" old vim-powerline symbols
+let g:airline_left_sep = '⮀'
+let g:airline_left_alt_sep = '⮁'
+let g:airline_right_sep = '⮂'
+let g:airline_right_alt_sep = '⮃'
+let g:airline_symbols.branch = '⭠'
+let g:airline_symbols.readonly = '⭤'
+let g:airline_symbols.linenr = '⭡'
 
-        " Map arrow keys
-        nmap <Left> <Left>
-        nmap <Right> <Right>
-        nmap <Up> <Up>
-        nmap <Down> <Down>
+" Map arrow keys
+nmap <Left> <Left>
+nmap <Right> <Right>
+nmap <Up> <Up>
+nmap <Down> <Down>
 
-        if &term == "xterm-ipad"
-          nnoremap <Tab> <Esc>
-          vnoremap <Tab> <Esc>gV
-          onoremap <Tab> <Esc>
-          inoremap <Tab> <Esc>\`^
-          inoremap <Leader><Tab> <Tab>
-        endif
+if &term == "xterm-ipad"
+  nnoremap <Tab> <Esc>
+  vnoremap <Tab> <Esc>gV
+  onoremap <Tab> <Esc>
+  inoremap <Tab> <Esc>\`^
+  inoremap <Leader><Tab> <Tab>
+endif
 EOF
       fi
 
