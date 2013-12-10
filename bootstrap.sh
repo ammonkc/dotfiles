@@ -108,16 +108,6 @@ vimify() {
       cat << EOF > 'local.vimrc'
 " local.vimrc
 let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']
-Bundle 'tpope/vim-git'
-Bundle 'airblade/vim-gitgutter‎'
-Bundle 'vim-scripts/restore_view.vim'
-" Bundle 'markwu/vim-laravel-snippets'
-" Bundle 'mattn/webapi-vim'
-" Bundle 'mattn/gist-vim'
-
-" restore_view.vim configs
-set viewoptions=cursor,folds,slash,unix
-" let g:skipview_files = ['*\.vim']
 EOF
     fi
 
@@ -135,6 +125,17 @@ EOF
 syntax enable
 set background=dark
 colorscheme solarized
+
+Bundle 'tpope/vim-git'
+Bundle 'airblade/vim-gitgutter‎'
+Bundle 'vim-scripts/restore_view.vim'
+" Bundle 'markwu/vim-laravel-snippets'
+" Bundle 'mattn/webapi-vim'
+" Bundle 'mattn/gist-vim'
+
+" restore_view.vim configs
+set viewoptions=cursor,folds,slash,unix
+" let g:skipview_files = ['*\.vim']
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
