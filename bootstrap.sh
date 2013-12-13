@@ -127,7 +127,7 @@ set background=dark
 colorscheme solarized
 
 Bundle 'tpope/vim-git'
-Bundle 'airblade/vim-gitgutter‎'
+Bundle 'airblade/vim-gitgutter'
 Bundle 'vim-scripts/restore_view.vim'
 " Bundle 'markwu/vim-laravel-snippets'
 " Bundle 'mattn/webapi-vim'
