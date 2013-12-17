@@ -190,6 +190,9 @@ EOF
       fi
 
       cd "$INSTALLDIR"
+
+      notice "Installing vim bundles..."
+      vim +BundleInstall +qall 2&>/dev/null
   fi
 }
 
@@ -275,8 +278,6 @@ else
   zsh_themes
   install
   vimify
-  notice "Installing vim bundles..."
-  vim +BundleInstall +qall 2&>/dev/null
   notice "Don't forget to set your API Keys in $HOME/.private_env"
 fi
 
