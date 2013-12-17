@@ -275,7 +275,7 @@ else
   zsh_themes
   install
   vimify
-  vim +BundleInstall +qall 2>/dev/null
+  vim +BundleInstall +qall 2&>/dev/null
   notice "Don't forget to set your API Keys in $HOME/.private_env"
 fi
 
