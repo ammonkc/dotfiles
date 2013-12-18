@@ -32,6 +32,8 @@ alias myip='curl ifconfig.me/ip'
 # Develop shortcuts
 alias repos='cd ~/Develop/Repos'
 alias www='cd /Library/WebServer/Documents'
+alias wwwb='cd /Library/WebServer/Documents/bpl'
+alias wwwp='cd /Library/WebServer/Documents/panda'
 
 # Apache Shortcuts
 alias httpd='sudo apachectl'
