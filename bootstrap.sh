@@ -249,7 +249,7 @@ if [ -d $HOME/.dotfiles ]; then
   pushd $HOME/.dotfiles
 
   # Update Repo
-  notice "Updating"
+  notice "Updating git repo"
   git pull origin master
   git submodule init
   git submodule update --remote
@@ -259,7 +259,7 @@ if [ -d $HOME/.dotfiles ]; then
   backup
 
   # Install
-  notice "Installing"
+  notice "Updating"
   zsh_themes
   update
 else
