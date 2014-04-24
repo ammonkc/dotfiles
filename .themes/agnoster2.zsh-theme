@@ -69,7 +69,9 @@ prompt_context() {
 
 # Git: branch/detached head, dirty status
 prompt_git() {
-  local ref dirty
+  local ref dirty mode repo_path
+  repo_path=$(git rev-parse --git-dir 2>/dev/null)
+
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
     dirty=$(parse_git_dirty)
     ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
@@ -77,6 +79,14 @@ prompt_git() {
       prompt_segment yellow black
     else
       prompt_segment green black
+    fi
+
+    if [[ -e "${repo_path}/BISECT_LOG" ]]; then
+      mode=" <B>"
+    elif [[ -e "${repo_path}/MERGE_HEAD" ]]; then
+      mode=" >M<"
+    elif [[ -e "${repo_path}/rebase" || -e "${repo_path}/rebase-apply" || -e "${repo_path}/rebase-merge" || -e "${repo_path}/../.dotest" ]]; then
+      mode=" >R>"
     fi
 
     setopt promptsubst
@@ -88,9 +98,9 @@ prompt_git() {
     zstyle ':vcs_info:*' stagedstr '✚'
     zstyle ':vcs_info:git:*' unstagedstr '●'
     zstyle ':vcs_info:*' formats ' %u%c'
-    zstyle ':vcs_info:*' actionformats '%u%c'
+    zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${ref/refs\/heads\//⭠ }${vcs_info_msg_0_}"
+    echo -n "${ref/refs\/heads\//⭠ }${vcs_info_msg_0_%% }${mode}"
   fi
 }
 
@@ -110,7 +120,7 @@ prompt_hg() {
                 # if working copy is clean
                 prompt_segment green black
             fi
-            echo -n $(hg prompt "⭠ {rev}@{branch}") $st
+            echo -n $(hg prompt "☿ {rev}@{branch}") $st
         else
             st=""
             rev=$(hg id -n 2>/dev/null | sed 's/[^-0-9]//g')
@@ -124,7 +134,7 @@ prompt_hg() {
             else
                 prompt_segment green black
             fi
-            echo -n "⭠ $rev@$branch" $st
+            echo -n "☿ $rev@$branch" $st
         fi
     fi
 }
@@ -132,6 +142,14 @@ prompt_hg() {
 # Dir: current working directory
 prompt_dir() {
   prompt_segment blue black '%~'
+}
+
+# Virtualenv: current working virtualenv
+prompt_virtualenv() {
+  local virtualenv_path="$VIRTUAL_ENV"
+  if [[ -n $virtualenv_path && -n $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
+    prompt_segment blue black "(`basename $virtualenv_path`)"
+  fi
 }
 
 # Status:
@@ -152,6 +170,7 @@ prompt_status() {
 build_prompt() {
   RETVAL=$?
   prompt_status
+  prompt_virtualenv
   prompt_context
   prompt_dir
   prompt_git
