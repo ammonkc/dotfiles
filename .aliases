@@ -40,6 +40,7 @@ alias httpd='sudo apachectl'
 
 # Vagrant Shortcuts
 alias vssh='vagrant ssh'
+alias vm='ssh vagrant@127.0.0.1 -p 2222'
 alias puppet-clean='ssh root@hub "puppet cert --clean"'
 
 # Git commands
