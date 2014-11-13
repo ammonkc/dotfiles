@@ -71,6 +71,10 @@ alias dotfilesUpdate='bash < <( curl https://raw.github.com/ammonkc/dotfiles/mas
 alias vundleUpdate="vim +BundleInstall! +BundleClean +qall"
 alias vundleInstall='vim +BundleInstall +qall'
 
+#OSX download log
+alias view-dl-log="sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'select LSQuarantineDataURLString from LSQuarantineEvent'"
+alias clear-dl-log="sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'delete from LSQuarantineEvent'"
+
 # OSX system shortcuts
 alias mnt-vmshare='sudo mount -o resvport -t nfs ptnas1.local:/vmshare /private/mnt/nfs'
 
