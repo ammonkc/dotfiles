@@ -9,3 +9,7 @@
 # export NOVA_USERNAME=""
 # export NOVA_APIKEY=""
 
+# Rackspace Rack CLI
+# export RS_REGION_NAME=""
+# export RS_USERNAME=""
+# export RS_API_KEY=""
