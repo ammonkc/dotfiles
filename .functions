@@ -36,7 +36,7 @@ function installKey() {
 }
 
 function enableTor() {
-  # 'Wi-Fi' or 'Ethernet' or 'Display Ethernet'
+  # 'Wi-Fi' or 'Ethernet' or 'Thunderbolt Ethernet' or 'Display Ethernet'
   if [ -z "${1}" ]; then
     local INTERFACE="Wi-Fi"
   else
