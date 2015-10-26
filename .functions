@@ -35,14 +35,25 @@ function installKey() {
   cat "~/.ssh/${1}.pub" | ssh "${2}" 'cat - >> ~/.ssh/authorized_keys'
 }
 
-# Update Remote Bootstrap docs
-function updateBS() {
-  remoteHost="git.websrv1.local"
-  ssh $remoteHost << EOF
-    cd repo/bootstrap
-    pwd
-    git pull origin master
-EOF
+function enableTor() {
+  # 'Wi-Fi' or 'Ethernet' or 'Display Ethernet'
+  if [ -z "${1}" ]; then
+    local INTERFACE="Wi-Fi"
+  else
+    local INTERFACE=$1
+  fi
+
+  # Ask for the administrator password upfront
+  sudo -v
+
+  # Keep-alive: update existing `sudo` time stamp until finished
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+  # Let's roll
+  sudo networksetup -setsocksfirewallproxy $INTERFACE 127.0.0.1 9050 off
+  sudo networksetup -setsocksfirewallproxystate $INTERFACE on
+  tor
+  sudo networksetup -setsocksfirewallproxystate $INTERFACE off
 }
 
 # toggle iTerm2 Dock icon
