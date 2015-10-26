@@ -56,6 +56,29 @@ function enableTor() {
   sudo networksetup -setsocksfirewallproxystate $INTERFACE off
 }
 
+function tor_service() {
+  launchctl $1 /usr/local/opt/tor/homebrew.mxcl.tor.plist
+}
+
+function tor-start() {
+  echo "$0: starting tor service...";
+  tor_service load
+}
+
+function tor-stop() {
+  echo "$0: stopping tor service...";
+  tor_service unload
+}
+
+function tor-check() {
+  echo "$0: checking if tor works...";
+  if torsocks curl -s https://check.torproject.org | grep -q 'Congratulations. This browser is configured to use Tor.'; then
+    echo 'The tor service works';
+  else
+    echo 'The tor service does NOT work';
+  fi
+}
+
 # toggle iTerm2 Dock icon
 # add this to your .bash_profile or .zshrc
 function toggleiTerm() {
