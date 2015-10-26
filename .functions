@@ -35,7 +35,7 @@ function installKey() {
   cat "~/.ssh/${1}.pub" | ssh "${2}" 'cat - >> ~/.ssh/authorized_keys'
 }
 
-function enableTor() {
+function tor-enable() {
   # 'Wi-Fi' or 'Ethernet' or 'Thunderbolt Ethernet' or 'Display Ethernet'
   if [ -z "${1}" ]; then
     local INTERFACE="Wi-Fi"
