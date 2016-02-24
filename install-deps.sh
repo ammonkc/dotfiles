@@ -37,13 +37,13 @@ ruby <(curl -fsSkL raw.github.com/mxcl/homebrew/go)
 
 # https://github.com/dronir/SpotifyControl
 # Spotify Controll Script
-cd ~/code
-git clone git://github.com/dronir/SpotifyControl.git
+# cd ~/code
+# git clone git://github.com/dronir/SpotifyControl.git
 
 # https://github.com/jeroenbegyn/VLCControl
 # VLC Controll Script
-cd ~/code
-git clone git://github.com/jeroenbegyn/VLCControl.git
+# cd ~/code
+# git clone git://github.com/jeroenbegyn/VLCControl.git
 
 
 # my magic photobooth symlink -> dropbox. I love it.
