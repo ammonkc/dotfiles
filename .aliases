@@ -65,7 +65,7 @@ alias update='brew update'
 alias upgrade='brew upgrade --all'
 
 # Dotfiles update
-alias dotfilesUpdate='bash < <( curl https://raw.github.com/ammonkc/dotfiles/master/bootstrap.sh )'
+alias dotfilesUpdate='bash -c "$( curl -fsSL https://raw.github.com/ammonkc/dotfiles/master/bootstrap.sh )"'
 
 # Vundle InstallBundle
 alias vundleUpdate="vim +BundleInstall! +BundleClean +qall"
