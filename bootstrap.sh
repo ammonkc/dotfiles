@@ -203,6 +203,7 @@ zsh_themes() {
       mkdir -p $custom_dir
   fi
   for theme in "${themes[@]}"; do
+      notice "Copying $theme"
       cp -Rf $theme $custom_dir
   done
 }
