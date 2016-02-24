@@ -197,7 +197,7 @@ EOF
 }
 
 zsh_themes() {
-  local themes=( $(ls -l custom/themes/**/*.zsh-theme) )
+  local themes=( $(ls custom/themes/**/*.zsh-theme) )
   local custom_dir=".oh-my-zsh/custom/themes/"
   if [ ! -d $custom_dir ]; then
       mkdir -p $custom_dir
