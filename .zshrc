@@ -16,6 +16,8 @@ POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs time)
 # POWERLEVEL9K_STATUS_VERBOSE=false
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
+# Custom commands
+# POWERLEVEL9K_CUSTOM_LARAVEL_VERSION="prompt_laravel_version"
 # DEFAULT_USER=$USER
 
 # Set to this to use case-sensitive completion

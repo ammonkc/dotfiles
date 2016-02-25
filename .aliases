@@ -34,6 +34,7 @@ alias repos='cd ~/Develop/Repos'
 alias www='cd /Library/WebServer/Documents'
 alias wwwb='cd /Library/WebServer/Documents/bpl'
 alias wwwp='cd /Library/WebServer/Documents/panda'
+alias hst='cd /Library/WebServer/Documents/panda/hawaiistatecars'
 
 # Apache Shortcuts
 alias httpd='sudo apachectl'

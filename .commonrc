@@ -7,5 +7,8 @@
 # Functions
 [[ -f "$HOME/.functions" ]] && source "$HOME/.functions"
 
+# Prompts
+[[ -f "$HOME/.prompts" ]] && source "$HOME/.prompts"
+
 # Rackspace novaclient
 [[ -f "$HOME/.novarc" ]] && source "$HOME/.novarc"

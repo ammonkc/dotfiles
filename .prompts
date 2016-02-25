@@ -1,0 +1,13 @@
+###############################
+# powerlevel9k custom_commands
+###############################
+# print Laravel version number
+prompt_laravel_version() {
+  local laravel_version
+  laravel_version=$(php artisan -V | grep "Laravel Framework version" | awk '{print $4}')
+
+  if [[ -n "$laravel_version" ]]; then
+    local color='%F{orange}'
+    echo -n "%{$color} Laravel $laravel_version"
+  fi
+}

@@ -225,7 +225,7 @@ in_array() {
 
 backupdir="$HOME/.dotfiles-backup/$(date "+%Y%m%d%H%M.%S")"
 dependencies=(git tree vim)
-excluded=(. .. .DS_Store .git .gitignore .gitmodules .osx .brew .themes .vimified bootstrap.sh install-deps.sh README.md)
+excluded=(. .. .DS_Store .git .gitignore .gitmodules .osx .brew .vimified bootstrap.sh install-deps.sh README.md)
 
 
 #-----------------------------------------------------------------------------
