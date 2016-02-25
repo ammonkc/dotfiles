@@ -197,15 +197,17 @@ EOF
 }
 
 zsh_themes() {
-  local themes=( $(ls custom/themes/**/*.zsh-theme) )
-  local custom_dir=".oh-my-zsh/custom/themes/"
-  if [ ! -d $custom_dir ]; then
-      mkdir -p $custom_dir
+  if [ "$ZSH_CUSTOM" = "$ZSH/custom" ]; then
+    local themes=( $(ls custom/themes/**/*.zsh-theme) )
+    local custom_dir=".oh-my-zsh/custom/themes/"
+    if [ ! -d $custom_dir ]; then
+        mkdir -p $custom_dir
+    fi
+    for theme in "${themes[@]}"; do
+        notice "Copying $theme"
+        cp -Rf $theme $custom_dir
+    done
   fi
-  for theme in "${themes[@]}"; do
-      notice "Copying $theme"
-      cp -Rf $theme $custom_dir
-  done
 }
 
 in_array() {
