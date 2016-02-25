@@ -12,12 +12,11 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 
 # POWERLEVEL9K_MODE="awesome-patched"¬
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status laravel_version background_jobs time)
 # POWERLEVEL9K_STATUS_VERBOSE=false
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
 # Custom commands
-# POWERLEVEL9K_CUSTOM_LARAVEL_VERSION="prompt_laravel_version"
 # DEFAULT_USER=$USER
 
 # Set to this to use case-sensitive completion

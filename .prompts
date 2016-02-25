@@ -7,7 +7,7 @@ prompt_laravel_version() {
   laravel_version=$(php artisan -V | grep "Laravel Framework version" | awk '{print $4}')
 
   if [[ -n "$laravel_version" ]]; then
-    local color='%F{orange}'
-    echo -n "%{$color} Laravel $laravel_version"
+    local color='%F{208}'
+    echo -n "%{$color%}L $laravel_version "
   fi
 }
