@@ -129,6 +129,7 @@ colorscheme solarized
 Bundle 'tpope/vim-git'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'vim-scripts/restore_view.vim'
+Bundle 'jamessan/vim-gnupg'
 " Bundle 'markwu/vim-laravel-snippets'
 " Bundle 'mattn/webapi-vim'
 " Bundle 'mattn/gist-vim'
