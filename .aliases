@@ -64,7 +64,7 @@ alias artisan='php artisan'
 alias install='brew install'
 alias reinstall='brew reinstall'
 alias update='brew update'
-alias upgrade='brew upgrade --all'
+alias upgrade='brew upgrade'
 
 # Dotfiles update
 alias dotfilesUpdate='bash -c "$( curl -fsSL https://raw.github.com/ammonkc/dotfiles/master/bootstrap.sh )"'
