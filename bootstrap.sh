@@ -200,7 +200,7 @@ EOF
 zsh_themes() {
   if [ "$ZSH_CUSTOM" = "$ZSH/custom" ]; then
     local themes=( $(ls custom/themes/**/*.zsh-theme) )
-    local custom_dir=".oh-my-zsh/custom/themes/"
+    local custom_dir="$ZSH/custom/themes/"
     if [ ! -d $custom_dir ]; then
         mkdir -p $custom_dir
     fi
@@ -226,7 +226,7 @@ in_array() {
 
 backupdir="$HOME/.dotfiles-backup/$(date "+%Y%m%d%H%M.%S")"
 dependencies=(git tree vim)
-excluded=(. .. .DS_Store .git .gitignore .gitmodules .osx .brew .vimified bootstrap.sh install-deps.sh README.md)
+excluded=(. .. .DS_Store .git custom .gitignore .gitmodules .osx .brew .vimified bootstrap.sh install-deps.sh README.md)
 
 
 #-----------------------------------------------------------------------------
