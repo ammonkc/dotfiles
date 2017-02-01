@@ -5,7 +5,10 @@
 # print Laravel version number
 prompt_laravel_version() {
   local laravel_version
-  laravel_version=$(php artisan -V | grep "Laravel Framework" | awk '{print $4}')
+  laravel_version=$(php artisan -V | grep "Laravel Framework" | awk '{print $3}')
+  if [[ -z "$laravel_version" ]]; then
+    laravel_version=$(php artisan -V | grep "Laravel Framework" | awk '{print $4}')
+  fi
   if [[ -n "$laravel_version" ]]; then
     "$1_prompt_segment" "$0" "$2" "208" "black" "L $laravel_version"
   fi
