@@ -157,6 +157,11 @@ clean_dotfiles-backup() {
            | sort -rnz)
 }
 
+# Homestead global
+function homestead() {
+    ( cd ~/.homestead && vagrant $* )
+}
+
 # Simple calculator
 function calc() {
   local result=""
