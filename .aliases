@@ -61,6 +61,9 @@ alias branches='git branch -a'
 # alias artisan='/usr/local/bin/artisan --env=local'
 alias artisan='php artisan'
 
+# PHPUnit
+alias punit='vendor/bin/phpunit'
+
 # Homebrew aliases
 alias install='brew install'
 alias reinstall='brew reinstall'
