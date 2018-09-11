@@ -56,4 +56,4 @@ plugins=(osx git git-flow-avh gitignore node npm brew bower composer laravel5 su
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/share/npm/bin:/Applications/VirtualBox.app/Contents/MacOS:$PATH
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/share/npm/bin:/Applications/VirtualBox.app/Contents/MacOS:/Users/ammonkc/.composer/vendor/bin:$PATH
