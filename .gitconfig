@@ -1,6 +1,6 @@
 [user]
-	name = Ammon Casey
-	email = ammon@caseyohana.com
+	name = $GIT_USER
+	email = $GIT_EMAIL
 [core]
 	quotepath = false
 	excludesfile = /Users/ammonkc/.gitignore_global

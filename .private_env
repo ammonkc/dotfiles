@@ -1,6 +1,10 @@
 # Homebrew Github API Token
 # export HOMEBREW_GITHUB_API_TOKEN=""
 
+# Git
+# export GIT_NAME=""
+# export GIT_EMAIL=""
+
 # Github API Token
 # export GITHUB_USER=""
 # export GITHUB_TOKEN=""
@@ -13,3 +17,7 @@
 # export RS_REGION_NAME=""
 # export RS_USERNAME=""
 # export RS_API_KEY=""
+
+# acme.sh rackspace dns api
+# export RACKSPACE_Username=""
+# export RACKSPACE_Apikey=""
