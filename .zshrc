@@ -10,14 +10,20 @@ ZSH_CUSTOM="$HOME/.dotfiles/custom"
 # time that oh-my-zsh is loaded.
 ZSH_THEME="powerlevel9k/powerlevel9k"
 
-# POWERLEVEL9K_MODE="awesome-patched"¬
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status laravel_ver php_ver background_jobs time)
+# PowerLevel9k config
+POWERLEVEL9K_MODE="nerdfont-complete"
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context dir dir_writable laravel_version vcs)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status php_ver node_version background_jobs time)
 # POWERLEVEL9K_STATUS_VERBOSE=false
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
+POWERLEVEL9K_ALWAYS_SHOW_CONTEXT="false"
+POWERLEVEL9K_ALWAYS_SHOW_USER="false"
+POWERLEVEL9K_LARAVEL_VERSION_FOREGROUND="black"
+POWERLEVEL9K_LARAVEL_VERSION_BACKGROUND="208"
+
 # Custom commands
-# DEFAULT_USER=$USER
+DEFAULT_USER=$USER
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -48,7 +54,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(osx git git-flow-avh gitignore node npm brew bower composer laravel5 sublime vundle screen encode64 z zsh-syntax-highlighting)
+plugins=(osx git git-flow-avh gitignore node npm brew composer laravel5 sublime vscode capistrano docker homestead vagrant vagrant-prompt iterm2 ssh-agent systemadmin vundle yarn screen encode64 z zsh-syntax-highlighting)
 
 # Common stuff
 [[ -s "$HOME/.commonrc" ]] && source "$HOME/.commonrc"
