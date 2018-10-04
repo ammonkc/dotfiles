@@ -13,7 +13,7 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 # PowerLevel9k config
 POWERLEVEL9K_MODE="nerdfont-complete"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context dir dir_writable laravel_version vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status php_ver node_version background_jobs time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status php_ver background_jobs time)
 # POWERLEVEL9K_STATUS_VERBOSE=false
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
