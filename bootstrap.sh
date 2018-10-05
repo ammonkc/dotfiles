@@ -54,6 +54,9 @@ install() {
       cp -Rf "$file" "$HOME/$file"
     fi
   done
+  if [ -f $HOME/.zshrc ]; then
+    source $HOME/.zshrc
+  fi
 }
 
 update() {
