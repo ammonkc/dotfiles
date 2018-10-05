@@ -107,7 +107,7 @@ vimify() {
       notice "Let's create a 'local.vimrc' file so you have some bundles by default."
       cat << EOF > 'local.vimrc'
 " local.vimrc
-let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']
+let g:vimified_packages = ['general', 'fancy', 'os', 'color']
 EOF
     fi
 
