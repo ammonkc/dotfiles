@@ -40,7 +40,7 @@ backup() {
 
   local files=( $(ls -a) )
   for file in "${files[@]}"; do
-    in_array $file "${excluded[@]}" || cp -Rf "$HOME/$file" "$backupdir/$file"
+    in_array $file "${excluded[@]}" || cp -Rf "$HOME/$file" "$backupdir/$file" 2>/dev/null
   done
 }
 
