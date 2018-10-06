@@ -114,6 +114,11 @@ let g:vimified_packages = ['general', 'fancy', 'os', 'color']
 EOF
     fi
 
+    cd "$INSTALLDIR"
+
+    notice "Installing vim bundles..."
+    vim +BundleInstall +qall 2&>/dev/null
+
     if [ ! -f before.vimrc ]; then
       notice "Creating'before.vimrc' file"
       cat << EOF > 'before.vimrc'
@@ -128,14 +133,6 @@ EOF
 syntax enable
 set background=dark
 colorscheme solarized
-
-Bundle 'tpope/vim-git'
-Bundle 'airblade/vim-gitgutter'
-Bundle 'vim-scripts/restore_view.vim'
-Bundle 'jamessan/vim-gnupg'
-" Bundle 'markwu/vim-laravel-snippets'
-" Bundle 'mattn/webapi-vim'
-" Bundle 'mattn/gist-vim'
 
 " restore_view.vim configs
 set viewoptions=cursor,folds,slash,unix
@@ -192,11 +189,6 @@ if &term == "xterm-ipad"
 endif
 EOF
       fi
-
-      cd "$INSTALLDIR"
-
-      notice "Installing vim bundles..."
-      vim +BundleInstall +qall 2&>/dev/null
   fi
 }
 
@@ -279,6 +271,8 @@ else
   git clone --recursive https://github.com/ammonkc/dotfiles.git $HOME/.dotfiles
 
   pushd $HOME/.dotfiles
+
+  git submodule update --remote
 
   # Backup
   notice "Backup up old files ($backupdir)"
