@@ -13,20 +13,3 @@ prompt_laravel_ver() {
       fi
   fi
 }
-
-################################################################
-# Segment to display PHP version number
-prompt_php_ver() {
-  phpfiles=(*.php(N))
-  for file in $phpfiles; do
-    if [[ -f $file ]]; then
-        local php_version
-        php_version=$(php -v 2>&1 | grep -oe "^PHP\s*[0-9.]*")
-
-        if [[ -n "$php_version" ]]; then
-          "$1_prompt_segment" "$0" "$2" "fuchsia" "grey93" "$php_version"
-        fi
-        break
-    fi
-  done
-}
