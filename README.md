@@ -11,7 +11,6 @@ Prerequisites
 Optional, but recommended:
 
 * [Homebrew](http://mxcl.github.com/homebrew/) (OS X only)
-* zsh
 
 
 Bootstrapper
@@ -21,7 +20,7 @@ The bootstrapper will back up all your existing files before it installs
 anything new, it'll also warn you if a dependency isn't met.
 
 ``` bash-session
-$ sh -c "$(curl -fsSL https://raw.github.com/ammonkc/dotfiles/master/bootstrap.sh)"
+$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/linux/bootstrap.sh)"
 ```
 
 Don't worry, all your old files will be backed up!

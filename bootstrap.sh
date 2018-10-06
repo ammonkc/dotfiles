@@ -119,6 +119,8 @@ EOF
     notice "Installing vim bundles..."
     vim +BundleInstall +qall 2&>/dev/null
 
+    cd "$INSTALLDIR/.vimified"
+
     if [ ! -f before.vimrc ]; then
       notice "Creating'before.vimrc' file"
       cat << EOF > 'before.vimrc'
@@ -253,7 +255,7 @@ if [ -d $HOME/.dotfiles ]; then
 
   # Update Repo
   notice "Updating git repo"
-  git pull origin master
+  git pull origin linux
   git submodule init
   git submodule update --remote
 
@@ -268,10 +270,9 @@ if [ -d $HOME/.dotfiles ]; then
 else
   # Clone Repo
   notice "Downloading"
-  git clone --recursive https://github.com/ammonkc/dotfiles.git $HOME/.dotfiles
+  git clone --recursive https://github.com/ammonkc/dotfiles.git --branch linux --single-branch $HOME/.dotfiles
 
   pushd $HOME/.dotfiles
-
   git submodule update --remote
 
   # Backup

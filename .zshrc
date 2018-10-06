@@ -13,7 +13,7 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 # PowerLevel9k config
 POWERLEVEL9K_MODE="nerdfont-complete"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context dir dir_writable laravel_version vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status php_ver background_jobs time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status php_version background_jobs time)
 # POWERLEVEL9K_STATUS_VERBOSE=false
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
@@ -22,14 +22,11 @@ POWERLEVEL9K_ALWAYS_SHOW_USER="false"
 POWERLEVEL9K_LARAVEL_VERSION_FOREGROUND="black"
 POWERLEVEL9K_LARAVEL_VERSION_BACKGROUND="208"
 
-# Custom commands
-DEFAULT_USER=$USER
-
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
 
 # Uncomment this to disable bi-weekly auto-update checks
-DISABLE_AUTO_UPDATE="true"
+# DISABLE_AUTO_UPDATE="true"
 
 # Uncomment to change how often before auto-updates occur? (in days)
 # export UPDATE_ZSH_DAYS=13
@@ -44,22 +41,22 @@ DISABLE_AUTO_UPDATE="true"
 # DISABLE_CORRECTION="true"
 
 # Uncomment following line if you want red dots to be displayed while waiting for completion
-COMPLETION_WAITING_DOTS="true"
+# COMPLETION_WAITING_DOTS="true"
 
 # Uncomment following line if you want to disable marking untracked files under
 # VCS as dirty. This makes repository status check for large repositories much,
 # much faster.
-DISABLE_UNTRACKED_FILES_DIRTY="true"
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(osx git git-flow-avh gitignore node npm brew composer laravel5 sublime vscode capistrano docker homestead vagrant vagrant-prompt iterm2 ssh-agent systemadmin vundle yarn screen encode64 z zsh-syntax-highlighting)
-
-# Common stuff
-[[ -s "$HOME/.commonrc" ]] && source "$HOME/.commonrc"
+plugins=(git github git-flow vundle zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/share/npm/bin:/Applications/VirtualBox.app/Contents/MacOS:/Users/ammonkc/.composer/vendor/bin:$PATH
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/share/npm/bin:$PATH
+
+# Common stuff
+[[ -s "$HOME/.commonrc" ]] && source "$HOME/.commonrc"

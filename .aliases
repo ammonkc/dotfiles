@@ -16,8 +16,6 @@ alias svim='vim sudo:'
 # programs
 alias st3='open -a "Sublime Text"'
 # also/or do this:
-# ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" ~/bin/subl
-
 
 # be nice
 alias please=sudo
@@ -25,25 +23,13 @@ alias hosts='sudo $EDITOR /etc/hosts'   # yes I occasionally 127.0.0.1 twitter.c
 
 # handy things
 alias myip='curl ifconfig.me/ip'
-#alias bunyip='node ~/code/bunyip/cli.js'
-#alias spotify="osascript ~/code/SpotifyControl/SpotifyControl.scpt"
-#alias vlc="osascript ~/code/VLCControl/VLCControl.scpt"
 
 # Develop shortcuts
-alias repos='cd ~/Develop/Repos'
-alias src='cd ~/Develop/src'
-alias www='cd /Library/WebServer/Documents'
-alias wwwb='cd /Library/WebServer/Documents/bpl'
-alias wwwp='cd /Library/WebServer/Documents/panda'
-alias hsc='cd /Library/WebServer/Documents/panda/hawaiistatecars'
-alias pkg='cd /Library/WebServer/Documents/panda/ptpkg'
+alias www='cd /var/www/html'
 
 # Apache Shortcuts
-alias httpd='sudo apachectl'
 
 # Vagrant Shortcuts
-alias vssh='vagrant ssh'
-alias vm='ssh vagrant@127.0.0.1 -p 2222'
 alias puppet-clean='ssh root@hub "puppet cert --clean"'
 
 # Git commands
@@ -58,38 +44,30 @@ alias status='git status'
 alias branches='git branch -a'
 
 # Laravel artisan
-# alias artisan='/usr/local/bin/artisan --env=local'
-alias artisan='php artisan'
+alias artisan='/usr/local/bin/artisan --env=local'
 
-# PHPUnit
-alias punit='vendor/bin/phpunit'
+# Yum aliases
+alias install='sudo yum install'
+alias update='sudo yum update'
 
-# Homebrew aliases
-alias install='brew install'
-alias reinstall='brew reinstall'
-alias update='brew update'
-alias upgrade='brew upgrade'
+# System services in /etc/init.d/
+alias ssrv='sudo service'
+alias siptables="sudo iptables -L --line-numbers"
+
+# Vagrant
+alias vbadd-setup='sudo /etc/init.d/vboxadd setup'
 
 # Dotfiles update
-alias dotfilesUpdate='bash -c "$( curl -fsSL https://raw.github.com/ammonkc/dotfiles/master/bootstrap.sh )"'
+alias dotfilesUpdate='sh -c "$(curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/linux/bootstrap.sh)"'
 
 # Vundle InstallBundle
 alias vundleUpdate="vim +BundleInstall! +BundleClean +qall"
 alias vundleInstall='vim +BundleInstall +qall'
 
-#OSX download log
-alias view-dl-log="sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'select LSQuarantineDataURLString from LSQuarantineEvent'"
-alias clear-dl-log="sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'delete from LSQuarantineEvent'"
-
-# OSX system shortcuts
-alias mnt-vmshare='sudo mount -o resvport -t nfs ptnas1.local:/vmshare /private/mnt/nfs'
+# Remote commands
+# alias updateBS='ssh git@websrv1.local "cd repo/bootstrap && git pull origin master"'
 
 # Utilities
-# Quick way to rebuild the Launch Services database and get rid
-# of duplicates in the Open With submenu.
-alias fixopenwith='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
-alias rebuildLaunchSrv='sudo /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
-
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
@@ -147,9 +125,6 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 # Canonical hex dump; some systems have this symlinked
 #type -t hd > /dev/null || alias hd="hexdump -C"
 
-# OS X has no `md5sum`, so use `md5` as a fallback
-#type -t md5sum > /dev/null || alias md5sum="md5"
-
 # Trim new lines and copy to clipboard
 alias trimcopy="tr -d '\n' | pbcopy"
 
@@ -166,14 +141,6 @@ alias fs="stat -f \"%z bytes\""
 # ROT13-encode text. Works for decoding, too! ;)
 alias rot13='tr a-zA-Z n-za-mN-ZA-M'
 
-# Empty the Trash on all mounted volumes and the main HDD
-alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; rm -rfv ~/.Trash"
-
-# Hide/show all desktop icons (useful when presenting)
-alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-
-
 # PlistBuddy alias, because sometimes `defaults` just doesn’t cut it
 alias plistbuddy="/usr/libexec/PlistBuddy"
 
@@ -181,9 +148,3 @@ alias plistbuddy="/usr/libexec/PlistBuddy"
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
     alias "$method"="lwp-request -m '$method'"
 done
-
-# Stuff I never really use but cannot delete either because of http://xkcd.com/530/
-alias stfu="osascript -e 'set volume output muted true'"
-alias pumpitup="osascript -e 'set volume 10'"
-alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
-

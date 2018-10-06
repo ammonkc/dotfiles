@@ -9,7 +9,7 @@ function rsaKey() {
   else
     keyComment=""
   fi
-  ssh-keygen -t rsa -b 2048 -f "~/.ssh/${1}" "${keyComment}"
+  ssh-keygen -t rsa -b 4096 -f "~/.ssh/${1}" "${keyComment}"
 }
 
 # Generate dsa keys
@@ -33,133 +33,6 @@ function installKey() {
     return 1
   fi
   cat "~/.ssh/${1}.pub" | ssh "${2}" 'cat - >> ~/.ssh/authorized_keys'
-}
-
-function tor-enable() {
-  # 'Wi-Fi' or 'Ethernet' or 'Thunderbolt Ethernet' or 'Display Ethernet'
-  if [ -z "${1}" ]; then
-    local INTERFACE="Wi-Fi"
-  else
-    local INTERFACE=$1
-  fi
-
-  # Ask for the administrator password upfront
-  sudo -v
-
-  # Keep-alive: update existing `sudo` time stamp until finished
-  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
-  # Let's roll
-  sudo networksetup -setsocksfirewallproxy $INTERFACE 127.0.0.1 9050 off
-  sudo networksetup -setsocksfirewallproxystate $INTERFACE on
-  tor
-  sudo networksetup -setsocksfirewallproxystate $INTERFACE off
-}
-
-function tor_service() {
-  launchctl $1 /usr/local/opt/tor/homebrew.mxcl.tor.plist
-}
-
-function tor-start() {
-  echo "$0: starting tor service...";
-  tor_service load
-}
-
-function tor-stop() {
-  echo "$0: stopping tor service...";
-  tor_service unload
-}
-
-function tor-check() {
-  echo "$0: checking if tor works...";
-  if torsocks curl -s https://check.torproject.org | grep -q 'Congratulations. This browser is configured to use Tor.'; then
-    echo 'The tor service works';
-  else
-    echo 'The tor service does NOT work';
-  fi
-}
-
-# toggle iTerm2 Dock icon
-# add this to your .bash_profile or .zshrc
-function toggleiTerm() {
-  pb='/usr/libexec/PlistBuddy'
-  iTerm='/Applications/iTerm.app/Contents/Info.plist'
-
-  echo "Do you wish to hide iTerm in Dock?"
-  select ync in "Hide" "Show" "Cancel"; do
-      case $ync in
-          'Hide' )
-            $pb -c "Add :LSUIElement bool true" $iTerm
-            echo "relaunch iTerm to take effectives"
-            break
-            ;;
-          'Show' )
-            $pb -c "Delete :LSUIElement" $iTerm
-            echo "run killall 'iTerm' to exit, and then relaunch it"
-            break
-            ;;
-    'Cancel' )
-      break
-      ;;
-      esac
-  done
-}
-
-# Toggle autostart mysql
-function toggleMysql() {
-  LAGENT='~/Library/LaunchAgents/homebrew.mxcl.mysql.plist'
-  PLIST='/usr/local/opt/mysql/homebrew.mxcl.mysql.plist'
-  echo "Do you wish to load MySQL?"
-  select ync in "Load" "Unload" "Cancel"; do
-    case $ync in
-      'Load' )
-        if [ ! -f "$LAGENT" ]; then
-          ln -sfv "$PLIST" "$LAGENT"
-        fi
-        launchctl load -w "$LAGENT"
-        echo "MySQL LaunchAgent loaded"
-        break
-        ;;
-      'Unload' )
-        launchctl unload -w "$LAGENT"
-        if [ -f "$LAGENT" ]; then
-          rm -Rf "$LAGENT"
-        fi
-        echo "MySQL LaunchAgent unloaded"
-        break
-        ;;
-      'Cancel' )
-        break
-        ;;
-      esac
-  done
-}
-
-# Clean old .dotfiles-backups
-clean_dotfiles-backup() {
-  if [ -z "${1}" ]; then
-    local keep="5"
-  else
-    local keep=$1
-  fi
-  local dir="$HOME/.dotfiles-backup"
-  [[ $dir = -* ]] && gdir=./$dir
-  while IFS='' read -r -d '' entry; do
-    if ((--keep < 0)); then
-      filename=${entry#*$'\t'}
-      rm -rf "$dir/$filename"
-    fi
-  done < <(gfind "$dir" \
-             -mindepth 1 \
-             -maxdepth 1 \
-             -type d \
-             -printf '%T@\t%P\0' \
-           | sort -rnz)
-}
-
-# Homestead global
-function homestead() {
-    ( cd ~/.homestead && vagrant $* )
 }
 
 # Simple calculator
