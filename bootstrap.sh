@@ -99,7 +99,7 @@ vimify() {
     fi
 
     if [ ! -d "bundle/vundle" ]; then
-        notice "Then, we install Vundle (https://github.com/gmarik/vundle)."
+        notice "Then, we install Vundle https://github.com/gmarik/vundle"
         git clone https://github.com/gmarik/vundle.git bundle/vundle
     fi
 
