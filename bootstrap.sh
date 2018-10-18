@@ -203,6 +203,12 @@ zsh_themes() {
   fi
 }
 
+zsh_shell() {
+  if [ ! -n "`$SHELL -c 'echo $ZSH_VERSION'`" ]; then
+    chsh -s /bin/zsh
+  fi
+}
+
 iterm2_profile() {
   ITERM2DIR="$HOME/.dotfiles/iterm2"
   if [ -d $ITERM2DIR ]; then
