@@ -162,6 +162,15 @@ function homestead() {
     ( cd ~/.homestead && vagrant $* )
 }
 
+# iTerm2 profile
+setup-iterm2-profile() {
+  echo "Setup iTerm2 profile"
+  # Specify the preferences directory
+  defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "~/.dotfiles/iterm2"
+  # Tell iTerm2 to use the custom preferences in the directory
+  defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
+}
+
 # Simple calculator
 function calc() {
   local result=""

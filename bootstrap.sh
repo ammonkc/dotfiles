@@ -203,6 +203,17 @@ zsh_themes() {
   fi
 }
 
+iterm2_profile() {
+  ITERM2DIR="$HOME/.dotfiles/iterm2"
+  if [ -d $ITERM2DIR ]; then
+    notice "Setup iTerm2 profile"
+    # Specify the preferences directory
+    defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string $ITERM2DIR
+    # Tell iTerm2 to use the custom preferences in the directory
+    defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
+  fi
+}
+
 in_array() {
   local hay needle=$1
   shift
@@ -258,7 +269,7 @@ if [ -d $HOME/.dotfiles ]; then
   notice "Backup up old files ($backupdir)"
   backup
 
-  # Install
+  # Update
   notice "Updating"
   zsh_themes
   update
@@ -280,6 +291,7 @@ else
   zsh_themes
   install
   vimify
+  iterm2_profile
   notice "Don't forget to set your API Keys in $HOME/.private_env"
 fi
 
