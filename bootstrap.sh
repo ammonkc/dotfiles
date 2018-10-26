@@ -284,21 +284,23 @@ else
   notice "Downloading"
   git clone --recursive https://github.com/ammonkc/dotfiles.git --branch master --single-branch $HOME/.dotfiles
 
-  pushd $HOME/.dotfiles
+  if [ -d $HOME/.dotfiles ]; then
+    pushd $HOME/.dotfiles
 
-  git submodule update --remote
+    git submodule update --remote
 
-  # Backup
-  notice "Backup up old files ($backupdir)"
-  backup
+    # Backup
+    notice "Backup up old files ($backupdir)"
+    backup
 
-  # Install
-  notice "Installing"
-  zsh_themes
-  install
-  vimify
-  iterm2_profile
-  notice "Don't forget to set your API Keys in $HOME/.private_env"
+    # Install
+    notice "Installing"
+    zsh_themes
+    install
+    vimify
+    iterm2_profile
+    notice "Don't forget to set your API Keys in $HOME/.private_env"
+  fi
 fi
 
 
