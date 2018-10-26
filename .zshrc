@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+ZSH=$HOME/.dotfiles/.oh-my-zsh
 
 # Path to your oh-my-zsh custom folder
 ZSH_CUSTOM="$HOME/.dotfiles/custom"
