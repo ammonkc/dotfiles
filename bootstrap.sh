@@ -260,16 +260,17 @@ if [ -d $HOME/.dotfiles ]; then
   notice "Backup up old files ($backupdir)"
   backup
 
-  # Install
+  # Update
   notice "Updating"
   zsh_themes
   update
 else
   # Clone Repo
   notice "Downloading"
-  git clone --recursive https://github.com/ammonkc/dotfiles.git --branch linux --single-branch $HOME/.dotfiles
+  git clone --recursive https://github.com/ammonkc/dotfiles.git --branch linux $HOME/.dotfiles
 
   pushd $HOME/.dotfiles
+
   git submodule update --remote
 
   # Backup
