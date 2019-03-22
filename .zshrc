@@ -54,7 +54,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(osx git git-flow-avh gitignore node npm brew composer laravel5 sublime vscode capistrano docker homestead vagrant vagrant-prompt iterm2 ssh-agent systemadmin vundle yarn screen encode64 z zsh-syntax-highlighting)
+plugins=(osx git git-flow-avh gitignore node npm brew composer laravel5 sublime vscode capistrano homestead vagrant-prompt iterm2 ssh-agent systemadmin vundle yarn screen encode64 z)
 
 # Common stuff
 [[ -s "$HOME/.commonrc" ]] && source "$HOME/.commonrc"
