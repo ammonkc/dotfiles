@@ -785,6 +785,8 @@
             <string></string>
         </dict>
     </dict>
+    <key>HapticFeedbackForEsc</key>
+    <false/>
     <key>HiddenAFRStrokeThickness</key>
     <real>0.0</real>
     <key>HiddenAdvancedFontRendering</key>
@@ -2752,7 +2754,11 @@
     <key>NoSyncInstallationId</key>
     <string>0FF965B2-C2ED-445C-BB65-CCCA79A1EAE1</string>
     <key>NoSyncLaunchExperienceControllerRunCount</key>
-    <integer>4</integer>
+    <integer>9</integer>
+    <key>NoSyncNeverRemindPrefsChangesLostForFile</key>
+    <true/>
+    <key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
+    <integer>0</integer>
     <key>NoSyncNextAnnoyanceTime</key>
     <real>575317009.86580503</real>
     <key>NoSyncOnboardingWindowHasBeenShown</key>
@@ -2761,6 +2767,17 @@
     <false/>
     <key>NoSyncRecordedVariables</key>
     <dict>
+        <key>0</key>
+        <array>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>id</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+        </array>
         <key>1</key>
         <array>
             <dict>
@@ -3024,57 +3041,9 @@
         <array>
             <dict>
                 <key>isTerminal</key>
-                <false/>
-                <key>name</key>
-                <string>iterm2</string>
-                <key>nonterminalContext</key>
-                <integer>4</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
                 <true/>
                 <key>name</key>
-                <string>currentTab.currentSession.jobName</string>
-                <key>nonterminalContext</key>
-                <integer>0</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
-                <true/>
-                <key>name</key>
-                <string>currentTab.currentSession</string>
-                <key>nonterminalContext</key>
-                <integer>0</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
-                <true/>
-                <key>name</key>
-                <string>currentTab.currentSession.presentationName</string>
-                <key>nonterminalContext</key>
-                <integer>0</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
-                <true/>
-                <key>name</key>
-                <string>currentTab.currentSession.path</string>
-                <key>nonterminalContext</key>
-                <integer>0</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
-                <true/>
-                <key>name</key>
-                <string>currentTab.currentSession.terminalIconName</string>
-                <key>nonterminalContext</key>
-                <integer>0</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
-                <true/>
-                <key>name</key>
-                <string>currentTab.currentSession.terminalWindowName</string>
+                <string>titleOverride</string>
                 <key>nonterminalContext</key>
                 <integer>0</integer>
             </dict>
@@ -3083,22 +3052,6 @@
                 <true/>
                 <key>name</key>
                 <string>titleOverrideFormat</string>
-                <key>nonterminalContext</key>
-                <integer>0</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
-                <true/>
-                <key>name</key>
-                <string>currentTab.iterm2.localhostName</string>
-                <key>nonterminalContext</key>
-                <integer>0</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
-                <true/>
-                <key>name</key>
-                <string>currentTab.window</string>
                 <key>nonterminalContext</key>
                 <integer>0</integer>
             </dict>
@@ -3114,7 +3067,111 @@
                 <key>isTerminal</key>
                 <true/>
                 <key>name</key>
-                <string>titleOverride</string>
+                <string>currentTab.currentSession</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.jobName</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.presentationName</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.terminalIconName</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.window</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.username</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.name</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.pid</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.terminalWindowName</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.path</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <false/>
+                <key>name</key>
+                <string>iterm2</string>
+                <key>nonterminalContext</key>
+                <integer>4</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.iterm2.localhostName</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.tty</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentTab.currentSession.hostname</string>
                 <key>nonterminalContext</key>
                 <integer>0</integer>
             </dict>
@@ -3149,14 +3206,6 @@
                 <key>isTerminal</key>
                 <true/>
                 <key>name</key>
-                <string>currentSession.pid</string>
-                <key>nonterminalContext</key>
-                <integer>0</integer>
-            </dict>
-            <dict>
-                <key>isTerminal</key>
-                <true/>
-                <key>name</key>
                 <string>titleOverride</string>
                 <key>nonterminalContext</key>
                 <integer>0</integer>
@@ -3166,6 +3215,14 @@
                 <true/>
                 <key>name</key>
                 <string>currentSession</string>
+                <key>nonterminalContext</key>
+                <integer>0</integer>
+            </dict>
+            <dict>
+                <key>isTerminal</key>
+                <true/>
+                <key>name</key>
+                <string>currentSession.path</string>
                 <key>nonterminalContext</key>
                 <integer>0</integer>
             </dict>
@@ -3245,7 +3302,7 @@
                 <key>isTerminal</key>
                 <true/>
                 <key>name</key>
-                <string>currentSession.path</string>
+                <string>currentSession.pid</string>
                 <key>nonterminalContext</key>
                 <integer>0</integer>
             </dict>
@@ -3358,7 +3415,7 @@
     <key>SUHasLaunchedBefore</key>
     <true/>
     <key>SULastCheckTime</key>
-    <date>2019-04-15T18:36:39Z</date>
+    <date>2019-04-29T18:57:16Z</date>
     <key>SUUpdateRelaunchingMarker</key>
     <true/>
     <key>SavePasteHistory</key>
@@ -3368,6 +3425,8 @@
     <key>ShowPaneTitles</key>
     <false/>
     <key>SmartPlacement</key>
+    <false/>
+    <key>SoundForEsc</key>
     <false/>
     <key>SplitPaneDimmingAmount</key>
     <real>0.45149990916252136</real>
@@ -3401,6 +3460,8 @@
     <true/>
     <key>UseLionStyleFullscreen</key>
     <true/>
+    <key>VisualIndicatorForEsc</key>
+    <false/>
     <key>WebKitDefaultFontSize</key>
     <integer>11</integer>
     <key>WebKitStandardFont</key>
@@ -3421,6 +3482,6 @@
     <key>findRegex_iTerm</key>
     <false/>
     <key>iTerm Version</key>
-    <string>3.3.0beta2</string>
+    <string>3.3.0beta4</string>
 </dict>
 </plist>
