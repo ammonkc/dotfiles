@@ -11,6 +11,7 @@ alias -- -="cd -"
 alias lss='ls -aFhlG'
 alias lsa='ls -la'
 alias lsl='ls -l'
+alias lsh='ls -FhlG'
 alias svim='vim sudo:'
 
 # programs
