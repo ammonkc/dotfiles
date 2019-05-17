@@ -4,6 +4,7 @@ alias cd..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias home="cd ~"
 alias -- -="cd -"
@@ -33,11 +34,10 @@ alias myip='curl ifconfig.me/ip'
 # Develop shortcuts
 alias repos='cd ~/Develop/Repos'
 alias src='cd ~/Develop/src'
-alias www='cd /Library/WebServer/Documents'
-alias wwwb='cd /Library/WebServer/Documents/bpl'
-alias wwwp='cd /Library/WebServer/Documents/panda'
-alias hsc='cd /Library/WebServer/Documents/panda/hawaiistatecars'
-alias pkg='cd /Library/WebServer/Documents/panda/ptpkg'
+alias www='cd ~/Develop/code'
+alias hsc='cd ~/Develop/code/hawaiistatecars'
+alias pkg='cd ~/Develop/code/ptpkg'
+alias pta='cd ~/Develop/code/ptagent'
 
 # Apache Shortcuts
 alias httpd='sudo apachectl'
