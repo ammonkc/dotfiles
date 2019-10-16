@@ -53,5 +53,9 @@ export RESET
 # Node Path
 export NODE_PATH="/usr/local/bin/node"
 
+# Homebrew Ruby
+export LDFLAGS="-L/usr/local/opt/ruby/lib"
+export CPPFLAGS="-I/usr/local/opt/ruby/include"
+
 # Private env variables
 [[ -f "$HOME/.private_env" ]] && source "$HOME/.private_env"
