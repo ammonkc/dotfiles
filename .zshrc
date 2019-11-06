@@ -1,13 +1,19 @@
+# Path to your dotfiles.
+export DOTFILES=$HOME/.dotfiles
+
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
 # Path to your oh-my-zsh configuration.
-ZSH=$HOME/.dotfiles/.oh-my-zsh
+export ZSH=$HOME/.dotfiles/.oh-my-zsh
 
-# Path to your oh-my-zsh custom folder
-ZSH_CUSTOM="$HOME/.dotfiles/custom"
+# Enable completions
+autoload -Uz compinit && compinit
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="powerlevel9k/powerlevel9k"
 
 # PowerLevel9k config
@@ -25,8 +31,18 @@ POWERLEVEL9K_LARAVEL_VERSION_BACKGROUND="208"
 # Custom commands
 DEFAULT_USER=$USER
 
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
 
 # Uncomment this to disable bi-weekly auto-update checks
 DISABLE_AUTO_UPDATE="true"
@@ -51,15 +67,37 @@ COMPLETION_WAITING_DOTS="true"
 # much faster.
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+export ZSH_CUSTOM="$DOTFILES/custom"
+
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(osx git git-flow-avh gitignore node npm brew composer laravel5 sublime vscode capistrano homestead vagrant-prompt iterm2 ssh-agent systemadmin vundle yarn screen encode64 z)
 
 # Common stuff
-[[ -s "$HOME/.commonrc" ]] && source "$HOME/.commonrc"
+[[ -s "$DOTFILES/.commonrc" ]] && source "$DOTFILES/.commonrc"
 
 source $ZSH/oh-my-zsh.sh
 
-# Customize to your needs...
-export PATH=/usr/local/opt/ruby/bin:$PATH
+# User configuration
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"

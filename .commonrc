@@ -1,14 +1,5 @@
 # Load things
-[[ -f "$HOME/.exports" ]] && source "$HOME/.exports"
-
-# Aliases
-[[ -f "$HOME/.aliases" ]] && source "$HOME/.aliases"
-
-# Functions
-[[ -f "$HOME/.functions" ]] && source "$HOME/.functions"
-
-# Prompts
-[[ -f "$HOME/.prompts" ]] && source "$HOME/.prompts"
+[[ -f "$DOTFILES/.exports" ]] && source "$DOTFILES/.exports"
 
 # Rackspace novaclient
-[[ -f "$HOME/.novarc" ]] && source "$HOME/.novarc"
+[[ -f "$DOTFILES/.novarc" ]] && source "$DOTFILES/.novarc"

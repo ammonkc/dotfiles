@@ -235,7 +235,7 @@ in_array() {
 
 backupdir="$HOME/.dotfiles-backup/$(date "+%Y%m%d%H%M.%S")"
 dependencies=(git tree vim)
-excluded=(. .. .DS_Store  custom iterm2 .oh-my-zsh .vimified .git .gitconfig .gitignore .gitmodules .osx .brew bootstrap.sh install-deps.sh README.md)
+excluded=(. .. .DS_Store  custom iterm2 .oh-my-zsh .vimified .git .gitconfig .gitignore .gitmodules .osx .macos .brew bootstrap.sh install-deps.sh README.md)
 
 
 #-----------------------------------------------------------------------------
@@ -271,14 +271,10 @@ if [ -d $HOME/.dotfiles ]; then
   git submodule init
   git submodule update --remote
 
-  # Backup
-  notice "Backup up old files ($backupdir)"
-  backup
+  # Removes .zshrc from $HOME (if it exists) and symlinks the .zshrc file from the .dotfiles
+  rm -rf $HOME/.zshrc
+  ln -s $HOME/.dotfiles/.zshrc $HOME/.zshrc
 
-  # Update
-  notice "Updating"
-  zsh_themes
-  update
 else
   # Clone Repo
   notice "Downloading"
@@ -289,14 +285,12 @@ else
 
     git submodule update --remote
 
-    # Backup
-    notice "Backup up old files ($backupdir)"
-    backup
+    # Removes .zshrc from $HOME (if it exists) and symlinks the .zshrc file from the .dotfiles
+    rm -rf $HOME/.zshrc
+    ln -s $HOME/.dotfiles/.zshrc $HOME/.zshrc
 
     # Install
     notice "Installing"
-    zsh_themes
-    install
     vimify
     iterm2_profile
     notice "Don't forget to set your API Keys in $HOME/.private_env"

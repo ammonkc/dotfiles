@@ -8,6 +8,13 @@ export MANPAGER="less -X"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
 # xterm colors
 if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
     export TERM=gnome-256color
