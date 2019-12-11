@@ -90,6 +90,10 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# cdpath
+# relative cd into any subfolder
+cdpath=(~/Develop/src ~/Develop/code)
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
