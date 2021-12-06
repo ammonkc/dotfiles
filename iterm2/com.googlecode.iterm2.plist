@@ -845,6 +845,8 @@
 	<string>~</string>
 	<key>NSNavPanelExpandedSizeForOpenMode</key>
 	<string>{712, 448}</string>
+	<key>NSOverlayScrollersFallBackForAccessoryViews</key>
+	<false/>
 	<key>NSQuotedKeystrokeBinding</key>
 	<string></string>
 	<key>NSRepeatCountBinding</key>
@@ -899,7 +901,7 @@
 	<key>NSWindow Frame UKCrashReporter</key>
 	<string>155 594 592 584 0 0 1920 1178 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>0 1177 1920 403 0 0 1920 1177 </string>
+	<string>0 1177 1920 379 0 0 1920 1177 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>555 318 570 451 0 0 1680 1028 </string>
 	<key>New Bookmarks</key>
@@ -2753,6 +2755,9 @@
 	</array>
 	<key>NoSyncAllAppVersions</key>
 	<array>
+		<string>3.4.0beta2</string>
+		<string>3.3.12beta3</string>
+		<string>3.3.12beta2</string>
 		<string>3.3.3beta1</string>
 		<string>3.3.5beta2</string>
 		<string>3.3.2beta1</string>
@@ -2782,6 +2787,7 @@
 		<string>3.3.10beta3</string>
 		<string>3.3.10beta4</string>
 		<string>3.3.11beta1</string>
+		<string>3.4.0beta1</string>
 	</array>
 	<key>NoSyncConfirmBeta</key>
 	<true/>
@@ -2798,12 +2804,16 @@
 	</dict>
 	<key>NoSyncHaveShownPromoWithId_4</key>
 	<true/>
+	<key>NoSyncHaveUsedCopyMode</key>
+	<true/>
 	<key>NoSyncHaveWarnedAboutIncompatibleSoftware</key>
 	<true/>
 	<key>NoSyncInstallationId</key>
 	<string>0FF965B2-C2ED-445C-BB65-CCCA79A1EAE1</string>
+	<key>NoSyncLastOSVersion</key>
+	<string>Version 10.15.6 (Build 19G73)</string>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>102</integer>
+	<integer>109</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -2937,6 +2947,14 @@
 				<key>isTerminal</key>
 				<true/>
 				<key>name</key>
+				<string>selectionLength</string>
+				<key>nonterminalContext</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>isTerminal</key>
+				<true/>
+				<key>name</key>
 				<string>path</string>
 				<key>nonterminalContext</key>
 				<integer>0</integer>
@@ -2956,6 +2974,14 @@
 				<string>triggerName</string>
 				<key>nonterminalContext</key>
 				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>isTerminal</key>
+				<false/>
+				<key>name</key>
+				<string>parentSession</string>
+				<key>nonterminalContext</key>
+				<integer>1</integer>
 			</dict>
 			<dict>
 				<key>isTerminal</key>
@@ -3081,6 +3107,14 @@
 				<key>isTerminal</key>
 				<true/>
 				<key>name</key>
+				<string>selection</string>
+				<key>nonterminalContext</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>isTerminal</key>
+				<true/>
+				<key>name</key>
 				<string>autoNameFormat</string>
 				<key>nonterminalContext</key>
 				<integer>0</integer>
@@ -3157,6 +3191,14 @@
 				<true/>
 				<key>name</key>
 				<string>style</string>
+				<key>nonterminalContext</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>isTerminal</key>
+				<true/>
+				<key>name</key>
+				<string>currentTab.currentSession.jobPid</string>
 				<key>nonterminalContext</key>
 				<integer>0</integer>
 			</dict>
@@ -3528,6 +3570,8 @@
 			</dict>
 		</array>
 	</dict>
+	<key>NoSyncRestoreWindowsCount</key>
+	<integer>0</integer>
 	<key>NoSyncTimeOfFirstLaunchOfVersionWithTip</key>
 	<real>477614627.771873</real>
 	<key>NoSyncTimeOfLastPromo</key>
@@ -3587,6 +3631,8 @@
 	</dict>
 	<key>PrefsCustomFolder</key>
 	<string>/Users/ammonkc/.dotfiles/iterm2</string>
+	<key>PreventEscapeSequenceFromClearingHistory</key>
+	<false/>
 	<key>Print In Black And White</key>
 	<true/>
 	<key>PromptOnClose</key>
@@ -3604,11 +3650,11 @@
 	<key>SUFeedAlternateAppNameKey</key>
 	<string>iTerm</string>
 	<key>SUFeedURL</key>
-	<string>https://iterm2.com/appcasts/testing_new.xml?shard=98</string>
+	<string>https://iterm2.com/appcasts/testing_modern.xml?shard=98</string>
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2020-05-27T22:13:01Z</date>
+	<date>2020-08-02T16:24:41Z</date>
 	<key>SUUpdateGroupIdentifier</key>
 	<integer>1597397998</integer>
 	<key>SUUpdateRelaunchingMarker</key>
@@ -3627,6 +3673,8 @@
 	<real>0.45149990916252136</real>
 	<key>StretchTabsToFillBar</key>
 	<true/>
+	<key>SwitchPaneModifier</key>
+	<integer>5</integer>
 	<key>SwitchTabModifier</key>
 	<integer>4</integer>
 	<key>SwitchWindowModifier</key>
@@ -3677,6 +3725,6 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.3.11beta1</string>
+	<string>3.4.0beta2</string>
 </dict>
 </plist>
