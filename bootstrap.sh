@@ -37,7 +37,7 @@ dep() {
 
 vimify() {
   INSTALLDIR="$HOME/.dotfiles"
-  if [ -d "$INSTALLDIR/.vimified" ]; then
+  if [ -d "$INSTALLDIR/vimified" ]; then
     if [ -d $HOME/.vim ] && [ ! -L $HOME/.vim ]; then
       [ -d "$HOME/.vim" ] && rm -rf "$HOME/.vim"
     fi
@@ -47,14 +47,14 @@ vimify() {
 
     if [ ! -f ~/.vim ]; then
         notice "Now, we will create ~/.vim and ~/.vimrc files to configure Vim."
-        ln -sfn "$INSTALLDIR/.vimified" "$HOME/.vim"
+        ln -sfn "$INSTALLDIR/vimified" "$HOME/.vim"
     fi
 
     if [ ! -f ~/.vimrc ]; then
-        ln -sfn "$INSTALLDIR/.vimified/vimrc" "$HOME/.vimrc"
+        ln -sfn "$INSTALLDIR/vimified/vimrc" "$HOME/.vimrc"
     fi
 
-    cd "$INSTALLDIR/.vimified"
+    cd "$INSTALLDIR/vimified"
 
     if [ ! -d "bundle" ]; then
       notice "Now, we will create a separate directory to store the bundles Vim will use."

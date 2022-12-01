@@ -1,9 +1,9 @@
-[submodule ".oh-my-zsh"]
-	path = .oh-my-zsh
+[submodule "oh-my-zsh"]
+	path = oh-my-zsh
 	url = git://github.com/robbyrussell/oh-my-zsh.git
     branch = master
-[submodule ".vimified"]
-    path = .vimified
+[submodule "vimified"]
+    path = vimified
     url = https://github.com/zaiste/vimified.git
     branch = master
 [submodule "powerlevel10k"]

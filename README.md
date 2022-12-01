@@ -21,7 +21,7 @@ Prerequisites
 
 Optional, but recommended:
 
-* [Homebrew](http://mxcl.github.com/homebrew/) (OS X only)
+* [Homebrew](http://mxcl.github.com/homebrew/) (macos only)
 * zsh
 
 
@@ -43,7 +43,7 @@ After backing up your old Mac you may now follow these install instructions to s
 2. [Generate a new public and private SSH key](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) by running:
 
    ```zsh
-   curl https://raw.githubusercontent.com/driesvints/dotfiles/HEAD/ssh.sh | sh -s "<your-email-address>"
+   curl https://raw.githubusercontent.com/ammonkc/dotfiles/HEAD/ssh.sh | sh -s "<your-email-address>"
    ```
 
 3. 
