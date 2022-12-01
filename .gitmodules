@@ -1,15 +1,16 @@
 [submodule "oh-my-zsh"]
 	path = oh-my-zsh
-	url = git://github.com/robbyrussell/oh-my-zsh.git
+	url = https://github.com/robbyrussell/oh-my-zsh.git
     branch = master
 [submodule "vimified"]
-    path = vimified
-    url = https://github.com/zaiste/vimified.git
+	path = vimified
+	url = https://github.com/zaiste/vimified.git
     branch = master
-[submodule "powerlevel10k"]
+[submodule "custom/themes/powerlevel10k"]
 	path = custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
     branch = master
-[submodule "plugins/artisan"]
+[submodule "custom/plugins/artisan"]
 	path = custom/plugins/artisan
-	url = git@github.com:jessarcher/zsh-artisan.git
+	url = https://github.com/jessarcher/zsh-artisan.git
+    branch = master
