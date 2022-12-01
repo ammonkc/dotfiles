@@ -224,7 +224,7 @@ else
     vimify
 
     # Setup a fresh mac
-    $HOME/.dotfiles/fresh.sh
+    # $HOME/.dotfiles/fresh.sh
     notice "Don't forget to set your API Keys in $HOME/.private_env"
   fi
 fi

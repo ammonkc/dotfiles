@@ -16,16 +16,16 @@ brew 'ffmpeg'
 brew 'findutils'
 brew 'gh'
 brew 'git'
+brew 'git-flow'
 brew 'gnupg2'
 brew 'grep'
 brew 'hub'
+brew 'htop'
 brew 'httpie'
 brew 'jq' # Used for spatie/visit
 brew 'mackup'
 brew 'mas' # Mac App Store manager
 brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
-brew 'stripe/stripe-cli/stripe'
-brew 'stripe/stripe-mock/stripe-mock'
 brew 'svn' # Needed to install fonts
 brew 'tree'
 brew 'vim'
@@ -55,7 +55,6 @@ brew 'yarn'
 # Apps casks
 cask '1password'
 cask 'alfred'
-cask 'amphetamine'
 cask 'dbngin'
 cask 'discord'
 cask 'docker'
@@ -85,7 +84,7 @@ cask 'transmit'
 cask 'tuple'
 cask 'vagrant'
 cask 'virtualbox' # Might need to allow access in Security settings
-cask 'virtualbox-extension-pack'
+# cask 'virtualbox-extension-pack'
 cask 'visual-studio-code'
 cask 'vlc'
 cask 'zwift'
@@ -97,6 +96,7 @@ cask 'quicklook-csv'
 cask 'qlstephen'
 
 # Fonts
+cask 'font-hack-nerd-font'
 cask 'font-lato'
 cask 'font-open-sans'
 cask 'font-roboto'
@@ -106,6 +106,7 @@ cask 'font-source-sans-pro'
 cask 'font-source-serif-pro'
 
 # Mac App Store
+mas 'Amphetamine', id: 937984704
 mas 'Byword', id: 420212497
 mas 'Giphy Capture', id: 668208984
 mas 'Numbers', id: 409203825
