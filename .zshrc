@@ -91,7 +91,22 @@ ZSH_CUSTOM=$DOTFILES/custom
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(macos artisan git npm brew composer sublime vscode homestead vagrant-prompt iterm2 ssh-agent vundle)
+plugins=(
+    artisan
+    brew
+    composer
+    dotenv
+    git
+    homestead
+    iterm2
+    macos
+    npm
+    ssh-agent
+    sublime
+    vagrant-prompt
+    vscode
+    vundle
+)
 
 # Common stuff
 [[ -s "$DOTFILES/.exports" ]] && source "$DOTFILES/.exports"
