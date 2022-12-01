@@ -1,5 +1,0 @@
-# Load things
-[[ -f "$DOTFILES/.exports" ]] && source "$DOTFILES/.exports"
-
-# Rackspace novaclient
-[[ -f "$DOTFILES/.novarc" ]] && source "$DOTFILES/.novarc"
