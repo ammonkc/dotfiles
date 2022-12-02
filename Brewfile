@@ -88,13 +88,12 @@ cask 'tor-browser'
 cask 'transmission'
 cask 'transmit'
 cask 'tuple'
-cask 'vagrant'
+cask 'vagrant' # sudo softwareupdate --install-rosetta
 cask 'vidl'
 cask 'virtualbox' # Might need to allow access in Security settings
 cask 'visual-studio-code'
 cask 'vlc'
 cask 'xit'
-cask 'zwift'
 
 # Quicklook
 cask 'qlmarkdown'
