@@ -120,8 +120,6 @@ mas 'Coin Tick - Menu Bar Crypto', id: 1141688067
 mas 'Gestimer', id: 990588172
 mas 'HazeOver • Distraction Dimmer', id: 430798174
 mas 'LookUp: English dictionary', id: 872564448
-mas 'Microsoft Outlook', id: 985367838
-mas 'Microsoft Teams', id: 985367838
 mas 'Numbers', id: 409203825
 mas 'Paste - Clipboard Manager', id: 967805235
 mas 'PCalc', id: 403504866
