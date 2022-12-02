@@ -115,10 +115,9 @@ cask 'font-source-serif-pro'
 mas '1Blocker - Ad Blocker', id: 1365531024
 mas 'Amphetamine', id: 937984704
 mas 'Boop', id: 1518425043
-mas 'Coin Tick - Menu Bar Crypto', id: 1141688067
 mas 'Byword', id: 420212497
+mas 'Coin Tick - Menu Bar Crypto', id: 1141688067
 mas 'Gestimer', id: 990588172
-mas 'Giphy Capture', id: 668208984
 mas 'HazeOver • Distraction Dimmer', id: 430798174
 mas 'LookUp: English dictionary', id: 872564448
 mas 'Microsoft Outlook', id: 985367838
