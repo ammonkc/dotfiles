@@ -41,7 +41,7 @@ brew 'gifsicle'
 # Development
 brew 'php'
 brew 'php@8.0'
-brew 'php@7.4'
+# brew 'php@7.4'
 brew 'composer'
 brew 'imagemagick'
 brew 'meilisearch'
