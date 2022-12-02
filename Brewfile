@@ -88,9 +88,9 @@ cask 'tor-browser'
 cask 'transmission'
 cask 'transmit'
 cask 'tuple'
-cask 'vagrant' # sudo softwareupdate --install-rosetta
+# cask 'vagrant' # sudo softwareupdate --install-rosetta
 cask 'vidl'
-cask 'virtualbox' # Might need to allow access in Security settings
+# cask 'virtualbox' # Might need to allow access in Security settings
 cask 'visual-studio-code'
 cask 'vlc'
 cask 'xit'
@@ -129,7 +129,6 @@ mas 'Redacted', id: 984968384
 mas 'Reeder 5.', id: 1529448980
 mas 'Sequel Ace', id: 1518036000
 mas 'Soulver 2', id: 413965349
-mas 'Speedtest', id: 1153157709
 mas 'Tweetbot', id: 1384080005
 mas 'xScope 4', id: 889428659
 mas 'Yoink - Improved Drag and Drop', id: 457622435
