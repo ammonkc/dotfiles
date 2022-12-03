@@ -108,7 +108,7 @@ plugins=(
     vagrant-prompt
     vscode
     vundle
-    zsh-autosuggestion
+    zsh-autosuggestions
     zsh-syntax-highlighting
 )
 
