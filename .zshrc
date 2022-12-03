@@ -97,15 +97,19 @@ plugins=(
     composer
     dotenv
     git
+    git-flow
     homestead
     iterm2
     macos
     npm
     ssh-agent
     sublime
+    vagrant
     vagrant-prompt
     vscode
     vundle
+    zsh-autosuggestion
+    zsh-syntax-highlighting
 )
 
 # Common stuff
