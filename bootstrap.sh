@@ -73,8 +73,6 @@ vimify() {
       echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > 'local.vimrc'
     fi
 
-    fi
-
     cd "$INSTALLDIR"
 
     notice "Installing vim bundles..."
