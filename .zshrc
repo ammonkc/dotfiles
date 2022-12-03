@@ -117,7 +117,7 @@ source $ZSH/oh-my-zsh.sh
 
 # cdpath
 # relative cd into any subfolder
-cdpath=(~/Develop/src ~/Sites)
+cdpath=(~/Develop/src ~/Develop/Sites)
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
