@@ -41,6 +41,7 @@ vimify() {
     if [ -d $HOME/.vim ] && [ ! -L $HOME/.vim ]; then
       [ -d "$HOME/.vim" ] && rm -rf "$HOME/.vim"
     fi
+
     if [ -f $HOME/.vimrc ] && [ ! -L $HOME/.vimrc ]; then
       [ -f "$HOME/.vimrc" ] && rm -rf "$HOME/.vimrc"
     fi
@@ -69,10 +70,9 @@ vimify() {
 
     if [ ! -f local.vimrc ]; then
       notice "Let's create a 'local.vimrc' file so you have some bundles by default."
-      cat << EOF > 'local.vimrc'
-" local.vimrc
-let g:vimified_packages = ['general', 'fancy', 'os', 'color']
-EOF
+      echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > 'local.vimrc'
+    fi
+
     fi
 
     cd "$INSTALLDIR"
