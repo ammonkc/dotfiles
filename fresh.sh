@@ -32,9 +32,9 @@ $HOME/.composer/vendor/bin/valet install
 # Install Global Ray
 $HOME/.composer/vendor/bin/global-ray install
 
-# Create a develop directory
-mkdir -p $HOME/Develop/Sites
-mkdir -p $HOME/Develop/src
+# Create a developer directory
+mkdir -p $HOME/Developer/code
+mkdir -p $HOME/Developer/src
 
 # Clone Github repositories
 $DOTFILES/clone.sh
