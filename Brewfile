@@ -100,7 +100,7 @@ cask 'xit'
 cask 'qlmarkdown'
 cask 'quicklook-json'
 cask 'quicklook-csv'
-cask 'qlstephen'
+cask 'qlvideo'
 
 # Fonts
 cask 'font-hack-nerd-font'
