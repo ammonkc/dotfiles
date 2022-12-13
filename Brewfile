@@ -40,8 +40,8 @@ brew 'gifsicle'
 
 # Development
 brew 'php'
-brew 'php@8.0'
 brew 'php@8.1'
+brew 'php@8.0'
 # brew 'php@7.4'
 brew 'composer'
 brew 'imagemagick'
@@ -55,9 +55,11 @@ brew 'yarn'
 # Apps casks
 cask '1password'
 cask 'alfred'
+cask 'bartender'
 cask 'dbngin'
 cask 'discord'
 cask 'docker'
+cask 'dropbox'
 cask 'firefox'
 cask 'folx'
 cask 'github'
@@ -69,26 +71,33 @@ cask 'imageoptim'
 cask 'insomnia'
 cask 'istat-menus'
 cask 'iterm2'
+cask 'latest'
 cask 'microsoft-excel'
 cask 'microsoft-teams'
 cask 'microsoft-outlook'
 cask 'microsoft-word'
 cask 'moom'
+cask 'omnidisksweeper'
 cask 'parallels'
 cask 'postman'
 cask 'phpmon'
+cask 'phpstorm'
+cask 'rapidapi'
 cask 'ray'
 cask 'raycast'
 cask 'screens'
 cask 'screens-connect'
-cask 'sublime-text'
+cask 'shottr'
 cask 'subler'
+cask 'sublime-text'
 cask 'tableplus'
+cask 'tempbox'
 cask 'the-unarchiver'
 cask 'tinkerwell'
 cask 'tor-browser'
 cask 'transmission'
 cask 'transmit'
+cask 'tunnelblick'
 cask 'tuple'
 # cask 'vagrant' # sudo softwareupdate --install-rosetta
 cask 'vidl'
@@ -119,9 +128,12 @@ mas 'Amphetamine', id: 937984704
 mas 'Boop', id: 1518425043
 mas 'Byword', id: 420212497
 mas 'Coin Tick - Menu Bar Crypto', id: 1141688067
+mas 'Dropzone 4', id: 1485052491
 mas 'Gestimer', id: 990588172
+mas 'Glance - Quick Look Code Files', id: 1564688210
 mas 'HazeOver • Distraction Dimmer', id: 430798174
 mas 'LookUp: English dictionary', id: 872564448
+mas 'Moom', id: 419330170
 mas 'Numbers', id: 409203825
 mas 'Paste - Clipboard Manager', id: 967805235
 mas 'PCalc', id: 403504866
