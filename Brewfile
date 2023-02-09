@@ -124,6 +124,7 @@ cask 'qlvideo'
 
 # Fonts
 cask 'font-hack-nerd-font'
+cask 'font-hack'
 cask 'font-lato'
 cask 'font-open-sans'
 cask 'font-roboto'
