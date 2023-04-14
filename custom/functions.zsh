@@ -1,3 +1,16 @@
+# toggle xdebug
+function xdebug() {
+  iniFileLocation="/opt/homebrew/etc/php/8.0/conf.d/ext-xdebug.ini"
+  currentLine=`cat $iniFileLocation | grep xdebug.so`
+  if [[ $currentLine =~ ^#zend_extension ]]
+  then
+    sed -i -e 's/^#zend_extension/zend_extension/g' $iniFileLocation
+    echo "xdebug is now active"
+  else
+    sed -i -e 's/^zend_extension/#zend_extension/g' $iniFileLocation
+    echo "xdebug is now inactive"
+  fi
+}
 
 # Generate rsa keys
 function rsaKey() {
