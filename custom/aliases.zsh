@@ -84,6 +84,11 @@ alias serve="php artisan serve"
 
 #ILT docker
 alias spin="./spin"
+alias spa="./spin artisan"
+alias spfresh="./spin artisan migrate:fresh --seed"
+alias sptinker="./spin artisan tinker"
+alias spseed="./spin artisan db:seed"
+alias spserve="./spin artisan serve"
 
 # Homebrew aliases
 alias install='brew install'
