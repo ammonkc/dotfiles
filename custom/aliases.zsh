@@ -82,6 +82,9 @@ alias tinker="php artisan tinker"
 alias seed="php artisan db:seed"
 alias serve="php artisan serve"
 
+#ILT docker
+alias spin="./spin"
+
 # Homebrew aliases
 alias install='brew install'
 alias reinstall='brew reinstall'
