@@ -84,6 +84,8 @@ alias serve="php artisan serve"
 
 #ILT docker
 alias spin="./spin"
+alias sup="./spin up"
+alias sdown="./spin down"
 alias spa="./spin artisan"
 alias spfresh="./spin artisan migrate:fresh --seed"
 alias sptinker="./spin artisan tinker"
