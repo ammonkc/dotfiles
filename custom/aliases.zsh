@@ -20,12 +20,6 @@ alias ~="cd ~" # `cd` is probably faster to type though
 alias home="cd ~"
 alias -- -="cd -"
 
-# File system list
-alias lss='ls -aFhlG'
-alias lsa='ls -la'
-alias lsl='ls -l'
-alias lsh='ls -FhlG'
-
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
     colorflag="--color"
@@ -39,9 +33,14 @@ alias l="ls -l ${colorflag}"
 # List all files colorized in long format, including dot files
 alias la="ls -la ${colorflag}"
 
-
 # List only directories
 alias lsd='ls -l | grep "^d"'
+
+# File system list
+alias lss='ls -aFhlG'
+alias lsa='ls -la'
+alias lsl='ls -l'
+alias lsh='ls -FhlG'
 
 # Always use color output for `ls`
 if [[ "$OSTYPE" =~ ^darwin ]]; then
@@ -74,6 +73,8 @@ alias dotfiles="cd $DOTFILES"
 alias library="cd $HOME/Library"
 alias sites="cd $HOME/Developer/code"
 alias src="cd $HOME/Developer/src"
+# allegro.test project directory
+alias dev="cd $HOME/Developer/code/allegro.test"
 
 # Laravel
 alias a="php artisan"
