@@ -12,8 +12,10 @@ brew 'awscli'
 brew 'bash' # Latest Bash version
 brew 'bat' # Used for spatie/visit
 brew 'coreutils' # Those that come with macOS are outdated
+brew 'entr'
 brew 'ffmpeg'
 brew 'findutils'
+brew 'fzf'
 brew 'gh'
 brew 'git'
 brew 'git-flow'
@@ -26,12 +28,15 @@ brew 'httpie'
 brew 'jq' # Used for spatie/visit
 brew 'mackup'
 brew 'mas' # Mac App Store manager
+brew 'mc' # midnight-commander
 brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
+brew 'rg' # ripgrep
 brew 'svn' # Needed to install fonts
 brew 'tree'
 brew 'vim'
 brew 'wget'
 brew 'zlib' # Needed for Memcached
+brew 'zoxide'
 
 # Spatie Medialibrary
 brew 'jpegoptim'
