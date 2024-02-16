@@ -42,6 +42,8 @@ alias lsa='ls -la'
 alias lsl='ls -l'
 alias lsh='ls -FhlG'
 
+alias cat='bat'
+
 # Always use color output for `ls`
 if [[ "$OSTYPE" =~ ^darwin ]]; then
     alias ls="command ls -G"
