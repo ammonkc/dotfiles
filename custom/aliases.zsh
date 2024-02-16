@@ -10,7 +10,7 @@ alias compile="commit 'compile'"
 alias version="commit 'version'"
 
 # Easier navigation: .., ..., ~ and -
-alias zz="z -"
+alias zz="cd -"
 alias ..="cd .."
 alias cd..="cd .."
 alias ...="cd ../.."
