@@ -132,6 +132,9 @@ cdpath=(~/Develop/src ~/Develop/Sites)
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
+# zoxide init
+eval "$(zoxide init zsh)"
+
 # You may need to manually set your language environment
 # export LC_ALL=en_US.UTF-8
 # export LANG=en_US.UTF-8
