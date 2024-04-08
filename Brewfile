@@ -64,7 +64,6 @@ brew 'yarn'
 
 # Apps casks
 cask '1password'
-cask 'alfred'
 cask 'airbuddy'
 cask 'appcleaner'
 cask 'bartender'
