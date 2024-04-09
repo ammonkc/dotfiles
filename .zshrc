@@ -105,6 +105,7 @@ plugins=(
     iterm2
     macos
     npm
+    nvm
     ssh-agent
     sublime
     vagrant
