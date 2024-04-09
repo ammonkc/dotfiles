@@ -120,7 +120,7 @@ plugins=(
 
 # SSH agent
 zstyle :omz:plugins:ssh-agent agent-forwarding yes
-zstyle :omz:plugins:ssh-agent identities id_ed25519 id_ed25519-ilt
+zstyle :omz:plugins:ssh-agent identities id_ed25519 id_rsa
 
 source $ZSH/oh-my-zsh.sh
 
