@@ -133,7 +133,7 @@ nmap <Right> <Right>
 nmap <Up> <Up>
 nmap <Down> <Down>
 
-" nmap arrow keys
+" noremap arrow keys
 noremap <left> <left>
 noremap <right> <right>
 noremap <up> <up>
