@@ -73,11 +73,6 @@ vimify() {
       echo "let g:vimified_packages = ['general', 'fancy', 'css', 'js', 'os', 'html', 'coding', 'color']" > 'local.vimrc'
     fi
 
-    cd "$INSTALLDIR"
-
-    notice "Installing vim bundles..."
-    vim +BundleInstall +qall 2&>/dev/null
-
     if [ ! -f before.vimrc ]; then
       notice "Creating'before.vimrc' file"
       cat << EOF > 'before.vimrc'
@@ -133,12 +128,6 @@ nmap <Right> <Right>
 nmap <Up> <Up>
 nmap <Down> <Down>
 
-" noremap arrow keys
-noremap <left> <left>
-noremap <right> <right>
-noremap <up> <up>
-noremap <down> <down>
-
 if &term == "xterm-ipad"
   nnoremap <Tab> <Esc>
   vnoremap <Tab> <Esc>gV
@@ -148,6 +137,11 @@ if &term == "xterm-ipad"
 endif
 EOF
       fi
+
+    cd "$INSTALLDIR"
+
+    notice "Installing vim bundles..."
+    vim +BundleInstall +qall 2&>/dev/null
   fi
 }
 
