@@ -105,7 +105,6 @@ plugins=(
     iterm2
     macos
     npm
-    nvm
     ssh-agent
     sublime
     vagrant
@@ -113,6 +112,7 @@ plugins=(
     vscode
     vundle
     zsh-autosuggestions
+    zsh-nvm
     zsh-syntax-highlighting
 )
 
