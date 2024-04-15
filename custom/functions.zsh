@@ -1,6 +1,7 @@
 # toggle xdebug
 function xdebug() {
-  iniFileLocation="/opt/homebrew/etc/php/8.0/conf.d/ext-xdebug.ini"
+  currentPhpVersion=$(php -v | ggrep -E 'PHP *?\s' | ggrep -oP '(?<=\s)\d\.\d')
+  iniFileLocation="/opt/homebrew/etc/php/${currentPhpVersion}/conf.d/ext-xdebug.ini"
   currentLine=`cat $iniFileLocation | grep xdebug.so`
   if [[ $currentLine =~ ^#zend_extension ]]
   then
