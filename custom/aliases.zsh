@@ -132,7 +132,7 @@ for phpVersion in ${installedPhpVersions[*]}; do
 
     value="${value} brew link php@${phpVersion} --force --overwrite; } &> /dev/null && php -v"
 
-    alias "${phpVersion}"="${value}"
+    alias "php${phpVersion}"="${value}"
 done
 
 # JS
