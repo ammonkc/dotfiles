@@ -4,6 +4,7 @@ tap 'homebrew/cask-versions'
 tap 'homebrew/bundle'
 tap 'nicoverbruggen/homebrew-cask'
 tap 'shivammathur/php'
+tap 'koekeishiya/formulae'
 
 # Binaries
 brew 'ack'
@@ -17,24 +18,23 @@ brew 'fd'         # fast and user-friendly alternative to find
 brew 'ffmpeg'
 brew 'findutils'
 brew 'fzf'        # Fuzzy Finder
-brew 'fzf-git'    # bash and zsh key bindings for Git objects
 brew 'gh'
 brew 'git'
 brew 'git-delta'  # syntax-highlighting pager for git, diff, and grep output
 brew 'git-flow'   # git branching model
 brew 'gnupg'
 brew 'grep'
-brew 'gstat'
 brew 'hub'
 brew 'htop'
 brew 'httpie'
 brew 'jq'         # json command line processor
+brew 'koekeishiya/formulae/skhd'  # Simple hotkey daemon for macOS
+brew 'koekeishiya/formulae/yabai' # Tiling window manager
 brew 'mas'        # Mac App Store manager
 brew 'mc'         # midnight-commander
 brew 'neovim'
 brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
 brew 'rg'         # ripgrep
-brew 'skhd'       # Simple hotkey daemon for macOS
 brew 'stow'       # dotfiles symlink farm manager
 brew 'svn'        # Needed to install fonts
 brew 'thefuck'    # Corrects your previous console command
@@ -42,7 +42,6 @@ brew 'tldr'       # tldr for man pages
 brew 'tree'
 brew 'vim'
 brew 'wget'
-brew 'yabai'      # Tiling window manager
 brew 'zlib'       # Needed for Memcached
 brew 'zoxide'
 
@@ -57,7 +56,7 @@ brew 'gifsicle'
 brew 'php'
 brew 'php@8.2'
 brew 'php@8.1'
-brew 'php@8.0'
+brew 'shivammathur/php/php@8.0'
 brew 'composer'
 brew 'imagemagick'
 brew 'meilisearch'
@@ -82,17 +81,20 @@ cask 'insomnia'
 cask 'istat-menus'
 cask 'iterm2'
 cask 'karabiner-elements'
+keka 'keka'                 # macOS file archiver
 cask 'latest'
 cask 'monitorcontrol'
 cask 'moom'
 cask 'obsidian'
 cask 'omnidisksweeper'
+cask 'orbstack'
 cask 'postman'
 cask 'phpstorm'
 cask 'rapidapi'
 cask 'raycast'
 cask 'screens'
 cask 'screens-connect'
+cask 'sequel-ace'
 cask 'slack'
 cask 'subler'
 cask 'sublime-text'
@@ -104,9 +106,7 @@ cask 'transmission'
 cask 'transmit'
 cask 'tunnelblick'
 cask 'tuple'
-# cask 'vagrant' # sudo softwareupdate --install-rosetta
 cask 'vidl'
-# cask 'virtualbox' # Might need to allow access in Security settings
 cask 'visual-studio-code'
 cask 'vlc'
 cask 'xit'
@@ -121,42 +121,42 @@ cask 'qlvideo'
 cask 'font-hack'
 cask 'font-hack-nerd-font'
 cask 'font-lato'
-cask 'font-mesl-lg-nerd-font'
+cask 'font-meslo-lg-nerd-font'
 cask 'font-open-sans'
 cask 'font-roboto'
 cask 'font-source-code-pro-for-powerline'
-cask 'font-source-code-pro'
-cask 'font-source-sans-pro'
-cask 'font-source-serif-pro'
+cask 'homebrew/cask-fonts/font-source-code-pro'
+cask 'homebrew/cask-fonts/font-source-sans-pro'
+cask 'homebrew/cask-fonts/font-source-serif-pro'
 cask 'font-sf-pro'
 cask 'font-sf-pro'
 cask 'font-fira-code'
 cask 'sf-symbols'
 
 # Mac App Store
-mas '1Blocker - Ad Blocker', id: 1365531024
-mas 'Amphetamine', id: 937984704
-mas 'Boop', id: 1518425043
-mas 'Byword', id: 420212497
-mas 'Coin Tick - Menu Bar Crypto', id: 1141688067
-mas 'Dropzone 4', id: 1485052491
-mas 'Gestimer', id: 990588172
-mas 'Glance - Quick Look Code Files', id: 1564688210
-mas 'HazeOver • Distraction Dimmer', id: 430798174
-mas 'LookUp: English dictionary', id: 872564448
-mas 'Moom', id: 419330170
-mas 'Numbers', id: 409203825
-mas 'Paste - Clipboard Manager', id: 967805235
-mas 'PCalc', id: 403504866
-mas 'Pixave', id: 924891282
-mas 'Pixelmator Pro', id: 1289583905
-mas 'Redacted', id: 984968384
-mas 'Reeder 5.', id: 1529448980
-mas 'Sequel Ace', id: 1518036000
-mas 'Soulver 2', id: 413965349
-mas 'Tailscale', id: 1475387142
-mas 'xScope 4', id: 889428659
-mas 'Yoink - Improved Drag and Drop', id: 457622435
+# mas '1Blocker - Ad Blocker', id: 1365531024
+# mas 'Amphetamine', id: 937984704
+# mas 'Boop', id: 1518425043
+# mas 'Byword', id: 420212497
+# mas 'Coin Tick - Menu Bar Crypto', id: 1141688067
+# mas 'Dropzone 4', id: 1485052491
+# mas 'Gestimer', id: 990588172
+# mas 'Glance - Quick Look Code Files', id: 1564688210
+# mas 'HazeOver • Distraction Dimmer', id: 430798174
+# mas 'LookUp: English dictionary', id: 872564448
+# mas 'Moom', id: 419330170
+# mas 'Numbers', id: 409203825
+# mas 'Paste - Clipboard Manager', id: 967805235
+# mas 'PCalc', id: 403504866
+# mas 'Pixave', id: 924891282
+# mas 'Pixelmator Pro', id: 1289583905
+# mas 'Redacted', id: 984968384
+# mas 'Reeder 5.', id: 1529448980
+# mas 'Sequel Ace', id: 1518036000
+# mas 'Soulver 2', id: 413965349
+# mas 'Tailscale', id: 1475387142
+# mas 'xScope 4', id: 889428659
+# mas 'Yoink - Improved Drag and Drop', id: 457622435
 # mas 'The Unarchiver', id: 425424353
 # mas 'Keynote', id: 409183694
 # mas 'Things', id: 904280696

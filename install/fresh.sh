@@ -10,6 +10,10 @@ if test ! $(which brew); then
   eval "$($(which brew) shellenv)"
 fi
 
+mkdir -p $HOME/.ssh
+ssh-keyscan -H github.com >> $HOME/.ssh/known_hosts
+ssh-keyscan -H bitbucket.org >> $HOME/.ssh/known_hosts
+
 notice "Brew all the things"
 
 # Update Homebrew recipes
@@ -23,7 +27,7 @@ brew bundle --file $DOTFILES/install/Brewfile
 source $DOTFILES/install/develop.sh
 
 # Generating new SSH keys
-source $DOTFILES/install/ssh.sh
+# source $DOTFILES/install/ssh.sh
 
 # Copy .private_env file
 cp -Rf $DOTFILES/.private_env $HOME/.private_env
