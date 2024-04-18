@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Path to your dotfiles.
 export DOTFILES=$HOME/.dotfiles
 
@@ -98,7 +105,11 @@ plugins=(
     artisan
     brew
     composer
+    docker
+    docker-compose
     dotenv
+    eza
+    fzf
     git
     git-flow
     homestead
@@ -106,35 +117,33 @@ plugins=(
     macos
     npm
     ssh-agent
-    sublime
+    thefuck
     vagrant
     vagrant-prompt
     vscode
-    vundle
+    zoxide
     zsh-autosuggestions
     zsh-nvm
     zsh-syntax-highlighting
 )
 
-# Common stuff
-[[ -s "$DOTFILES/install/exports.sh" ]] && source "$DOTFILES/install/exports.sh"
-
-# SSH agent
+# ---- SSH agent ----
 zstyle :omz:plugins:ssh-agent agent-forwarding yes
 zstyle :omz:plugins:ssh-agent identities id_ed25519 id_rsa
+zstyle :omz:plugins:ssh-agent quiet yes
 
+# ---- Oh My Zsh ----
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
+# ---- User configuration ----
 
-# cdpath
-# relative cd into any subfolder
-cdpath=(~/Develop/src ~/Develop/Sites)
+# Common stuff
+[[ -s "$DOTFILES/install/exports.sh" ]] && source "$DOTFILES/install/exports.sh"
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # zoxide init
-eval "$(zoxide init --cmd cd zsh)"
+# eval "$(zoxide init --cmd cd zsh)"
 
 # You may need to manually set your language environment
 # export LC_ALL=en_US.UTF-8

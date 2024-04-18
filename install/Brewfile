@@ -9,34 +9,42 @@ tap 'shivammathur/php'
 # Binaries
 brew 'ack'
 brew 'awscli'
-brew 'bash' # Latest Bash version
-brew 'bat' # Used for spatie/visit
-brew 'coreutils' # Those that come with macOS are outdated
-brew 'entr'
+brew 'bash'       # Latest Bash version
+brew 'bat'        # better cat
+brew 'coreutils'  # Those that come with macOS are outdated
+brew 'entr'       # Run arbitrary commands when files change
+brew 'eza'        # modern replacement for ls
+brew 'fd'         # fast and user-friendly alternative to find
 brew 'ffmpeg'
 brew 'findutils'
-brew 'fzf'
+brew 'fzf'        # Fuzzy Finder
+brew 'fzf-git'    # bash and zsh key bindings for Git objects
 brew 'gh'
 brew 'git'
-brew 'git-flow'
+brew 'git-delta'  # syntax-highlighting pager for git, diff, and grep output
+brew 'git-flow'   # git branching model
 brew 'gnupg'
 brew 'grep'
 brew 'gstat'
 brew 'hub'
 brew 'htop'
 brew 'httpie'
-brew 'jq' # Used for spatie/visit
-brew 'mackup'
-brew 'mas' # Mac App Store manager
-brew 'mc' # midnight-commander
+brew 'jq'         # json command line processor
+brew 'mas'        # Mac App Store manager
+brew 'mc'         # midnight-commander
+brew 'neovim'
 brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
-brew 'rg' # ripgrep
-brew 'stow'
-brew 'svn' # Needed to install fonts
+brew 'rg'         # ripgrep
+brew 'skhd'       # Simple hotkey daemon for macOS
+brew 'stow'       # dotfiles symlink farm manager
+brew 'svn'        # Needed to install fonts
+brew 'thefuck'    # Corrects your previous console command
+brew 'tldr'       # tldr for man pages
 brew 'tree'
 brew 'vim'
 brew 'wget'
-brew 'zlib' # Needed for Memcached
+brew 'yabai'      # Tiling window manager
+brew 'zlib'       # Needed for Memcached
 brew 'zoxide'
 
 # Spatie Medialibrary
@@ -68,7 +76,6 @@ cask 'github'
 cask 'gitup'
 cask 'google-chrome'
 cask 'handbrake'
-cask 'hidock'
 cask 'iina'
 cask 'imagealpha'
 cask 'imageoptim'
@@ -77,10 +84,6 @@ cask 'istat-menus'
 cask 'iterm2'
 cask 'karabiner-elements'
 cask 'latest'
-cask 'microsoft-excel'
-cask 'microsoft-teams'
-cask 'microsoft-outlook'
-cask 'microsoft-word'
 cask 'monitorcontrol'
 cask 'moom'
 cask 'obsidian'
@@ -91,6 +94,7 @@ cask 'rapidapi'
 cask 'raycast'
 cask 'screens'
 cask 'screens-connect'
+cask 'slack'
 cask 'subler'
 cask 'sublime-text'
 cask 'tableplus'
@@ -115,16 +119,20 @@ cask 'quicklook-csv'
 cask 'qlvideo'
 
 # Fonts
-cask 'font-hack-nerd-font'
 cask 'font-hack'
+cask 'font-hack-nerd-font'
 cask 'font-lato'
+cask 'font-mesl-lg-nerd-font'
 cask 'font-open-sans'
 cask 'font-roboto'
 cask 'font-source-code-pro-for-powerline'
 cask 'font-source-code-pro'
 cask 'font-source-sans-pro'
 cask 'font-source-serif-pro'
+cask 'font-sf-pro'
+cask 'font-sf-pro'
 cask 'font-fira-code'
+cask 'sf-symbols'
 
 # Mac App Store
 mas '1Blocker - Ad Blocker', id: 1365531024

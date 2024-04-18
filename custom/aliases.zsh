@@ -2,7 +2,6 @@
 alias copyssh="pbcopy < $HOME/.ssh/id_ed25519.pub"
 alias reloadshell="source $HOME/.zshrc"
 alias reloaddns="dscacheutil -flushcache && sudo killall -HUP mDNSResponder"
-alias ll="/opt/homebrew/opt/coreutils/libexec/gnubin/ls -AhlFo --color --group-directories-first"
 alias phpstorm='open -a /Applications/PhpStorm.app "`pwd`"'
 alias shrug="echo '¯\_(ツ)_/¯' | pbcopy"
 alias c="clear"
@@ -19,38 +18,56 @@ alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias home="cd ~"
-alias -- -="cd -"
 
-# Detect which `ls` flavor is in use
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-    colorflag="--color"
-else # OS X `ls`
-    colorflag="-G"
-fi
-
-# List all files colorized in long format
-alias l="ls -l ${colorflag}"
-
-# List all files colorized in long format, including dot files
-alias la="ls -la ${colorflag}"
-
-# List only directories
-alias lsd='ls -l | grep "^d"'
-
-# File system list
-alias lss='ls -aFhlG'
-alias lsa='ls -la'
-alias lsl='ls -l'
-alias lsh='ls -FhlG'
-
+# ---- bat (better cat) -----
 alias cat='bat'
 
-# Always use color output for `ls`
-if [[ "$OSTYPE" =~ ^darwin ]]; then
-    alias ls="command ls -G"
+if command -v eza &> /dev/null; then
+    # ---- Eza (better ls) -----
+    alias ls="eza --color=always --git --icons=always --no-filesize  --no-time --no-user --no-permissions"
+    alias {la,lsa}="eza -la --color=always --git --icons=always --group-directories-first"
+    alias {lh,ldot}="eza -ld .* --color=always --git --icons=always --group-directories-first"
+    alias lD="eza -lD --color=always --git --icons=always" # lists only directories (no files)
+    alias {laD,lDD}="eza -laD --color=always --git --icons=always"
+    alias {ll,lsl}="eza -l --color=always --git --icons=always --group-directories-first" # lists everything with directories first
+    alias lsd="eza -d --color=always --git --icons=always --no-filesize  --no-time --no-user --no-permissions"
+    alias lsdl="eza -dl --color=always --git --icons=always --group-directories-first"
+    alias lSs="eza -l -ssize --color=always --git --icons=always"
+    alias lSn="eza -l -snewest --color=always --git --icons=always"
+    alias lsT="eza -T --color=always --git --icons=always --no-filesize  --no-time --no-user --no-permissions"
+    alias lsTl="eza -lT --color=always --git --icons=always"
+    alias lf="eza -lf --color=always --git --icons=always | grep -v /" # lists only files (no directories)
 else
-    alias ls="command ls --color"
-    export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
+    # ---- fallback to ls ----
+    # Detect which `ls` flavor is in use
+    if ls --color > /dev/null 2>&1; then # GNU `ls`
+        colorflag="--color"
+    else # OS X `ls`
+        colorflag="-G"
+    fi
+
+    # List all files colorized in long format
+    alias l="ls -l ${colorflag}"
+
+    # List all files colorized in long format, including dot files
+    alias la="ls -la ${colorflag}"
+
+    # List only directories
+    alias lsd='ls -l | grep "^d"'
+
+    # File system list
+    alias lss='ls -aFhlG'
+    alias lsa='ls -la'
+    alias lsl='ls -l'
+    alias lsh='ls -FhlG'
+
+    # Always use color output for `ls`
+    if [[ "$OSTYPE" =~ ^darwin ]]; then
+        alias ls="command ls -G"
+    else
+        alias ls="command ls --color"
+        export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
+    fi
 fi
 
 # Network
@@ -110,6 +127,7 @@ alias vundleUpdate="vim +BundleInstall! +BundleClean +qall"
 alias vundleInstall='vim +BundleInstall +qall'
 
 # vim
+alias vim="nvim"
 alias svim='vim sudo:'
 
 # PHP

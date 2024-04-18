@@ -101,7 +101,7 @@ else
     fi
 
     # Install vimify
-    source $DOTFILES/bin/dotfiles-vimify.sh
+    # source $DOTFILES/bin/dotfiles-vimify.sh
 
     # Stow dotfiles
     source $DOTFILES/bin/dotfiles-stow.sh
