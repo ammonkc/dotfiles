@@ -22,6 +22,9 @@ brew bundle --file $DOTFILES/install/Brewfile
 # Setup development environment
 source $DOTFILES/install/develop.sh
 
+# Generating new SSH keys
+source $DOTFILES/install/ssh.sh
+
 # Copy .private_env file
 cp -Rf $DOTFILES/.private_env $HOME/.private_env
 

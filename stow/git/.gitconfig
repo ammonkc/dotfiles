@@ -3,7 +3,7 @@
     email = $GIT_EMAIL
 [core]
     quotepath = false
-    excludesfile = ~/.gitignore_global
+    excludesfile = ~/.config/git/.gitignore_global
     editor = code -n --wait
     autocrlf = input
 [github]

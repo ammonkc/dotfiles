@@ -1,0 +1,56 @@
+{
+  "title": "Quake-style Hotkey Window for Wezterm",
+  "rules": [
+    {
+      "description": "Launch/show Wezterm if it is not in foreground",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "escape",
+            "modifiers": {
+              "mandatory": ["control"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "open '/Applications/WezTerm.app'"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["^com\\.github\\.wez\\.wezterm$"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Minimize Wezterm if it is in foreground",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "escape",
+            "modifiers": {
+              "mandatory": ["control"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "h",
+              "modifiers": ["command"]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["^com\\.github\\.wez\\.wezterm$"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
