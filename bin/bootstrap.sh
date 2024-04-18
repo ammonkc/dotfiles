@@ -111,7 +111,7 @@ else
       notice "Running on OSX"
       echo
       notice "Setup fresh mac"
-      source $DOTFILES/mac/fresh.sh
+      source $DOTFILES/install/fresh.sh
     fi
     info "Don't forget to set your API Keys in $HOME/.private_env"
   fi

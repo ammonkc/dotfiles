@@ -117,7 +117,7 @@ plugins=(
 )
 
 # Common stuff
-[[ -s "$DOTFILES/mac/exports.sh" ]] && source "$DOTFILES/mac/exports.sh"
+[[ -s "$DOTFILES/install/exports.sh" ]] && source "$DOTFILES/install/exports.sh"
 
 # SSH agent
 zstyle :omz:plugins:ssh-agent agent-forwarding yes
