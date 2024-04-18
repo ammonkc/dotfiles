@@ -5,7 +5,7 @@ STOW_DIR="$DOTFILES/stow"
 info "Stowing dotfiles..."
 
 stow_pkg() {
-    stow -t "$TARGET" -d "$STOW_DIR" -S "$1"
+    stow -t "$HOME" -d "$STOW_DIR" -S "$1"
     c_list "$1 stowed"
 }
 
