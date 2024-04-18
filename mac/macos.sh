@@ -21,7 +21,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 sudo scutil --set ComputerName "ammonkc - MackBook Pro"
 sudo scutil --set HostName "ammonkc - MackBook Pro"
 sudo scutil --set LocalHostName "ammonkc - MackBook Pro"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "MacBook Dries"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "MacBook Ammon"
 
 # Disable the sound effects on boot
 # sudo nvram SystemAudioVolume=" "

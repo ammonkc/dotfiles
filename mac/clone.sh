@@ -1,10 +1,14 @@
 #!/bin/sh
 
-echo "Cloning repositories..."
+notice "Cloning repositories..."
 
 DEVELOPER=$HOME/Developer
 CODE=$DEVELOPER/code
 SRC=$DEVELOPER/src
+
+# Create a developer directory
+mkdir -p $CODE
+mkdir -p $SRC
 
 # Personal
 git clone git@github.com:ammonkc/dotfiles.git $SRC/dotfiles

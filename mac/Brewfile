@@ -31,6 +31,7 @@ brew 'mas' # Mac App Store manager
 brew 'mc' # midnight-commander
 brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
 brew 'rg' # ripgrep
+brew 'stow'
 brew 'svn' # Needed to install fonts
 brew 'tree'
 brew 'vim'
@@ -82,6 +83,7 @@ cask 'microsoft-outlook'
 cask 'microsoft-word'
 cask 'monitorcontrol'
 cask 'moom'
+cask 'obsidian'
 cask 'omnidisksweeper'
 cask 'postman'
 cask 'phpstorm'

@@ -12,41 +12,28 @@ if test ! $(which brew); then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+notice "Brew all the things"
+
 # Update Homebrew recipes
 brew update
 
 # Install all our dependencies with bundle (See Brewfile)
 brew tap homebrew/bundle
-brew bundle --file $DOTFILES/Brewfile
-
-# Set default MySQL root password and auth type
-# mysql -u root -e "ALTER USER root@localhost IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
+brew bundle --file $DOTFILES/mac/Brewfile
 
 # Install PHP extensions with PECL
-pecl install imagick 
+pecl install imagick
 # pecl install redis swoole
 
 # Install global Composer packages
-/usr/local/bin/composer global require laravel/installer
-
-# Install Laravel Valet
-# $HOME/.composer/vendor/bin/valet install
-
-# Install Global Ray
-# $HOME/.composer/vendor/bin/global-ray install
-
-# Create a developer directory
-mkdir -p $HOME/Developer/code
-mkdir -p $HOME/Developer/src
+# /usr/local/bin/composer global require laravel/installer
 
 # Clone Github repositories
-$DOTFILES/clone.sh
-
-# Symlink the Mackup config file to the home directory
-ln -s $DOTFILES/.mackup.cfg $HOME/.mackup.cfg
+source $DOTFILES/mac/clone.sh
 
 # Copy .private_env file
-cp -Rf $DOTFILES/.private_env $HOME/.private_env
+cp -Rf $DOTFILES/mac/.private_env $HOME/.private_env
 
 # Set macOS preferences - we will run this last because this will reload the shell
-source $DOTFILES/.macos
+notice "Updating macOS settings"
+source $DOTFILES/mac/macos.sh

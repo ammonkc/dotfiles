@@ -117,7 +117,7 @@ plugins=(
 )
 
 # Common stuff
-[[ -s "$DOTFILES/.exports" ]] && source "$DOTFILES/.exports"
+[[ -s "$DOTFILES/mac/exports.sh" ]] && source "$DOTFILES/mac/exports.sh"
 
 # SSH agent
 zstyle :omz:plugins:ssh-agent agent-forwarding yes
@@ -160,4 +160,4 @@ eval "$(zoxide init --cmd cd zsh)"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f $DOTFILES/p10k.zsh ]] || source $DOTFILES/p10k.zsh
+[[ ! -f $DOTFILES/custom/p10k.zsh ]] || source $DOTFILES/custom/p10k.zsh

@@ -3,12 +3,15 @@
     email = $GIT_EMAIL
 [core]
     quotepath = false
-    excludesfile = /Users/ammonkc/.gitignore_global
-    editor = /usr/local/bin/vim
+    excludesfile = ~/.gitignore_global
+    editor = code -n --wait
     autocrlf = input
 [github]
     user = $GITHUB_USER
     token = $GITHUB_TOKEN
+[bitbucket]
+    user = $BITBUCKET_USER
+    email = $BITBUCKET_EMAIL
 [credential]
     helper = osxkeychain
 [color]
@@ -22,8 +25,14 @@
     autosetupmerge = true
 [push]
     default = tracking
+[pull]
+    ff = only
 [rerere]
     enabled = true
+[init]
+    defaultBranch = main
+[url "git@github.com:"]
+    insteadOf = https://github.com/
 [alias]
     #Basic
     st = status
