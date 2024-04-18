@@ -87,7 +87,7 @@ else
   if test ! $(which omz); then
     # Clone Repo
     notice "Cloning dotfiles repo"
-    git clone --recursive https://github.com/ammonkc/dotfiles.git --branch master --single-branch $DOTFILES
+    git clone --recursive https://github.com/ammonkc/dotfiles.git --branch stow --single-branch $DOTFILES
   fi
 
   if [ -d $DOTFILES ]; then

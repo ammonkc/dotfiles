@@ -16,7 +16,7 @@ fi
 
 info "Pulling updates from dotfiles repo..."
 echo
-git pull origin master
+git pull origin stow
 git submodule init
 git submodule update --remote --merge
 echo
