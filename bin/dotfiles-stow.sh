@@ -2,7 +2,7 @@
 
 STOW_DIR="$DOTFILES/stow"
 
-info "Stowing dotfiles..."
+notice "Stowing dotfiles..."
 
 stow_pkg() {
     stow -t "$HOME" -d "$STOW_DIR" -S "$1"

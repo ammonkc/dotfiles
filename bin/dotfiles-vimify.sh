@@ -2,7 +2,7 @@
 
 # Sync dotfiles repo and ensure that dotfiles are tangled correctly afterward
 
-info "Installing vimify"
+notice "Installing vimify"
 
 # Navigate to the directory of this script (generally ~/.dotfiles/.bin)
 cd $(dirname $(readlink -f $0))

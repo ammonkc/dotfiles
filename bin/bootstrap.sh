@@ -13,10 +13,16 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
     export TERM=xterm-256color
 fi
 
-# Notice title
+# Notice (yellow) title
 notice() { printf  "\033[1;32m=> $1\033[0m \n"; }
 
-# Error title
+# Info (blue) title
+info() { printf  "\033[0;34m=> $1\033[0m \n"; }
+
+# Success (gree) title
+success() { printf  "\033[0;32m=> $1\033[0m \n"; }
+
+# Error () title
 error() { printf "\033[1;31m=> Error: $1\033[0m \n"; }
 
 # List item
