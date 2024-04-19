@@ -81,7 +81,7 @@ cask 'insomnia'
 cask 'istat-menus'
 cask 'iterm2'
 cask 'karabiner-elements'
-keka 'keka'                 # macOS file archiver
+cask 'keka'                 # macOS file archiver
 cask 'latest'
 cask 'monitorcontrol'
 cask 'moom'
