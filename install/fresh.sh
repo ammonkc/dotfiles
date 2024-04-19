@@ -22,5 +22,5 @@ source $DOTFILES/install/develop.sh
 cp -Rf $DOTFILES/.private_env $HOME/.private_env
 
 # Set macOS preferences - we will run this last because this will reload the shell
-notice "Updating macOS settings"
-source $DOTFILES/install/macos.sh
+# notice "Updating macOS settings"
+# source $DOTFILES/install/macos.sh
