@@ -2,10 +2,6 @@
 	path = oh-my-zsh
 	url = https://github.com/robbyrussell/oh-my-zsh.git
     branch = master
-[submodule "vimified"]
-	path = vimified
-	url = https://github.com/zaiste/vimified.git
-    branch = master
 [submodule "custom/themes/powerlevel10k"]
 	path = custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
