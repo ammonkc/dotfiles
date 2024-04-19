@@ -3,8 +3,7 @@
 # Sync dotfiles repo and ensure that dotfiles are tangled correctly afterward
 notice "Syncing dotfiles repo"
 
-# Navigate to the directory of this script (generally ~/.dotfiles/.bin)
-notice "dir: $(dirname $(readlink -f $0))"
+# Navigate to the directory of the dotfiles repo (generally ~/.dotfiles)
 pushd $DOTFILES
 
 notice "Stashing existing changes..."
