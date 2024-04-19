@@ -53,7 +53,7 @@ zsh_shell() {
 # Initialize
 #-----------------------------------------------------------------------------
 
-dependencies=(git tree vim stow)
+dependencies=(git tree vim)
 
 #-----------------------------------------------------------------------------
 # Dependencies
@@ -108,9 +108,6 @@ else
 
     # Install vimify
     # source $DOTFILES/bin/dotfiles-vimify.sh
-
-    # Stow dotfiles
-    source $DOTFILES/bin/dotfiles-stow.sh
 
     # Setup a fresh mac
     if [ "$(uname)" == "Darwin" ]; then
