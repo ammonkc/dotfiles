@@ -7,7 +7,7 @@ ssh-keyscan -H github.com >> $HOME/.ssh/known_hosts
 ssh-keyscan -H bitbucket.org >> $HOME/.ssh/known_hosts
 
 # Brew
-source $DOTFILES/brew.sh
+source $DOTFILES/install/brew.sh
 
 # Stow dotfiles
 source $DOTFILES/bin/dotfiles-stow.sh
