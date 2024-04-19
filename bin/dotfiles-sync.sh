@@ -3,10 +3,14 @@
 # Sync dotfiles repo and ensure that dotfiles are tangled correctly afterward
 notice "Syncing dotfiles repo"
 
-# Navigate to the directory of the dotfiles(generally ~/.dotfiles)
-cd $DOTFILES
+# Navigate to the directory of this script (generally ~/.dotfiles/.bin)
+notice "dir: $(dirname $(readlink -f $0))"
+# cd $(dirname $(readlink -f $0))
+# cd ..
+pushd $DOTFILES
 
 notice "Stashing existing changes..."
+echo "current dir: $(pwd)"
 stash_result=$(git stash push -m "sync-dotfiles: Before syncing dotfiles")
 needs_pop=1
 if [ "$stash_result" = "No local changes to save" ]; then
