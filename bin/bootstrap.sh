@@ -73,7 +73,6 @@ if [ $not_met -gt 0 ]; then
   exit 1
 fi
 
-
 #-----------------------------------------------------------------------------
 # Install
 #-----------------------------------------------------------------------------
@@ -100,14 +99,6 @@ else
     pushd $DOTFILES
 
     git submodule update --remote
-
-    # Removes .zshrc from $HOME (if it exists)
-    if [ -f $HOME/.zshrc ]; then
-      rm -rf $HOME/.zshrc
-    fi
-
-    # Install vimify
-    # source $DOTFILES/bin/dotfiles-vimify.sh
 
     # Setup a fresh mac
     if [ "$(uname)" == "Darwin" ]; then

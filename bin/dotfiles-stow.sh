@@ -9,6 +9,11 @@ stow_pkg() {
     c_list "$1 stowed"
 }
 
+# Removes .zshrc from $HOME (if it exists)
+if [ -f $HOME/.zshrc ]; then
+    rm -rf $HOME/.zshrc
+fi
+
 packages=($STOW_DIR/*)
 packages=("${packages[@]%/}")
 packages=("${packages[@]##*/}")
