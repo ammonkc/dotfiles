@@ -38,7 +38,7 @@ brew 'rg'         # ripgrep
 brew 'stow'       # dotfiles symlink farm manager
 brew 'svn'        # Needed to install fonts
 brew 'thefuck'    # Corrects your previous console command
-brew 'tldr'       # tldr for man pages
+brew 'tlrc'       # tldr for man pages
 brew 'tree'
 brew 'vim'
 brew 'wget'
