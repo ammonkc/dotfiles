@@ -65,6 +65,7 @@ brew 'node'
 # Apps casks
 cask '1password'
 cask 'airbuddy'
+cask 'alt-tab'
 cask 'bartender'
 cask 'docker'
 cask 'dropbox'
