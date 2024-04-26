@@ -14,5 +14,4 @@
 # @raycast.author Ammon Casey
 
 cd ~/Developer/code/allegro.test && ./spin down
-
 echo "Docker is down"
