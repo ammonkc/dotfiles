@@ -1,21 +1,21 @@
 [submodule "oh-my-zsh"]
-	path = oh-my-zsh
+	path = stow/zsh/oh-my-zsh
 	url = https://github.com/robbyrussell/oh-my-zsh.git
     branch = master
 [submodule "custom/themes/powerlevel10k"]
-	path = custom/themes/powerlevel10k
+	path = stow/zsh/custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
     branch = master
 [submodule "custom/plugins/artisan"]
-	path = custom/plugins/artisan
+	path = stow/zsh/custom/plugins/artisan
 	url = https://github.com/jessarcher/zsh-artisan.git
     branch = master
 [submodule "custom/plugins/zsh-autosuggestions"]
-	path = custom/plugins/zsh-autosuggestions
+	path = stow/zsh/custom/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
 [submodule "custom/plugins/zsh-syntax-highlighting"]
-	path = custom/plugins/zsh-syntax-highlighting
+	path = stow/zsh/custom/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
 [submodule "custom/plugins/zsh-nvm"]
-	path = custom/plugins/zsh-nvm
+	path = stow/zsh/custom/plugins/zsh-nvm
 	url = https://github.com/lukechilds/zsh-nvm
