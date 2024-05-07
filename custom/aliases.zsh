@@ -180,9 +180,9 @@ alias resolve="git add . && git commit --no-edit"
 alias stash="git stash -u"
 alias unstage="git restore --staged ."
 alias wip="commit wip"
-alias bg-orphan="git fetch && git branch -vv | grep ': gone]' | grep -v '\*' | awk '{ print $1; }'"
-alias bg-orphan-delete="git fetch && git branch -vv | grep ': gone]' | grep -v '\*' | awk '{ print $1; }' | xargs -r git branch -d"
-alias bg-orphan-delete-f="git fetch && git branch -vv | grep ': gone]' | grep -v '\*' | awk '{ print $1; }' | xargs -r git branch -D"
+alias gb-orphan="git fetch && git branch -vv | grep ': gone]' | grep -v '\*' | awk '{ print $1; }'"
+alias gb-orphan-d="git fetch && git branch -vv | grep ': gone]' | grep -v '\*' | awk '{ print $1; }' | xargs -r git branch -d"
+alias gb-orphan-D="git fetch && git branch -vv | grep ': gone]' | grep -v '\*' | awk '{ print $1; }' | xargs -r git branch -D"
 # Undo a `git push`
 alias undopush="git push -f origin HEAD^:master"
 # git root
