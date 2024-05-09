@@ -96,7 +96,3 @@
 
     # Undo a `git push`
     undopush = 'push -f origin HEAD^:master'
-
-    # Delete Orphaned branches
-    orphan-d = "!git fetch && git branch -vv | grep ': gone]' | grep -v '\*' | awk '{ print $1; }' | xargs -r git branch -d"
-    orphan-D = "!git fetch && git branch -vv | grep ': gone]' | grep -v '\*' | awk '{ print $1; }' | xargs -r git branch -D"
