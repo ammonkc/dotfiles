@@ -1,6 +1,6 @@
 #!/bin/sh
 
-notice "Generating a new SSH key for GitHub..."
+echo "Generating a new SSH key for GitHub..."
 
 # Create a directory for SSH keys if it doesn't exist
 mkdir -p ~/.ssh
@@ -22,4 +22,4 @@ ssh-add --apple-use-keychain ~/.ssh/id_rsa
 
 # Adding your SSH key to your GitHub account
 # https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account
-notice "run 'pbcopy < ~/.ssh/id_ed25519.pub' and paste that into GitHub"
+echo "run 'pbcopy < ~/.ssh/id_ed25519.pub' and paste that into GitHub"
