@@ -1,6 +1,6 @@
 # Taps
 tap 'homebrew/cask-fonts'
-tap 'homebrew/cask-versions'
+tap 'homebrew/homebrew-core'
 tap 'homebrew/bundle'
 tap 'nicoverbruggen/homebrew-cask'
 tap 'shivammathur/php'
