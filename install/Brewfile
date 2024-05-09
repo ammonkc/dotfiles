@@ -1,6 +1,5 @@
 # Taps
 tap 'homebrew/cask-fonts'
-tap 'homebrew/homebrew-core'
 tap 'homebrew/bundle'
 tap 'nicoverbruggen/homebrew-cask'
 tap 'shivammathur/php'
@@ -34,7 +33,6 @@ brew 'mas'        # Mac App Store manager
 brew 'mc'         # midnight-commander
 brew 'neovim'
 brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
-brew 'rar'        # rar archiver
 brew 'rg'         # ripgrep
 brew 'stow'       # dotfiles symlink farm manager
 brew 'svn'        # Needed to install fonts
@@ -91,6 +89,7 @@ cask 'omnidisksweeper'
 cask 'postman'
 cask 'phpstorm'
 cask 'rapidapi'
+cask 'rar'
 cask 'raycast'
 cask 'screens'
 cask 'screens-connect'
