@@ -5,7 +5,7 @@ echo
 notice "Install pecl extentions"
 echo
 # Install PHP extensions with PECL
-printf "\n" | pecl install imagick
+printf "autodetect" | pecl install imagick
 
 DEVELOPER=$HOME/Developer
 mkdir -p $DEVELOPER/code
