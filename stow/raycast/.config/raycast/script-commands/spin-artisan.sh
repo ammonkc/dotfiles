@@ -6,7 +6,7 @@
 # @raycast.mode fullOutput
 
 # Optional parameters:
-# @raycast.icon 🤖
+# @raycast.icon 🅰️
 # @raycast.packageName Docker Environment
 # @raycast.argument1 { "type": "text", "placeholder": "artisan command", "optional": true }
 
