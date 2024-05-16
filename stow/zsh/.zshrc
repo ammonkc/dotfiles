@@ -104,12 +104,15 @@ ZSH_CUSTOM=$DOTFILES/custom
 plugins=(
     artisan
     brew
+    colorize
+    command-not-found
     composer
     docker
     docker-compose
     dotenv
     eza
     fzf
+    fzf-tab
     git
     git-flow
     homestead
@@ -117,6 +120,7 @@ plugins=(
     macos
     npm
     ssh-agent
+    sudo
     thefuck
     vagrant
     vagrant-prompt
@@ -126,6 +130,13 @@ plugins=(
     zsh-nvm
     zsh-syntax-highlighting
 )
+
+# ---- zsh-completions ----
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git diff --color=always $word'
 
 # ---- SSH agent ----
 zstyle :omz:plugins:ssh-agent agent-forwarding yes
@@ -167,6 +178,28 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# ---- Keybindings ----
+bindkey -e
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+
+
+
+# ---- History ----
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=5000
+SAVEHIST=5000
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+setopt hist_reduce_blanks
+
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f $DOTFILES/custom/p10k.zsh ]] || source $DOTFILES/custom/p10k.zsh

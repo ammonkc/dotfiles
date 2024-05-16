@@ -6,43 +6,43 @@ tap 'shivammathur/php'
 tap 'koekeishiya/formulae'
 
 # Binaries
-brew 'ack'
-brew 'awscli'
-brew 'bash'       # Latest Bash version
-brew 'bat'        # better cat
-brew 'coreutils'  # Those that come with macOS are outdated
-brew 'entr'       # Run arbitrary commands when files change
-brew 'eza'        # modern replacement for ls
-brew 'fd'         # fast and user-friendly alternative to find
-brew 'ffmpeg'
-brew 'findutils'
-brew 'fzf'        # Fuzzy Finder
-brew 'gh'
-brew 'git'
-brew 'git-delta'  # syntax-highlighting pager for git, diff, and grep output
-brew 'git-flow'   # git branching model
-brew 'gnupg'
-brew 'grep'
-brew 'hub'
-brew 'htop'
-brew 'httpie'
-brew 'jq'         # json command line processor
+brew 'ack'                        # grep-like alternative
+brew 'bash'                       # Latest Bash version
+brew 'bat'                        # better cat
+brew 'coreutils'                  # Those that come with macOS are outdated
+brew 'entr'                       # Run arbitrary commands when files change
+brew 'eza'                        # modern replacement for ls
+brew 'fd'                         # fast and user-friendly alternative to find
+brew 'ffmpeg'                     # Play, record, convert, and stream audio and video
+brew 'findutils'                  # GNU File, Shell, and Text utilities
+brew 'fzf'                        # Fuzzy Finder
+brew 'gh'                         # github cli
+brew 'git'                        # distributed revision control system
+brew 'git-delta'                  # syntax-highlighting pager for git, diff, and grep output
+brew 'git-flow'                   # git branching model
+brew 'gnupg'                      # GNU privacy guard
+brew 'grep'                       # GNU grep, egrep and fgrep
+brew 'hub'                        # github cli
+brew 'htop'                       # interactive process viewer
+brew 'httpie'                     # command line http client
+brew 'jq'                         # json command line processor
 brew 'koekeishiya/formulae/skhd'  # Simple hotkey daemon for macOS
 brew 'koekeishiya/formulae/yabai' # Tiling window manager
-brew 'mas'        # Mac App Store manager
-brew 'mc'         # midnight-commander
-brew 'neovim'
-brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
-brew 'rg'         # ripgrep
-brew 'stow'       # dotfiles symlink farm manager
-brew 'svn'        # Needed to install fonts
-brew 'thefuck'    # Corrects your previous console command
-brew 'tlrc'       # tldr for man pages
-brew 'tree'
-brew 'vim'
-brew 'wget'
-brew 'zlib'       # Needed for Memcached
-brew 'zoxide'
+brew 'mas'                        # Mac App Store manager
+brew 'mc'                         # midnight-commander
+brew 'neovim'                     # better vim
+brew 'pkg-config'                 # https://github.com/driesvints/dotfiles/issues/20
+brew 'pygments'                   # syntax-highlighting pager for git, diff, and grep output
+brew 'rg'                         # ripgrep
+brew 'stow'                       # dotfiles symlink farm manager
+brew 'svn'                        # Needed to install fonts
+brew 'thefuck'                    # Corrects your previous console command
+brew 'tlrc'                       # tldr for man pages
+brew 'tree'                       # recursive directory listing
+brew 'vim'                        # vim
+brew 'wget'                       # wget
+brew 'zlib'                       # Needed for Memcached
+brew 'zoxide'                     # faster cd
 
 # Spatie Medialibrary
 brew 'jpegoptim'

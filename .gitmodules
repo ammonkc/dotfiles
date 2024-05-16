@@ -19,3 +19,6 @@
 [submodule "custom/plugins/zsh-nvm"]
 	path = custom/plugins/zsh-nvm
 	url = https://github.com/lukechilds/zsh-nvm
+[submodule "custom/plugins/fzf-tab"]
+	path = custom/plugins/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab
