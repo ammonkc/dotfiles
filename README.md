@@ -47,7 +47,7 @@ After backing up your old Mac you may now follow these install instructions to s
 3. [Generate a new public and private SSH key](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) by running:
 
    ```zsh
-   curl https://raw.githubusercontent.com/ammonkc/dotfiles/HEAD/bin/dotfiles-sshkeys.sh | sh -s "<your-email-address>"
+   curl https://raw.githubusercontent.com/ammonkc/dotfiles/stow/bin/dotfiles-sshkeys.sh | sh -s "<your-email-address>"
    ```
 
 4.
@@ -58,7 +58,7 @@ The bootstrapper will back up all your existing files before it installs
 anything new, it'll also warn you if a dependency isn't met.
 
 ``` bash-session
-/bin/bash -c "$(curl -fsSL https://raw.github.com/ammonkc/dotfiles/master/bin/bootstrap.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.github.com/ammonkc/dotfiles/stow/bin/bootstrap.sh)"
 ```
 
 Don't worry, all your old files will be backed up!
