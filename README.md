@@ -33,7 +33,6 @@ If you're migrating from an existing Mac, you should first make sure to backup a
 - Did you remember to save all important documents from non-iCloud directories?
 - Did you save all of your work from apps which aren't synced through iCloud?
 - Did you remember to export important data from your local database?
-- Did you update [mackup](https://github.com/lra/mackup) to the latest version and ran `mackup backup`?
 
 ### Setting up your Mac
 
