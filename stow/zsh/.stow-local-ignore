@@ -1,3 +1,3 @@
 # Comments and blank lines are allowed.
 
-^/*.txt
+*.txt
