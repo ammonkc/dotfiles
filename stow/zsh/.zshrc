@@ -115,15 +115,12 @@ plugins=(
     fzf-tab
     git
     git-flow
-    homestead
     iterm2
     macos
     npm
     ssh-agent
     sudo
     thefuck
-    vagrant
-    vagrant-prompt
     vscode
     zoxide
     zsh-autosuggestions
