@@ -179,26 +179,21 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# ---- Keybindings ----
-bindkey -e
-bindkey '^p' history-search-backward
-bindkey '^n' history-search-forward
-
-
-
 # ---- History ----
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=5000
 SAVEHIST=5000
 HISTDUP=erase
-setopt appendhistory
-setopt sharehistory
+setopt append_history
+setopt share_history
 setopt hist_ignore_space
 setopt hist_ignore_all_dups
 setopt hist_save_no_dups
+setopt hist_expire_dups_first
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 setopt hist_reduce_blanks
+setopt hist_verify
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.

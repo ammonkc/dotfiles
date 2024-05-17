@@ -15,7 +15,7 @@ ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -C "$1"
 eval "$(ssh-agent -s)"
 
 touch ~/.ssh/config
-echo 'Host *\n    AddKeysToAgent yes\n    UseKeychain yes\n    IdentitiesOnly yes\n    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock\n    IdentityFile ~/.ssh/id_ed25519"\n    IdentityFile ~/.ssh/id_rsa' | tee ~/.ssh/config
+echo 'Host *\n    AddKeysToAgent yes\n    UseKeychain yes\n    IdentitiesOnly yes\n    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"\n    IdentityFile ~/.ssh/id_ed25519\n    IdentityFile ~/.ssh/id_rsa' | tee ~/.ssh/config
 
 ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 ssh-add --apple-use-keychain ~/.ssh/id_rsa
