@@ -10,7 +10,10 @@ export LANG=en_US.UTF-8
 
 
 # load ssh agent
-ssh-add --apple-load-keychain -q
+# ssh-add --apple-load-keychain -q
+
+# 1password ssh agent
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
