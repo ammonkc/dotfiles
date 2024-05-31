@@ -105,7 +105,6 @@ plugins=(
     iterm2
     macos
     npm
-    ssh-agent
     sublime
     vagrant
     vagrant-prompt
@@ -117,11 +116,11 @@ plugins=(
 )
 
 # Common stuff
-[[ -s "$DOTFILES/.exports" ]] && source "$DOTFILES/.exports"
+[[ -s "$DOTFILES/.exports.sh" ]] && source "$DOTFILES/.exports.sh"
 
 # SSH agent
-zstyle :omz:plugins:ssh-agent agent-forwarding yes
-zstyle :omz:plugins:ssh-agent identities id_ed25519 id_rsa
+# zstyle :omz:plugins:ssh-agent agent-forwarding yes
+# zstyle :omz:plugins:ssh-agent identities id_ed25519 id_rsa
 
 source $ZSH/oh-my-zsh.sh
 
