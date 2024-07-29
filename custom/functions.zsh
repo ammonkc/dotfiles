@@ -3,7 +3,7 @@ function xdebug() {
   currentPhpVersion=$(php -v | ggrep -E 'PHP *?\s' | ggrep -oP '(?<=\s)\d\.\d')
   iniFileLocation="/opt/homebrew/etc/php/${currentPhpVersion}/conf.d/ext-xdebug.ini"
   currentLine=`cat $iniFileLocation | grep xdebug.so`
-  if [[ $currentLine =~ ^;zend_extension ]]
+  if [[ $currentLine =~ '^;zend_extension' ]]
   then
     sed -i -e 's/^;zend_extension/zend_extension/g' $iniFileLocation
     echo "xdebug is now active"
