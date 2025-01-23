@@ -95,8 +95,8 @@ alias spfresh="./spin artisan migrate:fresh --seed"
 alias sptinker="./spin artisan tinker"
 alias spseed="./spin artisan db:seed"
 alias spserve="./spin artisan serve"
-alias docker-up="docker compose -f docker-compose.yaml -f docker-compose-lumen.yaml --profile debug up --force-recreate --build --detach --remove-orphans"
-alias docker-down="docker compose -f docker-compose.yaml -f docker-compose-lumen.yaml --profile debug down"
+alias docker-up="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml -f docker-compose-lumen.yaml --profile debug up --force-recreate --build --detach --remove-orphans"
+alias docker-down="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml -f docker-compose-lumen.yaml --profile debug down"
 
 # Homebrew aliases
 alias install='brew install'
