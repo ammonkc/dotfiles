@@ -1,6 +1,6 @@
 # docker artisan alias
 docker-artisan() {
-  local command="php $@"
+  local command="php artisan $@"
   docker-compose exec php8.1-fpm bash -c "$command"
 }
 
