@@ -97,6 +97,8 @@ alias spseed="./spin artisan db:seed"
 alias spserve="./spin artisan serve"
 alias docker-up="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml -f docker-compose-lumen.yaml up --force-recreate --build --detach --remove-orphans"
 alias docker-down="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml -f docker-compose-lumen.yaml down"
+alias docker-artisan="docker-compose exec php8.1-fpm bash -c"
+alias dart="docker-compose exec php8.1-fpm bash -c"
 
 # Homebrew aliases
 alias install='brew install'
