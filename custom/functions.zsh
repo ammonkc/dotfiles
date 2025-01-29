@@ -1,3 +1,9 @@
+# docker artisan alias
+docker-artisan() {
+  local command="php $@"
+  docker-compose exec php8.1-fpm bash -c "$command"
+}
+
 # toggle xdebug
 function xdebug() {
   currentPhpVersion=$(php -v | ggrep -E 'PHP *?\s' | ggrep -oP '(?<=\s)\d\.\d')
