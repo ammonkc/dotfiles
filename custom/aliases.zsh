@@ -97,6 +97,8 @@ alias spseed="./spin artisan db:seed"
 alias spserve="./spin artisan serve"
 alias docker-up="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml -f docker-compose-lumen.yaml up --force-recreate --build --detach --remove-orphans"
 alias docker-down="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml -f docker-compose-lumen.yaml down"
+alias dup=docker-up
+alias ddown=docker-down
 alias dart=docker-artisan
 
 # Homebrew aliases
