@@ -85,6 +85,7 @@ alias fresh="php artisan migrate:fresh --seed"
 alias tinker="php artisan tinker"
 alias seed="php artisan db:seed"
 alias serve="php artisan serve"
+alias artest="php -d xdebug.mode="off" -d memory_limit=-1 -d max_execution_time=0 artisan test --parallel -vvv"
 
 #ILT docker
 alias spin="./spin"
