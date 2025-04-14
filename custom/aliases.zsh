@@ -96,8 +96,8 @@ alias spfresh="./spin artisan migrate:fresh --seed"
 alias sptinker="./spin artisan tinker"
 alias spseed="./spin artisan db:seed"
 alias spserve="./spin artisan serve"
-alias docker-up="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml --profile sftp up --force-recreate --build --detach --remove-orphans"
-alias docker-down="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml --profile sftp down"
+alias docker-up="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml --profile sftp --profile php8-work up --force-recreate --build --detach --remove-orphans"
+alias docker-down="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml --profile sftp --profile php8-work down"
 alias dup=docker-up
 alias ddown=docker-down
 alias dart=docker-artisan
