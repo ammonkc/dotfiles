@@ -141,6 +141,9 @@ for phpVersion in ${installedPhpVersions[*]}; do
     alias "php${phpVersion}"="${value}"
 done
 
+#genAI
+alias genailogin='export AWS_PROFILE=genai;aws sso login --profile genai'
+
 # JS
 alias nfresh="rm -rf node_modules/ package-lock.json && npm install"
 alias watch="npm run watch"
