@@ -142,14 +142,14 @@ for phpVersion in ${installedPhpVersions[*]}; do
 done
 
 #genAI
-alias genai='export AWS_PROFILE=genai;aws sso login --profile genai'
+alias genailogin='export AWS_PROFILE=genai;aws sso login --profile genai'
 
 # JS
 alias nfresh="rm -rf node_modules/ package-lock.json && npm install"
 alias watch="npm run watch"
 
 # Docker
-alias docker-composer="docker-compose"
+alias docker-composer="docker compose"
 
 # SQL Server
 alias mssql="docker run -e ACCEPT_EULA=Y -e SA_PASSWORD=LaravelWow1986! -p 1433:1433 mcr.microsoft.com/mssql/server:2017-latest"
