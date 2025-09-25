@@ -1,7 +1,7 @@
 # docker artisan alias
 docker-artisan() {
   local command="php artisan $@"
-  USER_ID=$(id -u) GROUP_ID=$(id -g) docker-compose exec php8.1-fpm bash -c "$command"
+  USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose exec php8.1-base bash -c "$command"
 }
 
 # toggle xdebug
