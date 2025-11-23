@@ -1,0 +1,141 @@
+---
+globs: .cursor/commands/review-*.md
+alwaysApply: false
+---
+
+# Custom Code Review Slash Commands
+
+This file defines custom code review slash commands for streamlining common development workflows in the Allegro Lending Suite.
+
+## Implementation Details
+
+### For Code Review Commands
+
+When executing a review command, follow this workflow:
+
+```bash
+# 1. Get current branch
+git status
+
+# 2. Get latest commit details
+git log --max-count=1
+
+# 3. Get commit changes
+git show [SHA] --no-patch --format=fuller
+
+# 4. Analyze the diff
+git show [SHA] --patch
+```
+
+### Review Criteria
+
+Apply these standards from project rules:
+
+-   [laravel-php-guidelines.mdc](mdc:.cursor/rules/laravel-php-guidelines.mdc) - PHP coding standards
+-   [test-writing.mdc](mdc:.cursor/rules/test-writing.mdc) - Test coverage expectations
+-   [db-query-refactoring.mdc](mdc:.cursor/rules/db-query-refactoring.mdc) - Database best practices
+
+### Context-Aware Analysis
+
+Consider these aspects:
+
+1. **File Type**: Apply language-specific best practices
+2. **File Location**: Understand architectural patterns
+    - `app/Models/` - Eloquent model patterns
+    - `app/Http/Controllers/` - Controller best practices
+    - `app/Libraries/` - Shared business logic patterns
+    - `tests/` - Testing standards
+3. **Project Patterns**: Follow existing codebase conventions
+
+---
+
+## Adding New Commands
+
+To add a new slash command:
+
+1. **Define the command** in this file with clear documentation
+2. **Specify the workflow** with step-by-step instructions
+3. **Include examples** of input and output
+4. **Reference related rules** for context
+
+### Command Template
+
+```markdown
+### `/command-name` - Brief Description
+
+Full description of what the command does.
+
+**Usage:**
+```
+
+/command-name [parameters]
+
+```
+
+**Parameters:**
+- `param1`: Description of parameter
+
+**What it does:**
+1. Step-by-step workflow
+2. Expected behavior
+3. Output format
+
+**Example:**
+```
+
+Example usage and output
+
+```
+
+```
+
+---
+
+## Best Practices
+
+### When Using Review Commands
+
+1. **Run reviews before submitting PRs** - Catch issues early
+2. **Use `/review-file` during development** - Get immediate feedback
+3. **Review commit history** - Use `/review-commit` for specific changes
+4. **Address all issues** - Don't ignore warnings or suggestions
+5. **Follow up with tests** - Add test coverage for changes
+
+### Review Quality
+
+To ensure high-quality reviews:
+
+-   Reviews should be **actionable** with specific suggestions
+-   Include **code examples** for recommended changes
+-   Prioritize issues by **severity** (critical, important, minor)
+-   Consider **project context** and existing patterns
+-   Reference **relevant documentation** and rules
+-   Provide **alternative solutions** when appropriate
+
+---
+
+## Troubleshooting
+
+### Command Not Working
+
+If a review command fails:
+
+1. Verify you're in a git repository: `git status`
+2. Check branch is clean or has commits
+3. Ensure proper permissions on `.git/` directory
+
+### Incomplete Reviews
+
+If reviews seem incomplete:
+
+1. Check file size - very large files may be truncated
+2. Verify git history exists
+3. Run `git show` manually to verify diff exists
+
+---
+
+## Related Resources
+
+-   [CLAUDE.md](mdc:CLAUDE.md) - Project-specific AI guidance
+-   [cursor-rules.mdc](mdc:.cursor/rules/cursor-rules.mdc) - Rule file format
+-   [test-writing.mdc](mdc:.cursor/rules/test-writing.mdc) - Testing standards

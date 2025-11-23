@@ -1,0 +1,92 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "playwright": {
+      "enabled": true,
+      "type": "local",
+      "command": ["bunx", "@playwright/mcp@latest", "--browser", "webkit"]
+    },
+    "context7": {
+      "enabled": true,
+      "type": "local",
+      "command": ["bunx", "@upstash/context7-mcp"]
+    },
+    "github": {
+      "enabled": false,
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer <TOKEN>"
+      }
+    }
+  },
+  "keybinds": {
+    "input_submit": "enter",
+    "input_newline": "shift+enter"
+  },
+  "permission": {
+    "webfetch": "allow",
+    "bash": {
+      "artisan *": "allow",
+      "git status": "allow",
+      "git diff": "allow",
+      "npm run build": "allow",
+      "ls": "allow",
+      "pwd": "allow",
+      "rg *": "allow"
+    }
+  },
+  "agent": {
+    "pair": {
+      "description": "AI pair programmer that keeps you in the loop by asking for your confirmation before executing any commands and edits",
+      "permission": {
+        "webfetch": "allow",
+        "edit": "ask",
+        "bash": {
+          "artisan *": "allow",
+          "git status": "allow",
+          "git diff": "allow",
+          "npm run *": "allow",
+          "pnpm run *": "allow",
+          "bun run *": "allow",
+          "ls": "allow",
+          "pwd": "allow",
+          "rg *": "allow",
+          "*": "ask"
+        }
+      }
+    }
+  },
+  "mode": {
+    "build": {
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
+    },
+    "plan": {
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
+    },
+    "review": {
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
+    }
+  },
+  "experimental": {
+    "hook": {
+      "session_completed": [
+        {
+          "command": ["pplay", "happy-chime-notice.mp3"]
+        }
+      ]
+    }
+  }
+}

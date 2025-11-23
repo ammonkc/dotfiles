@@ -1,0 +1,159 @@
+# ---------------------------------
+# Aliases
+# ---------------------------------
+
+alias c='clear'
+alias q='exit'
+alias ..='cd ..'
+alias mkdir='mkdir -pv'
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias rm='rm -iv'
+alias rmdir='rmdir -v'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# ---- navigation -----
+alias ..="cd ../"
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias ~="cd ~" 						# `cd` is probably faster to type though
+alias home="cd ~"
+alias -- -="cd -"
+alias zz="cd -"
+alias la='ls -lAh'
+alias lsa="ls -aG"
+alias ldot='ls -ld .*'				# List dotfiles
+alias lsd='ls -l | grep "^d"'		# List only directories
+
+# ---- neovim (nvim) -----
+if (( $+commands[nvim] )); then
+	alias vi='nvim'
+	alias vim='nvim'
+	alias svi='sudo nvim'
+	alias svim='nvim sudo:'
+	alias vis='nvim "+set si"'
+elif (( $+commands[vim] )); then
+	alias vi='vim'
+	alias svi='sudo vim'
+	alias svim='vim sudo:'
+	alias vis='vim "+set si"'
+fi
+
+# ---- Eza (better ls) -----
+if (( $+commands[eza] )); then
+    alias ls="eza --icons=always"
+fi
+
+# ---- Bat (better cat) -----
+# Link: https://github.com/sharkdp/bat
+if (( $+commands[bat] )); then
+    alias cat='bat'
+fi
+
+# ---- gnu grep -----
+if (( $+commands[ggrep] )); then
+	alias grep='ggrep'
+fi
+
+# ---- gnu sed -----
+if (( $+commands[gsed] )); then
+	alias sed='gsed'
+fi
+
+# ---- gnu tar -----
+if (( $+commands[gtar] )); then
+	alias tar='gtar'
+fi
+
+# ---- gnu awk -----
+if (( $+commands[gawk] )); then
+	alias awk='gawk'
+fi
+
+# ---- lazygit -----
+# Link: https://github.com/jesseduffield/lazygit
+if (( $+commands[lazygit] )); then
+    alias lg='lazygit'
+fi
+
+# ---- TheFuck -----
+if (( $+commands[thefuck] )); then
+	eval $(thefuck --alias)           # thefuck alias
+	eval $(thefuck --alias fk)        # fk alias
+fi
+
+# ---- homebrew -----
+if (( $+commands[brew] )); then
+	alias brw='brew'
+fi
+
+# Get local IP addresses
+if (( $+commands[ip] )); then
+    alias iplocal="ip -br -c a"
+else
+    alias iplocal="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+fi
+
+# ---- Network -----
+alias myip='curl ifconfig.me/ip'
+alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias localip="ipconfig getifaddr en1"
+alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+alias whois="whois -h whois-servers.net"	# Enhanced WHOIS lookups
+alias flush="dscacheutil -flushcache"		# Flush Directory Service cache
+
+# ---- PHP -----
+alias cfresh="rm -rf vendor/ composer.lock && composer i"
+alias composer="php -d memory_limit=-1 /opt/homebrew/bin/composer"
+# determine versions of PHP installed with HomeBrew
+installedPhpVersions=($(brew ls --versions | ggrep -E 'php(@.*)?\s' | ggrep -oP '(?<=\s)\d\.\d' | uniq | sort))
+
+# create alias for every version of PHP installed with HomeBrew
+for phpVersion in ${installedPhpVersions[*]}; do
+    value="{"
+
+    for otherPhpVersion in ${installedPhpVersions[*]}; do
+        if [ "${otherPhpVersion}" = "${phpVersion}" ]; then
+            continue;
+        fi
+
+        value="${value} brew unlink php@${otherPhpVersion};"
+    done
+
+    value="${value} brew link php@${phpVersion} --force --overwrite; } &> /dev/null && php -v"
+
+    alias "php${phpVersion}"="${value}"
+done
+
+# ---- Laravel -----
+alias a="php artisan"
+alias fresh="php artisan migrate:fresh --seed"
+alias tinker="php artisan tinker"
+alias seed="php artisan db:seed"
+alias serve="php artisan serve"
+alias artest="php -d xdebug.mode="off" -d memory_limit=-1 -d max_execution_time=0 artisan test --parallel -vvv"
+
+# ---- Docker -----
+alias docker-composer="docker compose"
+# ---- IDL Docker -----
+alias docker-up="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml --profile sftp --profile php8-work up --force-recreate --build --detach --remove-orphans"
+alias docker-down="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml --profile sftp --profile php8-work down"
+alias dup=docker-up
+alias ddown=docker-down
+alias dart=docker-artisan
+
+# ---- genAI -----
+alias genailogin='export AWS_PROFILE=genai;aws sso login --profile genai'
+
+# ---- Shortcuts -----
+alias clear-zsh-cache='rm -rf ~/.cache/zsh/zsh-eval-cache/* && echo "Cache cleared!"'
+alias reloadshell="source $ZDOTDIR/.zshrc"
+alias shrug="echo '¯\_(ツ)_/¯' | pbcopy"
+
+# ---- Git -----
+# Undo a `git push`
+alias undopush="git push -f origin HEAD^:master"

@@ -1,0 +1,46 @@
+{
+    "mcpServers": {
+        "context7": {
+            "command": "npx",
+            "args": ["-y", "@upstash/context7-mcp"]
+        },
+        "filesystem": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-filesystem", "${workspaceFolder}"]
+        },
+        "MCP Installer": {
+            "command": "npx",
+            "type": "stdio",
+            "args": ["cursor-mcp-installer-free@0.1.3", "index.mjs"]
+        },
+        "playwright": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["@playwright/mcp@latest"]
+        },
+        "git": {
+            "command": "~/.local/bin/uvx",
+            "args": ["mcp-server-git"]
+        },
+        "mcp-server-time": {
+            "command": "~/.local/bin/uvx",
+            "type": "stdio",
+            "args": ["mcp-server-time"]
+        },
+        "mysql": {
+            "command": "~/.local/bin/uvx",
+            "type": "stdio",
+            "args": ["@modelcontextprotocol/server-mysql"]
+        },
+        "docker": {
+            "command": "~/.local/bin/uvx",
+            "type": "stdio",
+            "args": ["@modelcontextprotocol/server-docker"]
+        },
+        "brave-search": {
+            "command": "~/.local/bin/uvx",
+            "type": "stdio",
+            "args": ["@modelcontextprotocol/server-brave-search"]
+        }
+    }
+}

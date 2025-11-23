@@ -1,0 +1,29 @@
+# https://spec.editorconfig.org/
+root = true
+
+[*]
+# general options
+end_of_line = lf
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+apply_ignore = true
+
+[*.py]
+indent_size = 4
+
+[{*.rb,Rakefile}]
+indent_style = space
+indent_size = 2
+
+[*.vim]
+indent_style = space
+indent_size = 4
+
+[*.yml,*.yaml,*.toml]
+indent_style = space
+indent_size = 2
+
+
+[*{zprofile,zsh}*]
+ignore = true

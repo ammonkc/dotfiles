@@ -199,7 +199,7 @@ else
   if test ! $(which omz); then
     # Clone Repo
     notice "Downloading"
-    git clone --recursive https://github.com/ammonkc/dotfiles.git --branch master --single-branch $HOME/.dotfiles
+    git clone https://github.com/ammonkc/dotfiles.git --branch main --single-branch $HOME/.dotfiles
   fi
 
   if [ -d $HOME/.dotfiles ]; then

@@ -1,0 +1,237 @@
+console_title_template = '{{ .Shell }} in {{ .Folder }}'
+version = 3
+final_space = true
+
+[upgrade]
+  source = 'cdn'
+  interval = '24h'
+  auto = false
+  notice = false
+
+[palette]
+  fine-pine = "#279c00"
+  red-pegasus = "#df000e"
+  lost-space = "#92918d"
+  haiti = "#292D3E"
+  git-dirty = "#f26d50"
+  laravel-red = "#f53003"
+  php-purple = "#4F5B93"
+  node-green = "#689f63"
+  go-cyan = "#00acd7"
+  ruby-red = "#AE1401"
+  docker-blue = "#0B59E7"
+  az-yellow = "#FEAC19"
+
+[secondary_prompt]
+  background = "transparent"
+  foreground = "p:fine-pine" #"#4e9a06"
+  template = "❯❯ "
+
+[transient_prompt]
+  background = "transparent"
+  foreground = "p:fine-pine" #"#4e9a06"
+  foreground_templates = ['{{ if gt .Code 0 }}p:red-pegasus{{ end }}']
+  template = "❯ "
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+
+  [[blocks.segments]]
+    template = ' {{ if .WSL }}WSL at {{ end }}{{.Icon}} '
+    foreground = "black" #'#000000'
+    background = "p:lost-space" #'#92918E'
+    type = 'os'
+    style = 'powerline'
+
+  [[blocks.segments]]
+    template = '{{ .Path }}{{ if .RootDir }} / {{ end }}{{ if not .Writable }} 󰌾{{ else }}{{ if and .Writable .Root }} 󰿆 {{end}}{{ end }} '
+    foreground = "lightWhite" #'#e4e4e4'
+    powerline_symbol = ''
+    background = "blue" #'#3465a4'
+    type = 'path'
+    style = 'powerline'
+
+    [blocks.segments.properties]
+      home_icon = ' ~'
+      folder_icon = ' \uf115 '
+      style = 'full'
+      mapped_locations = [
+        ["/", "  "],
+        ["~/", " ~"],
+        ["~/Documents/", " \uea7b Documents"],
+        ["~/Downloads/", " \uf409 Downloads"],
+        ["~/Movies/", " \uf500 Movies"],
+        ["~/Music/", " \uec1b Music"],
+        ["~/Developer/", " \uf121 "],
+        ["~/Developer/code/", " \uf121 "],
+        ["~/Developer/src/", " \uf126 "],
+        ["~/Developer/repos/", " \uf126 "],
+      ]
+
+  [[blocks.segments]]
+    template = ' {{ .UpstreamIcon }} {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} '
+    foreground = "black" #'#000000'
+    powerline_symbol = ''
+    background = "green" #'#4e9a06'
+    type = 'git'
+    style = 'powerline'
+    background_templates = ['{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}', '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-dirty{{ end }}', '{{ if gt .Ahead 0 }}cyan{{ end }}', '{{ if gt .Behind 0 }}green{{ end }}']
+
+    [blocks.segments.properties]
+      branch_icon = ' '
+      fetch_status = true
+      fetch_upstream_icon = true
+
+[[blocks]]
+  type = 'rprompt'
+  alignment = 'right'
+
+  [[blocks.segments]]
+    template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
+    foreground = "p:fine-pine" #'#d3d7cf'
+    powerline_symbol = ''
+    background = "p:haiti" #'#292D3E'
+    type = 'status'
+    style = 'powerline'
+    foreground_templates = ['{{ if gt .Code 0 }}p:white{{ else }}p:fine-pine{{ end }}']
+    background_templates = ['{{ if gt .Code 0 }}p:red-pegasus{{ end }}']
+    invert_powerline = true
+
+    [blocks.segments.properties]
+      always_enabled = true
+
+  [[blocks.segments]]
+    template = ' {{ .FormattedMs }}  '
+    foreground = "black" #'#000000'
+    powerline_symbol = ''
+    background = "yellow" #'#c4a000'
+    type = 'executiontime'
+    style = 'powerline'
+    invert_powerline = true
+
+  [[blocks.segments]]
+    type = "command"
+    style = "powerline"
+    powerline_symbol = ''
+    foreground = "p:laravel-red"
+    background = "p:haiti"
+    template = "{{ if .Output }} {{ .Output }} {{ end }}"
+    # Configuration to only show the segment in a Laravel project
+    [blocks.segments.properties]
+      # This property targets specific files to be present for the segment to render
+      shell = "bash"
+      command = "if [ -f artisan ]; then echo $(php artisan -V | awk '{print $3}'); fi"
+      # files = ["artisan"]
+
+  [[blocks.segments]]
+    type = "php"
+    style = "powerline"
+    powerline_symbol = ''
+    invert_powerline = true
+    foreground = "lightWhite"
+    background = "p:php-purple"
+    template = "  {{ .Full }} "
+
+    [blocks.segments.properties]
+      fetch_version = true
+
+  [[blocks.segments]]
+    template = ' {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  '
+    foreground = "lightWhite"
+    powerline_symbol = ''
+    background = "p:node-green" #'#689f63'
+    type = 'node'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.properties]
+      fetch_version = true
+
+  [[blocks.segments]]
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
+    foreground = "black" #'#111111'
+    powerline_symbol = ''
+    background = "p:go-cyan" #'#00acd7'
+    type = 'go'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.properties]
+      fetch_version = true
+
+  [[blocks.segments]]
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
+    foreground = "black" #'#111111'
+    powerline_symbol = ''
+    background = "lightYellow" #'#FFDE57'
+    type = 'python'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.properties]
+      display_mode = 'files'
+      fetch_virtual_env = false
+
+  [[blocks.segments]]
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
+    foreground = "lightWhite"
+    powerline_symbol = ''
+    background = "p:ruby-red" #'#AE1401'
+    type = 'ruby'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.properties]
+      display_mode = 'files'
+      fetch_version = true
+
+  [[blocks.segments]]
+    type = "docker"
+    style = "powerline"
+    powerline_symbol = ''
+    foreground = "black" #"#000000"
+    background = "p:docker-blue" #"#0B59E7"
+    template = "  {{ .Context }} "
+
+  [[blocks.segments]]
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} '
+    foreground = "lightWhite"
+    powerline_symbol = ''
+    background = "p:az-yellow" #'#FEAC19'
+    type = 'azfunc'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.properties]
+      display_mode = 'files'
+      fetch_version = false
+
+  [[blocks.segments]]
+    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
+    foreground = "lightWhite"
+    powerline_symbol = ''
+    type = 'aws'
+    style = 'powerline'
+    background_templates = ['{{if contains "default" .Profile}}#FFA400{{end}}', '{{if contains "jan" .Profile}}#f1184c{{end}}']
+    invert_powerline = true
+
+    [blocks.segments.properties]
+      display_default = false
+
+  [[blocks.segments]]
+    template = '  '
+    foreground = "black"
+    powerline_symbol = ''
+    background = "lightYellow" #'#ffff66'
+    type = 'root'
+    style = 'powerline'
+    invert_powerline = true
+
+  [[blocks.segments]]
+    template = ' {{ .CurrentDate | date .Format }}  '
+    foreground = "black" #'#000000'
+    background = "white" #'#d3d7cf'
+    type = 'time'
+    style = 'powerline'
+    invert_powerline = true

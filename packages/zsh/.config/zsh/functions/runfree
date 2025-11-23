@@ -1,0 +1,4 @@
+# Start a program but immediately disown it and detach it from the terminal
+# function runfree() {
+    "$@" > /dev/null 2>&1 & disown
+# }

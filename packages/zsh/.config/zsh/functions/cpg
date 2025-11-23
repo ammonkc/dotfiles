@@ -1,0 +1,8 @@
+# Copy and go to the directory
+# function cpg() {
+	if [[ -d "$2" ]];then
+		cp "$1" "$2" && cd "$2"
+	else
+		cp "$1" "$2"
+	fi
+# }

@@ -1,0 +1,73 @@
+#---------------------------------------------------
+# Configs
+#---------------------------------------------------
+theme                             = Molokai
+font-family                       = MesloLGS NF Regular
+font-size                         = 12
+adjust-cell-height                = 5%
+background                        = #17242f
+background-opacity                = 0.85
+background-blur                   = 18
+cursor-style                      = block
+bold-is-bright                    = true
+selection-background              = #183858
+split-divider-color               = #37454f
+scrollback-limit                  = 1000000
+shell-integration                 = zsh
+confirm-close-surface             = false
+window-colorspace                 = "display-p3"
+window-padding-x                  = 8
+window-padding-y                  = 5,0
+window-save-state                 = always
+window-inherit-working-directory  = false
+working-directory                 = home
+initial-window                    = false
+quick-terminal-screen             = macos-menu-bar
+quick-terminal-animation-duration = 0.15
+shell-integration-features        = no-cursor
+copy-on-select                    = clipboard
+auto-update-channel               = tip
+
+#---------------------------------------------------
+# Macos
+#---------------------------------------------------
+macos-titlebar-style              = transparent
+macos-hidden                      = always
+macos-icon                        = blueprint
+macos-secure-input-indication     = true
+macos-shortcuts                   = allow
+
+#---------------------------------------------------
+# Keybindings
+#---------------------------------------------------
+
+# global vizor mode
+keybind = global:alt+space=toggle_quick_terminal
+
+# General
+keybind = super+s>r=reload_config
+keybind = super+s>a=select_all
+keybind = super+s>c=copy_to_clipboard
+keybind = super+s>v=paste_from_clipboard
+keybind = super+s>k>i>l>l=close_surface
+
+# window stuff
+keybind = super+enter=toggle_fullscreen
+keybind = shift+super+enter=toggle_split_zoom
+
+# split navigation
+keybind = shift+super+right=goto_split:next
+keybind = shift+super+left=goto_split:previous
+keybind = shift+super+up=goto_split:top
+keybind = shift+super+down=goto_split:bottom
+
+# Tab navigation
+keybind = shift+super+[=previous_tab
+keybind = shift+super+]=next_tab
+
+# Prompt navigation
+keybind = alt+b=jump_to_prompt:-1
+keybind = alt+up=jump_to_prompt:-1
+keybind = alt+f=jump_to_prompt:1
+keybind = alt+down=jump_to_prompt:1
+keybind = shift+enter=text:\n

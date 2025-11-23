@@ -1,0 +1,64 @@
+# Cached eval function for slow initialization commands
+local cmd="$1"
+local eval_cmd="$2"
+
+# Find the command's full path
+local cmd_path="${commands[$cmd]}"
+[[ -z "$cmd_path" ]] && return 1
+
+# Generate cache filename based on binary's modification time
+local mtime
+if [[ "$OSTYPE" == darwin* ]]; then
+    mtime=$(stat -f %m "$cmd_path" 2>/dev/null)
+else
+    mtime=$(stat -c %Y "$cmd_path" 2>/dev/null)
+fi
+
+# Include a hash of the eval command in the cache filename
+local cache_key="${cmd}-${mtime}-$(echo "$eval_cmd" | md5)"
+local cache_file="${ZSH_CACHE_DIR:-$HOME/.cache/zsh}/zsh-eval-cache/${cache_key}.zsh"
+
+# Helper function to generate cache
+_generate_cache() {
+    mkdir -p "$(dirname "$cache_file")"
+
+    # Generate with error handling
+    if ! eval "$eval_cmd" > "$cache_file" 2>/dev/null; then
+        rm -f "$cache_file"  # Clean up failed generation
+        return 1
+    fi
+
+    # Validate generated cache is not empty
+    if [[ ! -s "$cache_file" ]]; then
+        rm -f "$cache_file"
+        return 1
+    fi
+
+    return 0
+}
+
+# Try to use existing cache
+if [[ -f "$cache_file" && -s "$cache_file" ]]; then
+    # Attempt to source cache, regenerate if it fails
+    if ! source "$cache_file" 2>/dev/null; then
+        # Cache is corrupted, regenerate
+        rm -f "$cache_file"
+        if _generate_cache; then
+            source "$cache_file"
+        else
+            # Fall back to direct eval if cache generation fails
+            eval "$eval_cmd"
+        fi
+    fi
+else
+    # Clean up old cache files for this command
+    rm -f "${ZSH_CACHE_DIR:-$HOME/.cache/zsh}/zsh-eval-cache/${cmd}"-*.zsh(N)
+
+    # Generate new cache
+    if _generate_cache; then
+        source "$cache_file"
+    else
+        # Fall back to direct eval if cache generation fails
+        eval "$eval_cmd"
+    fi
+fi

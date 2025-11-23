@@ -1,0 +1,85 @@
+## Type additions
+
+--type-add
+blade:*.{blade.php}
+
+--type-add
+laravel_model:*/Models/**/*.php
+
+--type-add
+laravel_action:*/Actions/**/*.php
+
+--type-add
+laravel_service:*/Services/**/*.php
+
+--type-add
+laravel_controller:*/Http/Controllers/**/*.php
+
+--type-add
+laravel_command:*/Console/Commands/**/*.php
+
+--type-add
+laravel_migration:*/migrations/**/*.php
+
+--type-add
+laravel_config:*/config/**/*.php
+
+--type-add
+laravel_test:*/tests/**/*.php
+
+# Add my 'web' type.
+--type-add
+frontend:*.{blade.php,html,css,scss,js,jsx,ts,tsx}*
+
+--type-add
+laravel:include:laravel_action,laravel_command,laravel_service,laravel_model,laravel_controller,laravel_migration,laravel_config,laravel_test,blade,frontend
+
+# add new types to search by
+--type-add
+style:*.{css,sass,less,stylus}
+
+--type-add
+spec:*.{spec,test}.{ts,tsx,js,jsx}
+
+--type-add
+test:*.{spec,test}.{php,ts,tsx,js,jsx}
+
+--type-add
+php:*.php
+
+--type-add
+ts:*.ts
+
+--type-add
+tsx:*.tsx
+
+--type-add
+js:*.js
+
+--type-add
+jsx:*.jsx
+
+--type-add
+json:*.json
+
+--type-add
+gql:*.{graphql,gql}
+
+--type-add
+pkg:package.json
+
+# ignore case
+--smart-case
+
+# Markdown (and MDX)
+--type-add
+md:*.{md,mdx}
+
+# follow symlinks
+--follow
+
+# include hidden files
+--hidden
+
+# Don't go into the .git/ directory
+--glob=!.git/*

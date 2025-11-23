@@ -1,0 +1,88 @@
+# By default, ignore project-specific vimrc
+/.vimrc
+/.vimrc.lua
+/.vim
+/.nvim.lua
+/.lazy.lua
+/coverage.xml
+.phpactor.json
+.cache
+.idea/
+.vscode
+.vagrant/
+.vimrc.local
+.vim/coc-settings.json
+
+# node
+/node_modules
+
+# Mac osx ignores
+*.DS_Store
+Thumbs.db
+*~
+*.swp
+.AppleDouble
+.LSOverride
+
+## Icon must end with two \r
+Icon
+
+## Thumbnails
+._*
+
+## Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+## Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+.apdisk
+
+
+# Compiled sources
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# log files
+*.log
+
+# typescript command garbage
+tscommand*.txt
+
+# npm things
+npm-debug.log
+
+# local databases
+*.sqlite
+
+# mise local config
+.mise/config.local.toml
+.mise.local.toml
+mise.local.toml
+
+# package-local env (often used for secrets)
+.env
+.env.*
+
+# Coding assistant related Hint files
+/.vectorcode/
+/.codanna/
+/.claude/
+/.cursor/
+/.claude/
+/.qodo/
+/CLAUDE.local.md
+/.goosehints
+.cursorignore
+.rules
+**/.claude/settings.local.json

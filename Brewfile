@@ -1,153 +1,176 @@
 # Taps
-tap 'homebrew/cask'
-tap 'homebrew/cask-fonts'
-tap 'homebrew/cask-versions'
-tap 'homebrew/bundle'
-tap 'nicoverbruggen/homebrew-cask'
 tap 'shivammathur/php'
+tap 'shivammathur/extensions'
 
-# Binaries
-brew 'ack'
-brew 'awscli'
-brew 'bash' # Latest Bash version
-brew 'bat' # Used for spatie/visit
-brew 'coreutils' # Those that come with macOS are outdated
-brew 'entr'
-brew 'ffmpeg'
-brew 'findutils'
-brew 'fzf'
-brew 'gh'
-brew 'git'
-brew 'git-flow'
-brew 'gnupg'
-brew 'grep'
-brew 'gstat'
-brew 'hub'
-brew 'htop'
-brew 'httpie'
-brew 'jq' # Used for spatie/visit
-brew 'mackup'
-brew 'mas' # Mac App Store manager
-brew 'mc' # midnight-commander
-brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
-brew 'rg' # ripgrep
-brew 'svn' # Needed to install fonts
-brew 'tree'
-brew 'vim'
-brew 'wget'
-brew 'zlib' # Needed for Memcached
-brew 'zoxide'
-
-# Spatie Medialibrary
-brew 'jpegoptim'
-brew 'optipng'
-brew 'pngquant'
-brew 'svgo'
-brew 'gifsicle'
+# cli tools
+brew 'ack'                  # Search tool like grep, but optimized for programmers
+brew 'atuin'                # Improved shell history for zsh, bash, fish and nushell
+brew 'awscli'               # Official Amazon AWS command-line interface
+brew 'bash'                 # Latest Bash version
+brew 'bat'                  # Clone of cat(1) with syntax highlighting and Git integration
+brew 'colima'               # Container runtimes on MacOS (and Linux) with minimal setup
+brew 'curl'                 # Get a file from an HTTP, HTTPS or FTP server
+brew 'curlie'               # Power of curl, ease of use of httpie
+brew 'eza'                  # Modern, maintained replacement for ls
+brew 'fastfetch'            # Like neofetch, but much faster because written mostly in C
+brew 'fd'                   # Simple, fast and user-friendly alternative to find
+brew 'fzf'                  # Command-line fuzzy finder written in Go
+brew 'gawk'                 # GNU awk utility
+brew 'gh'                   # GitHub command-line tool
+brew 'gifsicle'             # GIF image/animation creator/editor
+brew 'git'                  # Distributed revision control system
+brew 'git-delta'            # Syntax-highlighting pager for git and diff output
+brew 'git-flow'             # Extensions to follow Vincent Driessen's branching model
+brew 'git-lfs'              # Git extension for versioning large files
+brew 'glow'                 # markdown viewer
+brew 'gnu-sed'              # GNU implementation of the famous stream editor
+brew 'gnu-tar'              # GNU version of the tar archiving utility
+brew 'gnupg'                # GNU Pretty Good Privacy (PGP) package
+brew 'go-task'              # Task is a task runner/build tool thats simpler and easier to use
+brew 'grex'                 # Command-line tool for generating regular expressions
+brew 'htop'                 # Improved top (interactive process viewer)
+brew 'httpie'               # User-friendly cURL replacement (command-line HTTP client)
+brew 'jpegoptim'            # Utility to optimize JPEG files
+brew 'jq'                   # Lightweight and flexible command-line JSON processor
+brew 'lazydocker'           # Lazier way to manage everything docker
+brew 'lazygit'              # Simple terminal UI for git commands
+brew 'midnight-commander'   # Terminal-based visual file manager
+brew 'mise'                 # Polyglot runtime manager (asdf rust clone)
+brew 'neovim'               # Ambitious Vim-fork focused on extensibility and agility
+brew 'opencode'             # AI coding agent, built for the terminal
+brew 'optipng'              # PNG file optimizer
+brew 'pinentry-mac'         # Pinentry for GPG on Mac
+brew 'pkgconf'              # Package compiler and linker metadata toolkit
+brew 'pngquant'             # PNG image optimizing utility
+brew 'procs'                # Modern replacement for ps written in Rust
+brew 'stow'                 # Organize software neatly under a single directory tree (e.g. /usr/local)
+brew 'ripgrep'              # Search tool like grep and The Silver Searcher
+brew 'svgo'                 # Nodejs-based tool for optimizing SVG vector graphics files
+brew 'tlrc'                 # Very fast implementation of tldr in Rust
+brew 'thefuck'              # Programmatically correct mistyped console commands
+brew 'tmux'                 # Terminal multiplexer
+brew 'tree'                 # Display directories as trees (with optional color/HTML output)
+brew 'vim'                  # Vi 'workalike' with many additional features
+brew 'wget'                 # Internet file retriever
+brew 'yazi'                 # Blazing fast terminal file manager written in Rust, based on async I/O
+brew 'zlib'                 # Needed for Memcached
+brew 'zoxide'               # Shell extension to navigate your filesystem faster
+brew 'zimfw'                # Zsh plugin manager
+brew 'zsh'                  # UNIX shell (command interpreter)
+brew 'zsh-autosuggestions'  # Fish-like fast/unobtrusive autosuggestions for zsh
+brew 'zsh-completions'      # Additional completion definitions for zsh
+brew 'zsh-fast-syntax-highlighting' # Feature-rich syntax highlighting for Zsh
+brew 'zsh-history-substring-search' # Zsh port of Fish shell's history search
 
 # Development
-brew 'php'
-brew 'php@8.2'
-brew 'php@8.1'
-brew 'php@8.0'
-brew 'composer'
-brew 'imagemagick'
-brew 'meilisearch'
-brew 'node'
+brew 'node'                     # Open-source, cross-platform JavaScript runtime environment
+brew 'php'                      # php language
+brew 'composer'                 # Package Manager for PHP
+brew 'imagemagick'              # Tools and libraries to manipulate images in many formats
+brew 'shivammathur/php/php@8.3' # php version 8.3
+brew 'shivammathur/php/php@8.2' # php version 8.2
+brew 'shivammathur/php/php@8.1' # php version 8.1
+# php 8.4 exts
+brew 'shivammathur/extensions/pcov@8.4'
+brew 'shivammathur/extensions/xdebug@8.4'
+brew 'shivammathur/extensions/imagick@8.4'
+brew 'shivammathur/extensions/redis@8.4'
+# php 8.3 exts
+brew 'shivammathur/extensions/pcov@8.3'
+brew 'shivammathur/extensions/xdebug@8.3'
+brew 'shivammathur/extensions/imagick@8.3'
+brew 'shivammathur/extensions/redis@8.3'
+# php 8.2 exts
+brew 'shivammathur/extensions/pcov@8.2'
+brew 'shivammathur/extensions/xdebug@8.2'
+brew 'shivammathur/extensions/imagick@8.2'
+brew 'shivammathur/extensions/redis@8.2'
+# php 8.1 exts
+brew 'shivammathur/extensions/pcov@8.1'
+brew 'shivammathur/extensions/xdebug@8.1'
+brew 'shivammathur/extensions/imagick@8.1'
+brew 'shivammathur/extensions/redis@8.1'
 
-# Apps casks
-cask '1password'
-cask 'airbuddy'
-cask 'bartender'
-cask 'docker'
-cask 'dropbox'
-cask 'firefox'
-cask 'folx'
-cask 'github'
-cask 'gitup'
-cask 'google-chrome'
-cask 'handbrake'
-cask 'hidock'
-cask 'iina'
-cask 'imagealpha'
-cask 'imageoptim'
-cask 'insomnia'
-cask 'istat-menus'
-cask 'iterm2'
-cask 'karabiner-elements'
-cask 'latest'
-cask 'microsoft-excel'
-cask 'microsoft-teams'
-cask 'microsoft-outlook'
-cask 'microsoft-word'
-cask 'monitorcontrol'
-cask 'moom'
-cask 'omnidisksweeper'
-cask 'postman'
-cask 'phpstorm'
-cask 'rapidapi'
-cask 'raycast'
-cask 'screens'
-cask 'screens-connect'
-cask 'subler'
-cask 'sublime-text'
-cask 'tableplus'
-cask 'the-unarchiver'
-cask 'tinkerwell'
-cask 'tor-browser'
-cask 'transmission'
-cask 'transmit'
-cask 'tunnelblick'
-cask 'tuple'
-# cask 'vagrant' # sudo softwareupdate --install-rosetta
-cask 'vidl'
-# cask 'virtualbox' # Might need to allow access in Security settings
-cask 'visual-studio-code'
-cask 'vlc'
-cask 'xit'
+# Agentic AI
+brew 'claude-code'             # Terminal-based AI coding assistant
+brew 'opencode'                # AI coding agent, built for the terminal
 
-# Quicklook
-cask 'qlmarkdown'
-cask 'quicklook-json'
-cask 'quicklook-csv'
-cask 'qlvideo'
+if OS.mac?
+    # macOS-specific cli tools
+    brew 'mas'                 # Mac App Store manager
+    brew 'terminal-notifier'   # Send macOS User Notifications from the command-line
+    brew 'svn'                 # Needed to install fonts via Homebrew casks
 
-# Fonts
-cask 'font-hack-nerd-font'
-cask 'font-hack'
-cask 'font-lato'
-cask 'font-open-sans'
-cask 'font-roboto'
-cask 'font-source-code-pro-for-powerline'
-cask 'font-source-code-pro'
-cask 'font-source-sans-pro'
-cask 'font-source-serif-pro'
-cask 'font-fira-code'
+    # GNU tools (macOS needs these, Linux has them by default)
+    brew 'coreutils'           # Those that come with macOS are outdated
+    brew 'findutils'           # Collection of GNU find, xargs, and locate
+    brew 'gnu-sed'             # GNU implementation of the famous stream editor
+    brew 'grep'                # GNU grep, egrep and fgrep
 
-# Mac App Store
-mas '1Blocker - Ad Blocker', id: 1365531024
-mas 'Amphetamine', id: 937984704
-mas 'Boop', id: 1518425043
-mas 'Byword', id: 420212497
-mas 'Coin Tick - Menu Bar Crypto', id: 1141688067
-mas 'Dropzone 4', id: 1485052491
-mas 'Gestimer', id: 990588172
-mas 'Glance - Quick Look Code Files', id: 1564688210
-mas 'HazeOver • Distraction Dimmer', id: 430798174
-mas 'LookUp: English dictionary', id: 872564448
-mas 'Moom', id: 419330170
-mas 'Numbers', id: 409203825
-mas 'Paste - Clipboard Manager', id: 967805235
-mas 'PCalc', id: 403504866
-mas 'Pixave', id: 924891282
-mas 'Pixelmator Pro', id: 1289583905
-mas 'Redacted', id: 984968384
-mas 'Reeder 5.', id: 1529448980
-mas 'Sequel Ace', id: 1518036000
-mas 'Soulver 2', id: 413965349
-mas 'Tailscale', id: 1475387142
-mas 'xScope 4', id: 889428659
-mas 'Yoink - Improved Drag and Drop', id: 457622435
-# mas 'The Unarchiver', id: 425424353
-# mas 'Keynote', id: 409183694
-# mas 'Things', id: 904280696
+    # Code Editors
+    cask 'claude-code'         # Terminal-based AI coding assistant
+    cask 'conductor'           # Claude code parallelisation
+    cask 'cursor'              # Agentic AI code editor
+    cask 'phpstorm'            # PHP IDE by JetBrains
+    cask 'visual-studio-code'  # Microsoft Visual Studio Code
+    cask 'zed'                 # Agentic code editor
+
+    # Apps casks
+    cask '1password'           # 1Password app
+    cask '1password-cli'       # Command-line interface for 1Password
+    cask 'bartender'           # Menu bar icon organiser
+    cask 'betterdisplay'       # Display management tool
+    cask 'boop'                # Scriptable scratchpad for developers
+    cask 'docker'              # Pack, ship and run any application as a lightweight container
+    cask 'espanso'             # Cross-platform Text Expander written in Rust
+    cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
+    cask 'github'              # GitHub Desktop
+    cask 'google-chrome'       # Google Chrome browser
+    cask 'hammerspoon'         # Desktop automation application
+    cask 'handbrake'           # Open-source video transcoder available for Linux, Mac, and Windows
+    cask 'iina'                # Free and open-source media player
+    cask 'imagealpha'          # Utility to reduce the size of 24-bit PNG files
+    cask 'imageoptim'          # Tool to optimise images to a smaller size
+    cask 'istat-menus'         # System monitoring app
+    cask 'iterm2'              # Terminal emulator as alternative to Apple's Terminal app
+    cask 'jordanbaird-ice'     # Menu bar manager
+    cask 'karabiner-elements'  # Keyboard customiser
+    cask 'keka'                # the macOS file archiver
+    cask 'keycastr'            # Open-source keystroke visualiser
+    cask 'latest'              # Utility that shows the latest app updates
+    cask 'leader-key'          # Keyboard Application launcher
+    cask 'monitorcontrol'      # Tool to control external monitor brightness & volume
+    cask 'moom'                # Utility to move and zoom windows—on one display
+    cask 'orbstack'            # Replacement for Docker Desktop
+    cask 'omnidisksweeper'     # Finds large, unwanted files and deletes them
+    cask 'paste'               # Limitless clipboard
+    cask 'pika'                # Colour picker for colours onscreen
+    cask 'postman'             # Collaboration platform for API development
+    cask 'raycast'             # Control your tools with a few keystrokes
+    cask 'sequel-ace'          # MySQL/MariaDB database management
+    cask 'screens'             # Remote access software focusing on usability
+    cask 'slack'               # Team communication and collaboration software
+    cask 'subler'              # Mux and tag mp4 files
+    cask 'superwhisper'        # Dictation tool including LLM reformatting
+    cask 'tableplus'           # Native GUI tool for relational databases
+    cask 'tailscale'           # Mesh VPN based on WireGuard
+    cask 'transmit'            # File transfer application
+    cask 'utm'                 # Virtual machines UI using QEMU
+    cask 'vlc'                 # Multimedia player
+    cask 'yaak'                # REST, GraphQL and gRPC client
+    cask 'zoom'                # Video communication and virtual meeting platform
+
+    # Fonts
+    cask 'font-meslo-lg-nerd-font'
+    cask 'font-jetbrains-mono-nerd-font'
+    cask 'font-hack-nerd-font'
+
+    # Quicklook
+    cask 'qlcolorcode'      #
+    cask 'qlimagesize'      #
+    cask 'qlmarkdown'       # Quick Look generator for Markdown files
+    cask 'qlstephen'        #
+    cask 'quicklook-json'   # depricated
+    cask 'quicklook-csv'    # depricated
+    cask 'qlvideo'          # Thumbnails, static previews, and metadata for video files
+end

@@ -1,0 +1,112 @@
+# Start configuration
+
+# cache evals
+zmodule-custom() {
+  local zcommand zname ztarget
+  local -a zargs
+  zcommand=${1}
+  zname=custom/${zcommand}
+  shift
+  while (( # > 0 )); do
+    case ${1} in
+      --name)
+        shift
+        zname=${1}
+        ;;
+      --if)
+        shift
+        zargs+=(--if "(( \${+commands[${zcommand}]} )) && ${1}")
+        ;;
+      --if-command)
+        shift
+        zargs+=(--if "(( \${+commands[${zcommand}]} && \${+commands[${1}]} ))")
+        ;;
+      --if-ostype)
+        shift
+        zargs+=(--if "(( \${+commands[${zcommand}]} )) && [[ \${OSTYPE} == ${1} ]]")
+        ;;
+      --on-pull)
+        shift
+        zargs+=(--on-pull ${1})
+        ;;
+      -d|--disabled)
+        zargs+=(--disabled)
+        ;;
+      -f|--fpath)
+        shift
+        zargs+=(--fpath ${1})
+        ;;
+      -a|--autoload)
+        shift
+        zargs+=(--autoload ${1})
+        ;;
+      -s|--source)
+        shift
+        zargs+=(--source ${1})
+        ;;
+      -c|--cmd)
+        shift
+        zargs+=(--cmd ${1})
+        ;;
+      --comp)
+        shift
+        ztarget=functions/_${1//[^[:IDENT:]]/-}
+        zargs+=(--on-pull "mkdir -p functions")
+        zargs+=(--fpath functions)
+        zargs+=(--cmd "if [[ ! {}/${ztarget} -nt \${commands[${zcommand}]} ]]; then ${1} >! {}/${ztarget}; fi")
+        zargs+=(--cmd "if (( \${+_comps} && ! \${+_comps[${zcommand}]} )); then autoload -Uz ${ztarget:t}; _comps[${zcommand}]=${ztarget:t}; fi")
+        ;;
+      --eval)
+        shift
+        ztarget=${1//[^[:IDENT:]]/-}.zsh
+        zargs+=(--cmd "if [[ ! {}/${ztarget} -nt \${commands[${zcommand}]} ]]; then ${1} >! {}/${ztarget}; zcompile -UR {}/${ztarget}; fi")
+        zargs+=(--source ${ztarget})
+        ;;
+      *)
+        print "Unknown zmodule option ${1}"
+        return 2
+        ;;
+    esac
+    shift
+  done
+
+  zmodule custom-${zcommand} --name ${zname} --use mkdir --if-command ${zcommand} ${zargs}
+}
+
+# -------
+# Modules
+# -------
+
+zmodule fzf                                     # Configures fzf for faster fetching of files and directories names.
+zmodule input                                   # Applies correct bindkeys for input events.
+
+zmodule $BREW_DATA_HOME/zsh-fast-syntax-highlighting --name fast-syntax-highlighting    # syntax-highlighting
+
+# ----------
+# Completion
+# ----------
+
+zmodule $BREW_DATA_HOME/zsh-completions         # Additional completion definitions for Zsh.
+zmodule-custom docker --comp "docker completion zsh"
+# completion must be sourced after zsh-users/zsh-completions
+zmodule completion                              # Enables and configures smart and extensive tab completion.
+
+# -------------------------------------
+# Modules that must be initialized last
+# -------------------------------------
+
+zmodule $BREW_DATA_HOME/zsh-autosuggestions           # Fish-like autosuggestions for Zsh.
+# zsh-users/zsh-syntax-highlighting must be sourced after completion
+# zmodule $BREW_DATA_HOME/zsh-syntax-highlighting       # Fish-like syntax highlighting for Zsh.
+# zsh-users/zsh-history-substring-search must be sourced after zsh-users/zsh-syntax-highlighting
+zmodule $BREW_DATA_HOME/zsh-history-substring-search  # Fish-like history search (up arrow) for Zsh.
+
+# zmodule kiesman99/zim-zoxide      # initialized in .zshrc
+zmodule z-shell/zsh-eza
+zmodule MohamedElashri/fd-zsh
+zmodule Aloxaf/fzf-tab
+zmodule mdumitru/git-aliases
+zmodule marvinroman/oh-my-zsh-gpg-plugin
+zmodule Czocher/gpg-crypt
+zmodule le0me55i/zsh-extract -n extract.plugin  # extract(x)
+zmodule junegunn/fzf-git.sh

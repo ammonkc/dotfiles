@@ -1,0 +1,16 @@
+# vim: set filetype=unix/GITCONFIG
+
+# This is copied on install and not overwritten on subsequent calls to install.
+# this is to be used for local git configuration
+# that does not belong in the main ammonkc/dotfiles
+# repo, it is referenced from the main `~/.config/git/config`
+
+[user]
+  email = your.work.email@here.com
+  name = Ammon Casey
+  ; TODO: create an ssh key
+  ; signingkey = /Users/ammonkc/.ssh/id_something.pub
+  ; TODO: cat "git@ammonkc.gg $(cat ~/.ssh/id_something.pub)" > ~/.ssh/allowed_signers
+[github]
+  user = $GITHUB_USER
+  token = $GITHUB_TOKEN
