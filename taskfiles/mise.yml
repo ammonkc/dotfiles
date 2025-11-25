@@ -2,21 +2,43 @@
 version: 3
 
 tasks:
-  install:
-    desc: Installs all mise based tools
+  doctor:
+    desc: Check mise installation and configuration
+    internal: true
     cmds:
-      - cmd: mise install
+      - mise doctor
+
+  install:
+    desc: Install all mise-managed tools from config
+    summary: |
+      Installs tools defined in .mise.toml or .tool-versions
+      Runs mise doctor first to verify setup
+    preconditions:
+      - sh: command -v mise >/dev/null 2>&1
+        msg: "mise is not installed. Run 'brew install mise' first"
+    deps:
+      - doctor
+    cmds:
+      - mise install
 
   update:
-    aliases:
-      - up
-    desc: Updates all mise based tools
+    aliases: [up, upgrade]
+    desc: Update all mise-managed tools to latest versions
+    preconditions:
+      - sh: command -v mise >/dev/null 2>&1
+        msg: "mise is not installed"
+    deps:
+      - doctor
     cmds:
-      - cmd: mise up
-        silent: true
+      - mise up
+
+  list:
+    aliases: [ls]
+    desc: List all installed tools and their versions
+    cmds:
+      - mise list
 
   outdated:
-    desc: List all outdated tools, including major bumps
+    desc: List all outdated tools
     cmds:
-      - cmd: mise outdated -l
-        silent: true
+      - mise outdated -l
