@@ -12,6 +12,9 @@ includes:
     aliases: [dot]
     taskfile: ./taskfiles/dotfiles.yml
 
+  mac:
+    taskfile: ./taskfiles/mac.yml
+
   mise:
     taskfile: ./taskfiles/mise.yml
 
@@ -37,6 +40,9 @@ tasks:
       2. Installing and configuring all dotfiles (stow packages)
       3. Installing mise-managed tools (after mise config is stowed)
       4. Restoring Neovim plugins to the state specified in lazy-lock.json
+
+      Note: This does NOT apply macOS system preferences.
+      Run 'task mac:set:defaults' separately if you want to apply them.
     cmds:
       - task: system:install
       - task: dot:install
