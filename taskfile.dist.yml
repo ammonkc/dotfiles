@@ -8,6 +8,10 @@ includes:
   brew:
     taskfile: ./taskfiles/brew.yml
 
+  develop:
+    aliases: [dev]
+    taskfile: ./taskfiles/develop.yml
+
   dotfiles:
     aliases: [dot]
     taskfile: ./taskfiles/dotfiles.yml

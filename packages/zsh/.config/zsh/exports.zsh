@@ -48,3 +48,9 @@ export FASTFETCH_STARTUP="${FASTFETCH_STARTUP:-true}"
 if [[ "$OSTYPE" == darwin* ]]; then
   export SHELL_SESSIONS_DISABLE=1
 fi
+
+
+# -----------------------
+# ---- Local config -----
+# -----------------------
+[[ -f ~/.env.local ]] && source ~/.env.local || true

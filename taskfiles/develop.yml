@@ -1,0 +1,271 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+vars:
+  DEV_DIR: '{{.DEV_DIR | default "$HOME/Developer"}}'
+  CODE_DIR: '{{.DEV_DIR}}/code'
+  REPOS_DIR: '{{.DEV_DIR}}/repos'
+  # Get git username from config (fallback to "personal")
+  GIT_USER:
+    sh: git config --get user.name 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr ' ' '-' || echo "personal"
+  # Default organizations - reads from ~/.env.local or environment variable
+  # Priority: $DEFAULT_ORGS > ~/.env.local > git config username + "work"
+  DEFAULT_ORGS:
+    sh: |
+      # 1. Check if DEFAULT_ORGS is already set in environment
+      if [ -n "$DEFAULT_ORGS" ]; then
+        echo "$DEFAULT_ORGS"
+        exit 0
+      fi
+
+      # 2. Check for DEFAULT_ORGS in ~/.env.local
+      if [ -f "$HOME/.env.local" ] && grep -q "^export DEFAULT_ORGS=" "$HOME/.env.local"; then
+        grep "^export DEFAULT_ORGS=" "$HOME/.env.local" | cut -d'=' -f2- | tr -d '"' | tr -d "'"
+        exit 0
+      fi
+
+      # 3. Use git username + "work" as sensible defaults
+      git_user=$(git config --get user.name 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr ' ' '-' || echo "personal")
+      echo "$git_user work"
+
+tasks:
+  setup:
+    desc: Setup development directory structure
+    summary: |
+      Creates organized development directories for projects and repositories
+
+      Structure:
+        ~/Developer/
+        ├── code/               # Active development projects
+        └── repos/              # Git repositories (organized by user/org)
+
+      Organization directories are determined by (in order of priority):
+        1. Environment variable: DEFAULT_ORGS="org1 org2 org3" task dev:setup
+        2. ~/.env.local file: export DEFAULT_ORGS="org1 org2 org3"
+        3. Git config username + "work" (default fallback)
+
+      To customize your default orgs, add to ~/.env.local:
+        echo 'export DEFAULT_ORGS="myname mycompany client1"' >> ~/.env.local
+
+      Usage: task develop:setup
+    cmds:
+      - task: create_dirs
+      - echo "✓ Development directories created"
+      - echo ""
+      - echo "Directory structure:"
+      - echo "  {{.CODE_DIR}}/"
+      - |
+        for org in {{.DEFAULT_ORGS}}; do
+          echo "  {{.REPOS_DIR}}/$org/"
+        done
+      - echo ""
+      - echo "Current orgs:" "{{.DEFAULT_ORGS}}"
+
+  create_dirs:
+    internal: true
+    vars:
+      DEFAULT_ORGS: '{{.DEFAULT_ORGS}}'
+    cmds:
+      - mkdir -p "{{.CODE_DIR}}"
+      - |
+        for org in {{.DEFAULT_ORGS}}; do
+          mkdir -p "{{.REPOS_DIR}}/$org"
+        done
+    status:
+      - test -d "{{.CODE_DIR}}"
+
+  list:
+    desc: List development directories
+    summary: |
+      Shows the development directory structure and repository counts
+    vars:
+      CODE_PROJECTS:
+        sh: find "{{.CODE_DIR}}" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | xargs
+      ORGS:
+        sh: find "{{.REPOS_DIR}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort
+    cmds:
+      - echo "📂 Development Directories:"
+      - echo ""
+      - task: list:code
+      - task: list:repos
+
+  list:code:
+    internal: true
+    silent: true
+    vars:
+      CODE_PROJECTS:
+        sh: find "{{.CODE_DIR}}" -mindepth 1 -maxdepth 1 2>/dev/null | sort
+    preconditions:
+      - sh: test -d "{{.CODE_DIR}}"
+        msg: ""
+    cmds:
+      - echo "Code projects ({{.CODE_DIR}}):"
+      - |
+        if [ -n "{{.CODE_PROJECTS}}" ]; then
+          echo "{{.CODE_PROJECTS}}" | while read -r project; do
+            echo "  - $(basename "$project")"
+          done
+        else
+          echo "  (empty)"
+        fi
+      - echo ""
+
+  list:repos:
+    internal: true
+    silent: true
+    vars:
+      ORGS:
+        sh: find "{{.REPOS_DIR}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort
+    preconditions:
+      - sh: test -d "{{.REPOS_DIR}}"
+        msg: ""
+    cmds:
+      - echo "Repositories:"
+      - |
+        if [ -z "{{.ORGS}}" ]; then
+          echo "  (no organizations)"
+          exit 0
+        fi
+      - for:
+          var: ORGS
+          split: '\n'
+        task: list:org
+        vars:
+          ORG_PATH: '{{.ITEM}}'
+
+  list:org:
+    internal: true
+    silent: true
+    vars:
+      ORG_PATH: '{{.ORG_PATH}}'
+      ORG_NAME:
+        sh: basename "{{.ORG_PATH}}"
+      REPOS:
+        sh: find "{{.ORG_PATH}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort
+      REPO_COUNT:
+        sh: find "{{.ORG_PATH}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | xargs
+    cmds:
+      - echo "  {{.ORG_NAME}}/ ({{.REPO_COUNT}} repos)"
+      - for:
+          var: REPOS
+          split: '\n'
+        task: list:repo
+        vars:
+          REPO_PATH: '{{.ITEM}}'
+
+  list:repo:
+    internal: true
+    silent: true
+    vars:
+      REPO_PATH: '{{.REPO_PATH}}'
+      REPO_NAME:
+        sh: basename "{{.REPO_PATH}}"
+    cmds:
+      - echo "    - {{.REPO_NAME}}"
+
+  clone:
+    desc: Clone a repository to the appropriate directory
+    summary: |
+      Clones a Git repository to ~/Developer/repos/{org}/
+
+      The organization is automatically detected from the repo URL.
+      You can override it with the ORG parameter.
+
+      Usage:
+        # Auto-detect org from URL
+        task dev:clone REPO=git@github.com:username/project.git
+        → Clones to ~/Developer/repos/username/project
+
+        # Specify custom org
+        task dev:clone REPO=https://github.com/foo/bar.git ORG=work
+        → Clones to ~/Developer/repos/work/bar
+
+        # GitHub shorthand (requires gh CLI)
+        task dev:clone REPO=username/repo
+        → Uses gh to clone from GitHub
+    vars:
+      REPO: '{{.REPO}}'
+      ORG: '{{.ORG | default ""}}'
+      DETECTED_ORG:
+        sh: |
+          if [ -n "{{.ORG}}" ]; then
+            echo "{{.ORG}}"
+          else
+            # Try to detect org from repo URL (GitHub, GitLab, etc.)
+            repo="{{.REPO}}"
+
+            # Handle GitHub shorthand (username/repo)
+            if [[ "$repo" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]; then
+              echo "$repo" | cut -d'/' -f1
+            # Handle full URLs
+            elif [[ "$repo" =~ (github\.com|gitlab\.com|bitbucket\.org)[:/]([^/]+)/([^/]+) ]]; then
+              echo "$repo" | sed -E 's|.*[:/]([^/]+)/[^/]+.*|\1|'
+            else
+              echo "{{.GIT_USER}}"
+            fi
+          fi
+      REPO_NAME:
+        sh: |
+          repo="{{.REPO}}"
+          # Handle GitHub shorthand
+          if [[ "$repo" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]; then
+            echo "$repo" | cut -d'/' -f2
+          else
+            echo "$repo" | sed -E 's|.*[:/][^/]+/([^/]+)(\.git)?$|\1|' | sed 's/\.git$//'
+          fi
+      TARGET_DIR: '{{.REPOS_DIR}}/{{.DETECTED_ORG}}/{{.REPO_NAME}}'
+      IS_GH_SHORTHAND:
+        sh: |
+          if [[ "{{.REPO}}" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]; then
+            echo "true"
+          else
+            echo "false"
+          fi
+    preconditions:
+      - sh: test -n "{{.REPO}}"
+        msg: "REPO is required. Usage: task dev:clone REPO=<git-url-or-user/repo>"
+    cmds:
+      - mkdir -p "{{.REPOS_DIR}}/{{.DETECTED_ORG}}"
+      - echo "📥 Cloning {{.REPO_NAME}} to {{.DETECTED_ORG}}/"
+      - |
+        if [ "{{.IS_GH_SHORTHAND}}" = "true" ]; then
+          # Use gh CLI for GitHub shorthand
+          if command -v gh >/dev/null 2>&1; then
+            gh repo clone "{{.REPO}}" "{{.TARGET_DIR}}"
+          else
+            echo "Error: gh CLI not found. Install with: brew install gh"
+            exit 1
+          fi
+        else
+          git clone "{{.REPO}}" "{{.TARGET_DIR}}"
+        fi
+      - echo "✓ Cloned to:" "{{.TARGET_DIR}}"
+    status:
+      - test -d "{{.TARGET_DIR}}"
+
+  # Placeholder tasks for future development
+  sync:
+    desc: Sync all repositories (placeholder)
+    summary: |
+      Future: Sync all repos in ~/Developer/repos/
+      Could pull latest changes, check for updates, etc.
+    cmds:
+      - echo "🚧 Not implemented yet"
+      - echo "This will sync all repositories in {{.REPOS_DIR}}/"
+
+  update:
+    desc: Update all repositories (placeholder)
+    summary: |
+      Future: Update all repos (pull, fetch, etc.)
+    cmds:
+      - echo "🚧 Not implemented yet"
+      - echo "This will update all repositories"
+
+  status:
+    desc: Show git status for all repositories (placeholder)
+    summary: |
+      Future: Show git status for all repos
+    cmds:
+      - echo "🚧 Not implemented yet"
+      - echo "This will show status of all repositories"
+
