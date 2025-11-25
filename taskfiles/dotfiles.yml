@@ -1,209 +1,143 @@
-# yaml-language-server: $schema=https://taskfile.dev/schema.json
+# taskfiles/dotfiles.yml
 version: 3
 
-vars:
-  DOTFILES_DIR: "{{.ROOT_DIR}}"
-  SHARED_BINUTILS_PATH: "{{.ROOT_DIR}}/../../malleatus/shared_binutils"
-  LOCAL_DOTFILES_PATH: "{{.DOTFILES_DIR}}/local-packages"
-  # Get FORCE from environment or default to false
-  FORCE: '{{env "FORCE"}}'
-
 includes:
-  shell:
-    taskfile: ./shell.yml
+  backup:
+    taskfile: ./backup.yml
     internal: true
-  binutils:
-    taskfile: ./binutils.yml
-    internal: true
+
+vars:
+  DOTFILES_DIR: '{{.ROOT_DIR}}'
+  PACKAGES_DIR: '{{.DOTFILES_DIR}}/packages'
+  STOW_FLAGS: '--verbose --restow --no-folding'
+  # Dynamically get list of all package directories
+  PACKAGES:
+    sh: cd {{.PACKAGES_DIR}} && find . -maxdepth 1 -type d ! -name ".*" -exec basename {} \; | sort
+  # Dynamically find all .local template files in packages
+  LOCAL_FILES:
+    sh: cd {{.PACKAGES_DIR}} && find . -type f -name "*.local" | sed 's|^\./||'
 
 tasks:
-  link_dotfile:
-    internal: true
-    silent: true
-    vars:
-      SRC: "{{.SRC}}"
-      DEST: "{{.DEST}}"
-    cmds:
-      - |
-        SRC_PATH="{{.DOTFILES_DIR}}/{{.SRC}}"
-        DEST_PATH="{{.DEST}}"
-
-        # Create parent directory if it doesn't exist
-        mkdir -p "$(dirname "$DEST_PATH")"
-
-        # If FORCE is true, remove the target
-        if [ "{{.FORCE}}" = "true" ]; then
-          rm -rf "$DEST_PATH"
-        fi
-
-        if [ -L "$DEST_PATH" ]; then
-          current=$(readlink "$DEST_PATH")
-
-          # Check if it's a broken symlink
-          if [ ! -e "$current" ]; then
-            echo "$DEST_PATH is a broken symlink, replacing it"
-            rm "$DEST_PATH"
-            ln -s "$SRC_PATH" "$DEST_PATH"
-          elif [ "$current" != "$SRC_PATH" ]; then
-            echo "$DEST_PATH already exists and is symlinked to $current"
-          fi
-        elif [ -e "$DEST_PATH" ]; then
-          echo "$DEST_PATH already exists and is not a symlink"
-        else
-          echo "creating link for $DEST_PATH"
-          ln -s "$SRC_PATH" "$DEST_PATH"
-        fi
-
-  copy_dotfile:
-    internal: true
-    silent: true
-    vars:
-      SRC: "{{.SRC}}"
-      DEST: "{{.DEST}}"
-    cmds:
-      - |
-        SRC_PATH="{{.DOTFILES_DIR}}/{{.SRC}}"
-        DEST_PATH="{{.DEST}}"
-
-        # Create parent directory if it doesn't exist
-        mkdir -p "$(dirname "$DEST_PATH")"
-
-        # Check if target already exists
-        if [ -e "$DEST_PATH" ]; then
-          echo "$DEST_PATH already exists"
-        else
-          echo "creating $DEST_PATH"
-          cp "$SRC_PATH" "$DEST_PATH"
-        fi
-
   install:
-    desc: Install dotfiles
-    summary: |
-      Install dotfiles
-
-      This task will install and configure all dotfiles.
+    desc: Install all dotfiles using GNU Stow
     cmds:
-      - task: setup:config
+      - task: ensure-dirs
+      - task: stow-packages
+      - task: copy-local-configs
 
-  setup:config:
-    desc: Setup configuration files
+  ensure-dirs:
     internal: true
     cmds:
-      - task: utils:ensure_dirs
-      - task: utils:link_dotfiles
-      - task: utils:copy_dotfiles
-      - task: setup-local-dotfiles
-      - task: shell:update
-
-  utils:ensure_dirs:
-    internal: true
-    cmds:
-      - mkdir -p ~/bin
+      - mkdir -p ~/.config
       - mkdir -p ~/.ssh
-      - mkdir -p ~/.cargo
+      - mkdir -p ~/.local/{bin,share}
 
-  utils:link_dotfiles:
+  stow-packages:
     internal: true
-    deps:
-      - task: utils:link_macos_dotfiles
-      - task: utils:link_linux_dotfiles
-
-    vars:
-      DOTFILES:
-        - "packages/nvim|$HOME/.config/nvim"
-        - "packages-dist/starship/jj.toml|$HOME/.config/starship.toml"
-        - "packages/starship/|$HOME/.config/starship"
-        - "packages-dist/bash/bashrc|$HOME/.bashrc"
-        - "packages-dist/zsh/|$HOME/.zsh"
-        - "packages-dist/fish/|$HOME/.config/fish"
-        - "packages-dist/zsh/zshenv|$HOME/.zshenv"
-        - "packages-dist/zsh/zprofile|$HOME/.zprofile"
-        - "packages-dist/zsh/zshrc|$HOME/.zshrc"
-        - "packages/atuin|$HOME/.config/atuin"
-        - "packages/git/gitconfig|$HOME/.gitconfig"
-        - "packages/git/gitignore_global|$HOME/.gitignore_global"
-        - "packages/gh/config.yml|$HOME/.config/gh/config.yml"
-        - "packages/tmux/tmux.conf|$HOME/.tmux.conf"
-        - "packages/cargo/config.toml|$HOME/.cargo/config.toml"
-        - "packages/binutils/config/|$HOME/.config/binutils"
-        - "packages/wezterm/|$HOME/.config/wezterm"
-        - "packages/ghostty/|$HOME/.config/ghostty"
-        - "packages/zellij/|$HOME/.config/zellij"
-        - "packages/ssh/rc|$HOME/.ssh/rc"
-        - "packages/1Password/|$HOME/.config/1Password"
-        - "packages/mise/|$HOME/.config/mise"
-        - "packages/mcp/|$HOME/.config/mcp"
-        - "packages/hammerspoon/|$HOME/.hammerspoon"
-        - "packages/jj/|$HOME/.config/jj"
-        - "packages/ccstatusline/|$HOME/.config/ccstatusline"
-        - "packages/claude/settings.json|$HOME/.claude/settings.json"
-
+    desc: Stow all packages
     cmds:
+      - echo "📦 Stowing packages from {{.PACKAGES_DIR}}..."
       - for:
-          var: DOTFILES
-          as: DOTFILE
-        task: link_dotfile
+          var: PACKAGES
+          as: PACKAGE
+        task: stow-package
         vars:
-          SRC: '{{splitList "|" .DOTFILE | first}}'
-          DEST: '{{splitList "|" .DOTFILE | last}}'
+          PACKAGE: '{{.PACKAGE}}'
 
-  utils:link_macos_dotfiles:
-    internal: true
-    platforms: [darwin]
-    vars:
-      MACOS_DOTFILES:
-        - "packages/vscode/settings.json|$HOME/Library/Application Support/Code/User/settings.json"
-        - "packages/vscode/keybindings.json|$HOME/Library/Application Support/Code/User/keybindings.json"
-        - "packages/vscode/snippets|$HOME/Library/Application Support/Code/User/snippets"
-        - "packages/tealdeer/config.toml|$HOME/Library/Application Support/tealdeer/config.toml"
-        - "packages/alfred/snippets|$HOME/Library/Application Support/Alfred/Alfred.alfredpreferences/snippets"
-        #- "packages/alfred/preferences/features|$HOME/Library/Application Support/Alfred/Alfred.alfredpreferences/preferences/features"
-    cmds:
-      - for:
-          var: MACOS_DOTFILES
-          as: DOTFILE
-        task: link_dotfile
-        vars:
-          SRC: '{{splitList "|" .DOTFILE | first}}'
-          DEST: '{{splitList "|" .DOTFILE | last}}'
-
-  utils:link_linux_dotfiles:
-    internal: true
-    platforms: [linux]
-    vars:
-      LINUX_DOTFILES:
-        - "packages/jj/|$HOME/.config/jj"
-    cmds:
-      - for:
-          var: LINUX_DOTFILES
-          as: DOTFILE
-        task: link_dotfile
-        vars:
-          SRC: '{{splitList "|" .DOTFILE | first}}'
-          DEST: '{{splitList "|" .DOTFILE | last}}'
-
-  utils:copy_dotfiles:
+  stow-package:
     internal: true
     vars:
-      COPY_DOTFILES:
-        - "packages-dist/zsh/zshrc.local|$HOME/.zshrc.local"
-        - "packages/git/gitconfig.local|$HOME/.gitconfig.local"
-        - "packages/tmux/tmux.local.conf|$HOME/.tmux.local.conf"
+      PACKAGE: '{{.PACKAGE}}'
+    dir: '{{.PACKAGES_DIR}}'
+    cmds:
+      - echo "  → Stowing {{.PACKAGE}}..."
+      - task: backup:backup-conflicts
+        vars:
+          PACKAGE: '{{.PACKAGE}}'
+          PACKAGES_DIR: '{{.PACKAGES_DIR}}'
+          STOW_FLAGS: '{{.STOW_FLAGS}}'
+      - stow {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}"
+
+  unstow-packages:
+    internal: true
+    desc: Unstow all packages
+    cmds:
+      - echo "📦 Unstowing packages from {{.PACKAGES_DIR}}..."
+      - for:
+          var: PACKAGES
+          as: PACKAGE
+        task: unstow-package
+        vars:
+          PACKAGE: '{{.PACKAGE}}'
+
+  unstow-package:
+    internal: true
+    vars:
+      PACKAGE: '{{.PACKAGE}}'
+    dir: '{{.PACKAGES_DIR}}'
+    cmds:
+      - echo "  → Unstowing {{.PACKAGE}}..."
+      - stow --verbose --delete -t $HOME "{{.PACKAGE}}"
+      - task: backup:restore-latest-package
+        vars:
+          PACKAGE: '{{.PACKAGE}}'
+
+  uninstall:
+    desc: Remove dotfile symlinks
+    cmds:
+      - task: unstow-packages
+
+  list:
+    desc: List all available packages
+    silent: true
+    cmds:
+      - echo "📦 Available packages:"
+      - for:
+          var: PACKAGES
+          as: PACKAGE
+        cmd: echo "  - {{.PACKAGE}}"
+
+  restow:
+    desc: Restow a specific package
+    summary: |
+      Restow a specific package by name
+      Usage: task dot:restow PACKAGE=zsh
+    vars:
+      PACKAGE: '{{.PACKAGE | default ""}}'
+    dir: '{{.PACKAGES_DIR}}'
+    preconditions:
+      - sh: test -n "{{.PACKAGE}}"
+        msg: "PACKAGE variable is required. Usage: task dot:restow PACKAGE=zsh"
+      - sh: test -d "{{.PACKAGES_DIR}}/{{.PACKAGE}}"
+        msg: "Package '{{.PACKAGE}}' not found in {{.PACKAGES_DIR}}"
+    cmds:
+      - echo "🔄 Restowing {{.PACKAGE}}..."
+      - stow {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}"
+      - echo "✓ {{.PACKAGE}} restowed successfully"
+
+  copy-local-configs:
+    internal: true
+    desc: Copy .local template files from packages to $HOME if they don't exist
     cmds:
       - for:
-          var: COPY_DOTFILES
-          as: DOTFILE
-        task: copy_dotfile
+          var: LOCAL_FILES
+          as: LOCAL_FILE
+        task: copy-local-file
         vars:
-          SRC: '{{splitList "|" .DOTFILE | first}}'
-          DEST: '{{splitList "|" .DOTFILE | last}}'
-          FORCE: "false"
+          LOCAL_FILE: '{{.LOCAL_FILE}}'
 
-  setup-local-dotfiles:
+  copy-local-file:
     internal: true
-    desc: Set up local dotfiles using shared_binutils
-    deps: [binutils:build:shared-binutils]
+    vars:
+      LOCAL_FILE: '{{.LOCAL_FILE}}'
+      # Extract just the filename (e.g., "zsh/.config/zsh/env.local" -> "env.local")
+      FILENAME:
+        sh: basename "{{.LOCAL_FILE}}"
+      # Always copy to $HOME root with leading dot (e.g., "$HOME/.env.local")
+      DEST_FILE: '$HOME/.{{.FILENAME}}'
+    status:
+      - test -f "{{.DEST_FILE}}"
     cmds:
-      - |
-        "{{.SHARED_BINUTILS_PATH}}/target/debug/setup-local-dotfiles" \
-          --local-dotfiles-path "{{.LOCAL_DOTFILES_PATH}}" \
+      - echo "Copying {{.FILENAME}} to {{.DEST_FILE}}..."
+      - cp "{{.PACKAGES_DIR}}/{{.LOCAL_FILE}}" "{{.DEST_FILE}}"
+      - echo "✓ Created {{.DEST_FILE}} - please customize it"

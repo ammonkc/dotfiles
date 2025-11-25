@@ -1,0 +1,221 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+vars:
+  # XDG Base Directory for backups
+  BACKUP_BASE: '${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles/backups'
+  BACKUP_DIR:
+    sh: echo "{{.BACKUP_BASE}}/$(date +%Y%m%d-%H%M%S)"
+  # Get list of all backup timestamps
+  BACKUP_TIMESTAMPS:
+    sh: |
+      BACKUP_BASE="{{.BACKUP_BASE}}"
+      if [ -d "$BACKUP_BASE" ]; then
+        find "$BACKUP_BASE" -maxdepth 1 -type d ! -name "backups" -exec basename {} \; | sort -r
+      fi
+
+tasks:
+  check-conflicts:
+    desc: Check for stow conflicts and warn if found
+    internal: true
+    silent: true
+    vars:
+      PACKAGE: '{{.PACKAGE}}'
+      CONFLICTS: '{{.CONFLICTS}}'
+    preconditions:
+      - sh: 'test -z "{{.CONFLICTS}}"'
+        msg: |
+          ⚠️  Found conflicts for {{.PACKAGE}}, backing up existing files...
+    cmds:
+      - echo "    No conflicts for {{.PACKAGE}}"
+
+  backup-file:
+    desc: Backup a single file to the backup directory
+    internal: true
+    silent: true
+    vars:
+      FILE_PATH: '{{.FILE_PATH}}'
+      PACKAGE: '{{.PACKAGE}}'
+      SOURCE: '$HOME/{{.FILE_PATH}}'
+      DEST_DIR: '{{.BACKUP_DIR}}/{{.PACKAGE}}'
+    status:
+      # Skip if it's a symlink (already managed by stow)
+      - test -L "$HOME/{{.FILE_PATH}}"
+      # Skip if file doesn't exist
+      - test ! -e "$HOME/{{.FILE_PATH}}"
+    cmds:
+      - mkdir -p "{{.DEST_DIR}}/$(dirname '{{.FILE_PATH}}')"
+      - echo "      Backing up:" "$HOME/{{.FILE_PATH}}"
+      - cp -a "$HOME/{{.FILE_PATH}}" "{{.DEST_DIR}}/{{.FILE_PATH}}"
+      - rm -rf "$HOME/{{.FILE_PATH}}"
+
+  backup-conflicts:
+    desc: Detect and backup files that conflict with stow operation
+    internal: true
+    vars:
+      PACKAGE: '{{.PACKAGE}}'
+      PACKAGES_DIR: '{{.PACKAGES_DIR}}'
+      STOW_FLAGS: '{{.STOW_FLAGS}}'
+      # Get list of conflicting files by simulating stow
+      CONFLICTS:
+        sh: cd {{.PACKAGES_DIR}} && stow -n {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}" 2>&1 | grep "existing target is" | awk '{print $NF}' | tr -d "'" || true
+    dir: '{{.PACKAGES_DIR}}'
+    cmds:
+      - task: check-conflicts
+        vars:
+          PACKAGE: '{{.PACKAGE}}'
+          CONFLICTS: '{{.CONFLICTS}}'
+      - for:
+          var: CONFLICTS
+          split: '\n'
+        task: backup-file
+        vars:
+          FILE_PATH: '{{.ITEM}}'
+          PACKAGE: '{{.PACKAGE}}'
+
+  list:
+    desc: List all available backups
+    aliases: [ls]
+    vars:
+      HAS_BACKUPS:
+        sh: test -d "{{.BACKUP_BASE}}" && echo "true" || echo "false"
+    preconditions:
+      - sh: test "{{.HAS_BACKUPS}}" = "true"
+        msg: "ℹ️  No backups found"
+    cmds:
+      - echo "📦 Available backups in {{.BACKUP_BASE}}:"
+      - echo ""
+      - for:
+          var: BACKUP_TIMESTAMPS
+          as: TIMESTAMP
+        task: list-details
+        vars:
+          TIMESTAMP: '{{.TIMESTAMP}}'
+
+  list-details:
+    desc: List details for a specific backup
+    internal: true
+    vars:
+      TIMESTAMP: '{{.TIMESTAMP}}'
+      BACKUP_PATH: '{{.BACKUP_BASE}}/{{.TIMESTAMP}}'
+      # Get packages in this backup
+      BACKUP_PACKAGES:
+        sh: find "{{.BACKUP_BASE}}/{{.TIMESTAMP}}" -maxdepth 1 -type d ! -name "{{.TIMESTAMP}}" -exec basename {} \; | sort
+    cmds:
+      - echo "  📅 {{.TIMESTAMP}}"
+      - for:
+          var: BACKUP_PACKAGES
+          as: PACKAGE
+        task: list-package
+        vars:
+          TIMESTAMP: '{{.TIMESTAMP}}'
+          PACKAGE: '{{.PACKAGE}}'
+      - echo ""
+
+  list-package:
+    desc: List files in a specific backup package
+    internal: true
+    silent: true
+    vars:
+      TIMESTAMP: '{{.TIMESTAMP}}'
+      PACKAGE: '{{.PACKAGE}}'
+      FILE_COUNT:
+        sh: find "{{.BACKUP_BASE}}/{{.TIMESTAMP}}/{{.PACKAGE}}" -type f | wc -l | tr -d ' '
+    cmds:
+      - echo "      • {{.PACKAGE}} ({{.FILE_COUNT}} files)"
+
+  restore:
+    desc: Restore files from a backup
+    summary: |
+      Restore backed up files from a specific timestamp
+      Usage: task backup:restore TIMESTAMP=20240325-143022
+
+      Warning: This will overwrite current files!
+    vars:
+      TIMESTAMP: '{{.TIMESTAMP | default ""}}'
+      BACKUP_PATH: '{{.BACKUP_BASE}}/{{.TIMESTAMP}}'
+      # Get packages to restore
+      RESTORE_PACKAGES:
+        sh: |
+          if [ -d "{{.BACKUP_BASE}}/{{.TIMESTAMP}}" ]; then
+            find "{{.BACKUP_BASE}}/{{.TIMESTAMP}}" -maxdepth 1 -type d ! -name "{{.TIMESTAMP}}" -exec basename {} \;
+          fi
+    preconditions:
+      - sh: test -n "{{.TIMESTAMP}}"
+        msg: "TIMESTAMP variable is required. Usage: task backup:restore TIMESTAMP=20240325-143022"
+      - sh: test -d "{{.BACKUP_PATH}}"
+        msg: "Backup '{{.TIMESTAMP}}' not found. Use 'task backup:list' to see available backups"
+    cmds:
+      - echo "🔄 Restoring backup from {{.TIMESTAMP}}..."
+      - echo ""
+      - for:
+          var: RESTORE_PACKAGES
+          as: PACKAGE
+        task: restore-package
+        vars:
+          TIMESTAMP: '{{.TIMESTAMP}}'
+          PACKAGE: '{{.PACKAGE}}'
+      - echo ""
+      - echo "✓ Backup restored successfully"
+      - echo "⚠️  You may want to unstow packages first to avoid conflicts"
+
+  restore-package:
+    desc: Restore a single package from backup
+    internal: true
+    vars:
+      TIMESTAMP: '{{.TIMESTAMP}}'
+      PACKAGE: '{{.PACKAGE}}'
+      PACKAGE_PATH: '{{.BACKUP_BASE}}/{{.TIMESTAMP}}/{{.PACKAGE}}'
+    cmds:
+      - echo "  → Restoring {{.PACKAGE}}..."
+      - cp -a "{{.PACKAGE_PATH}}/." "$HOME/"
+
+  restore-latest-package:
+    desc: Restore the latest backup for a specific package (if it exists)
+    internal: true
+    vars:
+      PACKAGE: '{{.PACKAGE}}'
+      # Find the most recent backup containing this package
+      LATEST_BACKUP:
+        sh: |
+          BACKUP_BASE="{{.BACKUP_BASE}}"
+          if [ -d "$BACKUP_BASE" ]; then
+            for timestamp in $(find "$BACKUP_BASE" -maxdepth 1 -type d ! -name "backups" -exec basename {} \; | sort -r); do
+              if [ -d "$BACKUP_BASE/$timestamp/{{.PACKAGE}}" ]; then
+                echo "$timestamp"
+                exit 0
+              fi
+            done
+          fi
+    status:
+      # Skip if no backup exists for this package
+      - test -z "{{.LATEST_BACKUP}}"
+    cmds:
+      - echo "    📦 Restoring backed up files for {{.PACKAGE}} from {{.LATEST_BACKUP}}..."
+      - task: restore-package
+        vars:
+          TIMESTAMP: '{{.LATEST_BACKUP}}'
+          PACKAGE: '{{.PACKAGE}}'
+
+  clean:
+    desc: Remove old backups
+    summary: |
+      Remove old backups, keeping only the most recent N
+      Usage: task backup:clean KEEP=5
+    vars:
+      KEEP: '{{.KEEP | default "5"}}'
+    preconditions:
+      - sh: test -d "{{.BACKUP_BASE}}"
+        msg: "ℹ️  No backups found"
+    cmds:
+      - |
+        echo "🗑️  Cleaning old backups (keeping {{.KEEP}} most recent)..."
+        cd "{{.BACKUP_BASE}}"
+        ls -t | tail -n +$(({{.KEEP}} + 1)) | while read dir; do
+          if [ -d "$dir" ]; then
+            echo "  Removing: $dir"
+            rm -rf "$dir"
+          fi
+        done
+        echo "✓ Cleanup complete"
+

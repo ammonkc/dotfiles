@@ -2,6 +2,9 @@
 version: 3
 
 includes:
+  backup:
+    taskfile: ./taskfiles/backup.yml
+
   brew:
     taskfile: ./taskfiles/brew.yml
 
