@@ -45,7 +45,7 @@ tasks:
       - brew upgrade
       - task: update
 
-  update-no-commit:
+  update_no_commit:
     platforms: [darwin]
     # NOTE: the leading slash here is a bit annoying, but required due to a bug
     # in go-task see https://github.com/go-task/task/issues/828
@@ -57,7 +57,7 @@ tasks:
     platforms: [darwin]
     desc: Update Brewfile with current brew packages and commit changes
     cmds:
-      - task: update-no-commit
+      - task: update_no_commit
       - task: commit
 
   install:tools:

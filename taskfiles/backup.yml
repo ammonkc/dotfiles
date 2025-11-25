@@ -15,7 +15,7 @@ vars:
       fi
 
 tasks:
-  check-conflicts:
+  check_conflicts:
     desc: Check for stow conflicts and warn if found
     internal: true
     silent: true
@@ -29,7 +29,7 @@ tasks:
     cmds:
       - echo "    No conflicts for {{.PACKAGE}}"
 
-  backup-file:
+  backup_file:
     desc: Backup a single file to the backup directory
     internal: true
     silent: true
@@ -49,7 +49,7 @@ tasks:
       - cp -a "$HOME/{{.FILE_PATH}}" "{{.DEST_DIR}}/{{.FILE_PATH}}"
       - rm -rf "$HOME/{{.FILE_PATH}}"
 
-  backup-conflicts:
+  backup_conflicts:
     desc: Detect and backup files that conflict with stow operation
     internal: true
     vars:
@@ -64,14 +64,14 @@ tasks:
       # Skip entirely if no conflicts found
       - test -z "{{.CONFLICTS}}"
     cmds:
-      - task: check-conflicts
+      - task: check_conflicts
         vars:
           PACKAGE: '{{.PACKAGE}}'
           CONFLICTS: '{{.CONFLICTS}}'
       - for:
           var: CONFLICTS
           split: '\n'
-        task: backup-file
+        task: backup_file
         vars:
           FILE_PATH: '{{.ITEM}}'
           PACKAGE: '{{.PACKAGE}}'
@@ -91,11 +91,11 @@ tasks:
       - for:
           var: BACKUP_TIMESTAMPS
           as: TIMESTAMP
-        task: list-details
+        task: list:details
         vars:
           TIMESTAMP: '{{.TIMESTAMP}}'
 
-  list-details:
+  list:details:
     desc: List details for a specific backup
     internal: true
     vars:
@@ -109,13 +109,13 @@ tasks:
       - for:
           var: BACKUP_PACKAGES
           as: PACKAGE
-        task: list-package
+        task: list:package
         vars:
           TIMESTAMP: '{{.TIMESTAMP}}'
           PACKAGE: '{{.PACKAGE}}'
       - echo ""
 
-  list-package:
+  list:package:
     desc: List files in a specific backup package
     internal: true
     silent: true
@@ -154,7 +154,7 @@ tasks:
       - for:
           var: RESTORE_PACKAGES
           as: PACKAGE
-        task: restore-package
+        task: restore:package
         vars:
           TIMESTAMP: '{{.TIMESTAMP}}'
           PACKAGE: '{{.PACKAGE}}'
@@ -162,7 +162,7 @@ tasks:
       - echo "✓ Backup restored successfully"
       - echo "⚠️  You may want to unstow packages first to avoid conflicts"
 
-  restore-package:
+  restore:package:
     desc: Restore a single package from backup
     internal: true
     vars:
@@ -173,7 +173,7 @@ tasks:
       - echo "  → Restoring {{.PACKAGE}}..."
       - cp -a "{{.PACKAGE_PATH}}/." "$HOME/"
 
-  restore-latest-package:
+  restore_latest_package:
     desc: Restore the latest backup for a specific package (if it exists)
     internal: true
     vars:
@@ -195,7 +195,7 @@ tasks:
       - test -z "{{.LATEST_BACKUP}}"
     cmds:
       - echo "    📦 Restoring backed up files for {{.PACKAGE}} from {{.LATEST_BACKUP}}..."
-      - task: restore-package
+      - task: restore:package
         vars:
           TIMESTAMP: '{{.LATEST_BACKUP}}'
           PACKAGE: '{{.PACKAGE}}'
@@ -226,12 +226,12 @@ tasks:
       - for:
           var: OLD_BACKUPS
           as: BACKUP_DIR
-        task: remove-old-backup
+        task: clean:old_backup
         vars:
           BACKUP_DIR: '{{.BACKUP_DIR}}'
       - echo "✓ Cleanup complete"
 
-  remove-old-backup:
+  clean:old_backup:
     desc: Remove a single old backup directory
     internal: true
     vars:
@@ -240,7 +240,7 @@ tasks:
       - echo "  Removing:" "{{.BACKUP_DIR}}"
       - rm -rf "{{.BACKUP_BASE}}/{{.BACKUP_DIR}}"
 
-  clean-empty:
+  clean:empty:
     desc: Remove empty backup directories
     summary: |
       Removes backup directories that contain no files
@@ -269,12 +269,12 @@ tasks:
       - for:
           var: EMPTY_BACKUPS
           as: BACKUP_DIR
-        task: remove-empty-backup
+        task: clean:empty_backup
         vars:
           BACKUP_DIR: '{{.BACKUP_DIR}}'
       - echo "✓ Removed empty backup directories"
 
-  remove-empty-backup:
+  clean:empty_backup:
     desc: Remove a single empty backup directory
     internal: true
     vars:

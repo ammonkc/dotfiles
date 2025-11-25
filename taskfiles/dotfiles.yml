@@ -21,18 +21,18 @@ tasks:
   install:
     desc: Install all dotfiles using GNU Stow
     cmds:
-      - task: ensure-dirs
-      - task: stow-packages
-      - task: copy-local-configs
+      - task: ensure_dirs
+      - task: stow:packages
+      - task: copy_local_configs
 
-  ensure-dirs:
+  ensure_dirs:
     internal: true
     cmds:
       - mkdir -p ~/.config
       - mkdir -p ~/.ssh
       - mkdir -p ~/.local/{bin,share}
 
-  stow-packages:
+  stow:packages:
     internal: true
     desc: Stow all packages
     cmds:
@@ -40,25 +40,25 @@ tasks:
       - for:
           var: PACKAGES
           as: PACKAGE
-        task: stow-package
+        task: stow:package
         vars:
           PACKAGE: '{{.PACKAGE}}'
 
-  stow-package:
+  stow:package:
     internal: true
     vars:
       PACKAGE: '{{.PACKAGE}}'
     dir: '{{.PACKAGES_DIR}}'
     cmds:
       - echo "  → Stowing {{.PACKAGE}}..."
-      - task: backup:backup-conflicts
+      - task: backup:backup_conflicts
         vars:
           PACKAGE: '{{.PACKAGE}}'
           PACKAGES_DIR: '{{.PACKAGES_DIR}}'
           STOW_FLAGS: '{{.STOW_FLAGS}}'
       - stow {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}"
 
-  unstow-packages:
+  unstow:packages:
     internal: true
     desc: Unstow all packages
     cmds:
@@ -66,11 +66,11 @@ tasks:
       - for:
           var: PACKAGES
           as: PACKAGE
-        task: unstow-package
+        task: unstow:package
         vars:
           PACKAGE: '{{.PACKAGE}}'
 
-  unstow-package:
+  unstow:package:
     internal: true
     vars:
       PACKAGE: '{{.PACKAGE}}'
@@ -78,14 +78,14 @@ tasks:
     cmds:
       - echo "  → Unstowing {{.PACKAGE}}..."
       - stow --verbose --delete -t $HOME "{{.PACKAGE}}"
-      - task: backup:restore-latest-package
+      - task: backup:restore_latest_package
         vars:
           PACKAGE: '{{.PACKAGE}}'
 
   uninstall:
     desc: Remove dotfile symlinks
     cmds:
-      - task: unstow-packages
+      - task: unstow:packages
 
   list:
     desc: List all available packages
@@ -115,18 +115,18 @@ tasks:
       - stow {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}"
       - echo "✓ {{.PACKAGE}} restowed successfully"
 
-  copy-local-configs:
+  copy_local_configs:
     internal: true
     desc: Copy .local template files from packages to $HOME if they don't exist
     cmds:
       - for:
           var: LOCAL_FILES
           as: LOCAL_FILE
-        task: copy-local-file
+        task: copy_local_file
         vars:
           LOCAL_FILE: '{{.LOCAL_FILE}}'
 
-  copy-local-file:
+  copy_local_file:
     internal: true
     vars:
       LOCAL_FILE: '{{.LOCAL_FILE}}'
