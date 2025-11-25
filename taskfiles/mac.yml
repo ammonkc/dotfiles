@@ -1,68 +1,89 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
 
+vars:
+  MACOS_SCRIPT: '{{.ROOT_DIR}}/scripts/macos.sh'
+
 tasks:
   set:defaults:
-    desc: Sets macOS defaults and disables annoyances
+    desc: Apply all macOS system preferences
+    summary: |
+      Applies custom macOS defaults and preferences
+
+      This will:
+      - Back up current defaults to ~/Desktop
+      - Apply settings for Dock, Finder, Safari, Mail, and more
+      - Restart affected applications
+      - Some changes require logout/restart to take full effect
+
+      Run this on a fresh Mac setup or when you want to reapply settings.
+    platforms: [darwin]
+    preconditions:
+      - sh: test -f "{{.MACOS_SCRIPT}}"
+        msg: "macOS defaults script not found at {{.MACOS_SCRIPT}}"
+    cmds:
+      - bash "{{.MACOS_SCRIPT}}"
+
+  restart:dock:
+    desc: Restart Dock to apply settings
     platforms: [darwin]
     cmds:
-      - echo 'Disabling annoying features...'
+      - killall Dock
 
-      # disables the hold key menu to allow key repeat
-      - defaults write -g ApplePressAndHoldEnabled -bool false
+  restart:finder:
+    desc: Restart Finder to apply settings
+    platforms: [darwin]
+    cmds:
+      - killall Finder
 
-      # The speed of repetition of characters
-      - defaults write -g KeyRepeat -int 2
-
-      # Delay until repeat
-      - defaults write -g InitialKeyRepeat -int 15
-
-      # Set dock to auto hide with no delay
-      - defaults write com.apple.dock autohide -int 1
-
-      # Finder: show all filename extensions
-      - defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-
-      # Don’t automatically rearrange Spaces based on most recent use
-      - defaults write com.apple.dock mru-spaces -bool false
-
-      # Automatically hide and show the Dock
-      - defaults write com.apple.dock autohide -bool true
-
-      # Make Dock icons of hidden applications translucent
-      - defaults write com.apple.dock showhidden -bool true
-
-      # Show battery percentage in menubar
-      - defaults -currentHost write com.apple.controlcenter.plist BatteryShowPercentage -bool true
-
-      # change hammerspoon config dir to XDG Home:
-      - defaults write org.hammerspoon.Hammerspoon MJConfigFile "$HOME/.config/hammerspoon/init.lua"
+  restart:all:
+    desc: Restart Dock, Finder, and SystemUIServer
+    platforms: [darwin]
+    cmds:
+      - echo "🔄 Restarting system UI components..."
+      - killall Dock || true
+      - killall Finder || true
+      - killall SystemUIServer || true
+      - echo "✓ UI components restarted"
 
   xcode:install:
     desc: Install Xcode command line tools
     platforms: [darwin]
     status:
       - xcode-select -p
-    silent: true
     cmds:
       - xcode-select --install
 
   op:setup:
-    desc: mac/linux 1password ssh agent sock file compatibility
+    desc: Setup 1Password SSH agent symlink
     summary: |
-      symlink 1password ssh agent sock file so that the paths are compatible between
-      mac and linux (linux uses the ~/.1password, and mac uses that ugly path below)
+      Creates a symlink for 1Password SSH agent socket
+      This enables cross-platform compatibility (Linux uses ~/.1password)
     platforms: [darwin]
+    preconditions:
+      - sh: test -S ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+        msg: |
+          1Password SSH agent is not enabled.
+
+          Please:
+          1. Open 1Password app
+          2. Go to Settings → Developer
+          3. Enable "Use the SSH agent"
+          4. Run this task again
     status:
-      - test -d "$HOME/.1password"
-    silent: true
+      - test -L "$HOME/.1password/agent.sock"
     cmds:
-      - echo 'Symlinking 1Password SSH Agent Sock'
+      - echo "🔗 Creating 1Password SSH agent symlink..."
       - mkdir -p ~/.1password
       - ln -s ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ~/.1password/agent.sock
+      - echo "✓ Symlink created successfully"
 
   sync:
-    desc: Updates defaults and install mac specific tools
+    desc: Apply macOS defaults and restart UI components
+    summary: |
+      Convenience task that applies macOS defaults and restarts affected apps
+      Equivalent to running: task mac:set:defaults && task mac:restart:all
     platforms: [darwin]
     cmds:
       - task: set:defaults
+      - task: restart:all
