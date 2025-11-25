@@ -1,45 +1,76 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
 
+vars:
+  LAZY_LOCK: './packages/nvim/.config/nvim/lazy-lock.json'
+
 tasks:
-  commit:
-    desc: Commits the lazy-lock.json file if changed
-    silent: true
-    cmd: |
-      ./scripts/commit_changed_file.sh \
-        './packages/nvim/.config/nvim/lazy-lock.json' \
-        "chore(nvim): update plugins $(date '+%Y-%m-%d %H:%M:%S')"
+  health:
+    desc: Run Neovim health checks
+    internal: true
+    preconditions:
+      - sh: command -v nvim >/dev/null 2>&1
+        msg: "Neovim is not installed"
+    cmds:
+      - nvim --headless +'checkhealth' +qa
 
   restore:
-    desc: Restores Neovim plugins to the state in lazy-lock.json
+    desc: Restore Neovim plugins to the state in lazy-lock.json
     summary: |
       Restores Neovim plugins to the state specified in lazy-lock.json
+      Useful for bootstrapping a fresh machine or after cloning dotfiles
+    preconditions:
+      - sh: command -v nvim >/dev/null 2>&1
+        msg: "Neovim is not installed. Run 'brew install neovim' first"
+      - sh: test -f "{{.LAZY_LOCK}}"
+        msg: "lazy-lock.json not found at {{.LAZY_LOCK}}"
+    deps:
+      - health
     cmds:
       - |
         nvim --headless \
-          +verbose \
           +'Lazy! restore' \
           +'Lazy! clean' \
-          +'Lazy! clear' \
           +'TSUpdateSync' \
           +'autocmd User MasonUpdateAllCompleted qall!' \
-          +'MasonUpdateAll' \
+          +'MasonUpdateAll'
 
   update:
-    desc: Updates Neovim plugins, CLI utils, and TreeSitter plugins
+    desc: Update Neovim plugins, CLI utils, and TreeSitter
     summary: |
       Updates Neovim plugins, CLI utils, and TreeSitter plugins
-
-      Then automatically commits the changes to the lazy-lock file, if there are any.
+      Automatically commits changes to lazy-lock.json if there are any
+    preconditions:
+      - sh: command -v nvim >/dev/null 2>&1
+        msg: "Neovim is not installed"
+    deps:
+      - health
     cmds:
       - |
         nvim --headless \
-          +verbose \
           +'Lazy! sync' \
           +'Lazy! clean' \
-          +'Lazy! clear' \
           +'TSUpdateSync' \
           +'autocmd User MasonUpdateAllCompleted qall!' \
-          +'MasonUpdateAll' \
-
+          +'MasonUpdateAll'
       - task: commit
+
+  commit:
+    desc: Commit lazy-lock.json if changed
+    internal: true
+    preconditions:
+      - sh: test -f ./scripts/commit_changed_file.sh
+        msg: "commit script not found at ./scripts/commit_changed_file.sh"
+    cmds:
+      - |
+        ./scripts/commit_changed_file.sh \
+          '{{.LAZY_LOCK}}' \
+          "chore(nvim): update plugins $(date '+%Y-%m-%d %H:%M:%S')"
+
+  check:
+    desc: Verify Neovim setup and configuration
+    summary: |
+      Runs health checks to verify Neovim is properly configured
+      Useful for debugging issues after fresh install
+    cmds:
+      - task: health

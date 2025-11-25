@@ -29,6 +29,14 @@ tasks:
     cmds:
       - task: install:platform_tools
       - task: mise:install
+
+  update:
+    desc: Update all system dependencies
+    summary: |
+      Updates Homebrew packages and mise-managed tools
+      Run this periodically to keep your system up to date
+    cmds:
+      - task: brew:upgrade
       - task: mise:update
 
   install:platform_tools:
