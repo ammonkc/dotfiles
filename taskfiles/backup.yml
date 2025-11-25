@@ -60,6 +60,9 @@ tasks:
       CONFLICTS:
         sh: cd {{.PACKAGES_DIR}} && stow -n {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}" 2>&1 | grep "existing target is" | awk '{print $NF}' | tr -d "'" || true
     dir: '{{.PACKAGES_DIR}}'
+    status:
+      # Skip entirely if no conflicts found
+      - test -z "{{.CONFLICTS}}"
     cmds:
       - task: check-conflicts
         vars:
@@ -204,18 +207,79 @@ tasks:
       Usage: task backup:clean KEEP=5
     vars:
       KEEP: '{{.KEEP | default "5"}}'
+      # Get list of old backups to remove (all except the most recent KEEP)
+      OLD_BACKUPS:
+        sh: |
+          BACKUP_BASE="{{.BACKUP_BASE}}"
+          if [ -d "$BACKUP_BASE" ]; then
+            cd "$BACKUP_BASE"
+            ls -t | tail -n +$(({{.KEEP}} + 1))
+          fi
     preconditions:
       - sh: test -d "{{.BACKUP_BASE}}"
         msg: "ℹ️  No backups found"
+    status:
+      # Skip if no old backups to remove
+      - test -z "{{.OLD_BACKUPS}}"
     cmds:
-      - |
-        echo "🗑️  Cleaning old backups (keeping {{.KEEP}} most recent)..."
-        cd "{{.BACKUP_BASE}}"
-        ls -t | tail -n +$(({{.KEEP}} + 1)) | while read dir; do
-          if [ -d "$dir" ]; then
-            echo "  Removing: $dir"
-            rm -rf "$dir"
+      - echo "🗑️  Cleaning old backups (keeping {{.KEEP}} most recent)..."
+      - for:
+          var: OLD_BACKUPS
+          as: BACKUP_DIR
+        task: remove-old-backup
+        vars:
+          BACKUP_DIR: '{{.BACKUP_DIR}}'
+      - echo "✓ Cleanup complete"
+
+  remove-old-backup:
+    desc: Remove a single old backup directory
+    internal: true
+    vars:
+      BACKUP_DIR: '{{.BACKUP_DIR}}'
+    cmds:
+      - echo "  Removing:" "{{.BACKUP_DIR}}"
+      - rm -rf "{{.BACKUP_BASE}}/{{.BACKUP_DIR}}"
+
+  clean-empty:
+    desc: Remove empty backup directories
+    summary: |
+      Removes backup directories that contain no files
+      Useful for cleaning up after idempotent runs
+    vars:
+      # Get list of empty backup directories
+      EMPTY_BACKUPS:
+        sh: |
+          BACKUP_BASE="{{.BACKUP_BASE}}"
+          if [ -d "$BACKUP_BASE" ]; then
+            cd "$BACKUP_BASE"
+            for dir in */; do
+              if [ -d "$dir" ] && [ -z "$(find "$dir" -type f)" ]; then
+                basename "$dir"
+              fi
+            done
           fi
-        done
-        echo "✓ Cleanup complete"
+    preconditions:
+      - sh: test -d "{{.BACKUP_BASE}}"
+        msg: "ℹ️  No backups found"
+    status:
+      # Skip if no empty directories found
+      - test -z "{{.EMPTY_BACKUPS}}"
+    cmds:
+      - echo "🗑️  Removing empty backup directories..."
+      - for:
+          var: EMPTY_BACKUPS
+          as: BACKUP_DIR
+        task: remove-empty-backup
+        vars:
+          BACKUP_DIR: '{{.BACKUP_DIR}}'
+      - echo "✓ Removed empty backup directories"
+
+  remove-empty-backup:
+    desc: Remove a single empty backup directory
+    internal: true
+    vars:
+      BACKUP_DIR: '{{.BACKUP_DIR}}'
+    cmds:
+      - echo "  Removing empty:" "{{.BACKUP_DIR}}"
+      - rm -rf "{{.BACKUP_BASE}}/{{.BACKUP_DIR}}"
 

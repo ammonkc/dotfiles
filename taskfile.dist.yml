@@ -9,8 +9,7 @@ includes:
     taskfile: ./taskfiles/brew.yml
 
   dotfiles:
-    aliases:
-      - dot
+    aliases: [dot]
     taskfile: ./taskfiles/dotfiles.yml
 
   mise:
@@ -34,10 +33,12 @@ tasks:
     desc: Complete system setup - installs dependencies, builds utilities, configures dotfiles, and sets up Neovim
     summary: |
       Performs a full system setup by:
-      1. Installing all system dependencies (tools, languages, and utilities)
-      3. Installing and configuring all dotfiles
+      1. Installing all system dependencies (Homebrew and packages)
+      2. Installing and configuring all dotfiles (stow packages)
+      3. Installing mise-managed tools (after mise config is stowed)
       4. Restoring Neovim plugins to the state specified in lazy-lock.json
     cmds:
       - task: system:install
       - task: dot:install
+      - task: mise:install
       - task: nvim:restore

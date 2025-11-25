@@ -28,7 +28,6 @@ tasks:
     internal: true
     cmds:
       - task: install:platform_tools
-      - task: mise:install
 
   update:
     desc: Update all system dependencies

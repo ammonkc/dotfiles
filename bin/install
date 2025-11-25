@@ -7,6 +7,9 @@
 #### ██████╔╝╚██████╔╝   ██║   ██║     ██║███████╗███████╗███████║
 #### ╚═════╝  ╚═════╝    ╚═╝   ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝
 ########################################################################################################################
+
+set -e
+
 # Color helper functions
 info() { echo -e "\033[0;34m⚙️  $1\033[0m"; }
 success() { echo -e "\033[0;32m✓ $1\033[0m"; }
@@ -15,21 +18,49 @@ warning() { echo -e "\033[1;33m⚠️  $1\033[0m"; }
 
 XDG_BIN_DIR=${XDG_BIN_DIR:-$HOME/.local/bin}
 
+# Install go-task if not present
 if ! command -v task > /dev/null; then
-  # Install task
-  info "Installing task..."
-  mkdir -p $XDG_BIN_DIR
-  sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b $XDG_BIN_DIR || {
-    error "Failed to install task"
+  info "Installing go-task..."
+  mkdir -p "$XDG_BIN_DIR"
+  sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b "$XDG_BIN_DIR" || {
+    error "Failed to install go-task"
     exit 1
   }
-  success "Task installed successfully"
+  success "go-task installed successfully"
 else
-  success "Task already installed"
+  success "go-task already installed ($(task --version))"
 fi
 
-export PATH="$PATH:$XDG_BIN_DIR"
+# Add go-task to PATH for this session
+export PATH="$XDG_BIN_DIR:$PATH"
 
-task install
+# Verify go-task is now available
+if ! command -v task > /dev/null; then
+  error "go-task installed but not found in PATH"
+  error "Please add $XDG_BIN_DIR to your PATH and try again"
+  exit 1
+fi
 
-success "Setup complete! 🎉"
+# Add Homebrew to PATH if it exists but isn't in current PATH
+if [ -f /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -f /usr/local/bin/brew ]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# Run the main installation
+info "Running installation tasks..."
+if task install; then
+  echo ""
+  success "Setup complete! 🎉"
+  echo ""
+  info "Next steps:"
+  echo "  1. Restart your terminal or run: exec \$SHELL"
+  echo "  2. Customize local configs if needed:"
+  echo "     - ~/.gitconfig.local"
+  echo "     - ~/.zshrc.local"
+  echo "  3. Run 'task --list' to see available commands"
+else
+  error "Installation failed"
+  exit 1
+fi

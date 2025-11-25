@@ -19,6 +19,14 @@ tasks:
       - which brew
     cmds:
       - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - |
+        # Add Homebrew to PATH for current session
+        echo "Adding Homebrew to PATH..."
+        if [[ $(uname -m) == "arm64" ]]; then
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        else
+          eval "$(/usr/local/bin/brew shellenv)"
+        fi
 
   commit:
     desc: Commits the Brewfile file if changed

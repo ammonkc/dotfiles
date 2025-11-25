@@ -19,14 +19,26 @@ tasks:
     summary: |
       Restores Neovim plugins to the state specified in lazy-lock.json
       Useful for bootstrapping a fresh machine or after cloning dotfiles
+
+      Skips if plugins are already at the correct versions (checks lazy-lock.json hash)
+    vars:
+      NVIM_DATA: '${XDG_DATA_HOME:-$HOME/.local/share}/nvim'
+      LAZY_LOCK_HASH:
+        sh: test -f "{{.LAZY_LOCK}}" && shasum -a 256 "{{.LAZY_LOCK}}" | cut -d' ' -f1 || echo ""
+      LAST_RESTORE_HASH:
+        sh: test -f "{{.NVIM_DATA}}/.lazy-restore-hash" && cat "{{.NVIM_DATA}}/.lazy-restore-hash" || echo ""
     preconditions:
       - sh: command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed. Run 'brew install neovim' first"
       - sh: test -f "{{.LAZY_LOCK}}"
         msg: "lazy-lock.json not found at {{.LAZY_LOCK}}"
+    status:
+      # Skip if lazy-lock.json hasn't changed since last restore
+      - test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}"
     deps:
       - health
     cmds:
+      - echo "📦 Restoring Neovim plugins from lazy-lock.json..."
       - |
         nvim --headless \
           +'Lazy! restore' \
@@ -34,6 +46,9 @@ tasks:
           +'TSUpdateSync' \
           +'autocmd User MasonUpdateAllCompleted qall!' \
           +'MasonUpdateAll'
+      - mkdir -p "{{.NVIM_DATA}}"
+      - echo "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
+      - echo "✓ Plugins restored and hash saved"
 
   update:
     desc: Update Neovim plugins, CLI utils, and TreeSitter

@@ -16,6 +16,8 @@ tasks:
     preconditions:
       - sh: command -v mise >/dev/null 2>&1
         msg: "mise is not installed. Run 'brew install mise' first"
+      - sh: test -f .mise.toml || test -f .tool-versions || test -f .mise.local.toml
+        msg: "No mise config found (.mise.toml, .tool-versions, or .mise.local.toml)"
     deps:
       - doctor
     cmds:
