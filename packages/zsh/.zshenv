@@ -34,4 +34,4 @@ mkdir -p "$(dirname $ZSH_STATE_DIR)"
 mkdir -p "$(dirname $ZSH_COMPDUMP)"
 
 # Local config
-[[ -f ~/.zshenv.local ]] && source ~/.zshenv.local
+[[ -f $HOME/.zshenv.local ]] && source $HOME/.zshenv.local

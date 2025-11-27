@@ -53,4 +53,4 @@ fi
 # -----------------------
 # ---- Local config -----
 # -----------------------
-[[ -f ~/.env.local ]] && source ~/.env.local || true
+[[ -f $HOME/.env.local ]] && source $HOME/.env.local || true

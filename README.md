@@ -104,12 +104,12 @@ These dotfiles strictly adhere to the [XDG Base Directory Specification](https:/
 
 ### **Prerequisites**
 
-#### **macOS** (Primary Platform)
+#### **macOS**
 - macOS (tested on Sequoia 15.x, works on Big Sur 11.x+)
 - Xcode Command Line Tools (installed automatically if missing)
 - Admin access (for Homebrew and some system tools)
 
-#### **Linux** (Secondary Support - Debian/Ubuntu or Arch)
+#### **Linux** (Debian/Ubuntu or Arch)
 - Debian/Ubuntu (tested on Ubuntu 22.04+) or Arch Linux
 - Git (installed automatically if missing, requires sudo)
 - Sudo access (**you'll be prompted for password during package installation**)
@@ -127,7 +127,6 @@ curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/boots
 2. Clones this repository to `~/.dotfiles` (customizable via `$DOTFILES_DIR`)
 3. Installs Taskfile (task runner)
 4. Runs the main installation tasks
-5. Shows you next steps for customization
 
 **Duration:** ~15-30 minutes depending on internet speed
 

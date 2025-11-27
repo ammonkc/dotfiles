@@ -78,4 +78,4 @@ fi
 # -----------------------
 # ---- Local config -----
 # -----------------------
-[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local || true
+[[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local || true
