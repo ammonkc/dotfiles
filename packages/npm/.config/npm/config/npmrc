@@ -1,0 +1,2 @@
+cache=${XDG_CACHE_HOME}/npm
+userconfig=${NPM_CONFIG_USERCONFIG:-XDG_CONFIG_HOME/npm/config/npmrc}

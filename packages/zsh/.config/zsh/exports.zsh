@@ -29,13 +29,16 @@ export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 # gnupg
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 
+# npm
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config/npmrc"
+
+# pnpm
+export PNPM_HOME="$XDG_DATA_HOME/pnpm"
+
 # GEM
 export GEMRC="$XDG_CONFIG_HOME/gem/config"
 export GEM_HOME="$XDG_DATA_HOME/gem"
 export GEM_PATH="$GEM_HOME"
-
-# pnpm
-export PNPM_HOME="$XDG_DATA_HOME/pnpm"
 
 # AWS cli
 export AWS_CONFIG_FILE="${AWS_CONFIG_FILE:-XDG_CONFIG_HOME/aws/config}"
