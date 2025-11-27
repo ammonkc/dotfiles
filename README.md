@@ -120,6 +120,17 @@ dot info:all             # Show detailed system info
 - `~/.config/zsh/.zshrc.local` - Personal Zsh config
 - `~/.config/mise/.mise.local.toml` - Local tool versions
 
+**After Bootstrap - Enable SSH for Git:**
+
+The bootstrap process uses HTTPS for git operations. Once your SSH keys are set up (via 1Password SSH agent or `ssh-keygen`), you can switch to SSH by removing these lines from `~/.config/git/config.local`:
+
+```ini
+[url "https://github.com/"]
+  insteadOf = git@github.com:
+```
+
+After removing those lines, git will use SSH (faster, more secure) for all GitHub operations.
+
 **Add new dotfiles:**
 ```bash
 mkdir -p packages/myapp/.config/myapp

@@ -33,16 +33,16 @@ tasks:
       - test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}"
     cmds:
       - echo "📦 Installing Neovim plugins (this may take a few minutes)..."
-      # Ensure lazy.nvim is installed first (use GIT_CONFIG_GLOBAL='' to ignore SSH rewrite during bootstrap)
+      # Ensure lazy.nvim is installed first
       - |
         LAZY_PATH="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim"
         if [[ ! -d "$LAZY_PATH" ]]; then
           echo "  → Bootstrapping lazy.nvim..."
-          GIT_CONFIG_GLOBAL='' git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
+          git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
         fi
-      # Now restore plugins (show output for progress, use GIT_CONFIG_GLOBAL='' to avoid SSH rewrite)
+      # Now restore plugins (show output for progress)
       - |
-        GIT_CONFIG_GLOBAL='' nvim --headless \
+        nvim --headless \
           +'Lazy! restore' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
@@ -63,7 +63,7 @@ tasks:
     cmds:
       - echo "📦 Updating Neovim plugins..."
       - |
-        GIT_CONFIG_GLOBAL='' nvim --headless \
+        nvim --headless \
           +'Lazy! sync' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
