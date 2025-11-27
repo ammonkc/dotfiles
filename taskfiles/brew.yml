@@ -79,52 +79,7 @@ tasks:
     deps:
       - install:homebrew
     cmds:
-      - echo "📦 Installing Homebrew packages from Brewfile..."
-      - task: install:tools:attempt
-        vars: {ATTEMPT: 1}
-      - echo "✓ Homebrew packages installed successfully"
-
-  install:tools:attempt:
-    internal: true
-    platforms: [darwin]
-    dir: "/{{.DOTFILES}}"
-    vars:
-      ATTEMPT: '{{.ATTEMPT | default "1"}}'
-      MAX_ATTEMPTS: 3
-    cmds:
-      - cmd: brew bundle
-        ignore_error: true
-      - task: install:tools:retry
-        vars:
-          ATTEMPT: '{{.ATTEMPT}}'
-          MAX_ATTEMPTS: '{{.MAX_ATTEMPTS}}'
-
-  install:tools:retry:
-    internal: true
-    platforms: [darwin]
-    dir: "/{{.DOTFILES}}"
-    vars:
-      ATTEMPT: '{{.ATTEMPT}}'
-      MAX_ATTEMPTS: '{{.MAX_ATTEMPTS}}'
-      NEXT_ATTEMPT:
-        sh: echo $(({{.ATTEMPT}} + 1))
-    status:
-      # Check if brew bundle succeeded (no .Brewfile.lock.json.failed marker)
-      - brew bundle check
-    preconditions:
-      - sh: test {{.ATTEMPT}} -lt {{.MAX_ATTEMPTS}}
-        msg: |
-          ❌ Installation failed after {{.MAX_ATTEMPTS}} attempts
-          💡 This is likely a temporary network issue with ghcr.io
-          💡 You can try running 'task brew:install' again later
-    cmds:
-      - echo "⚠️  Installation failed (attempt {{.ATTEMPT}}/{{.MAX_ATTEMPTS}})"
-      - echo "⏳ Waiting 10 seconds before retry..."
-      - sleep 10
-      - echo "🔄 Retrying brew bundle..."
-      - task: install:tools:attempt
-        vars:
-          ATTEMPT: '{{.NEXT_ATTEMPT}}'
+      - brew bundle
 
   update_no_commit:
     internal: true
