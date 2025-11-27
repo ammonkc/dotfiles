@@ -124,6 +124,7 @@ tasks:
   backup_conflicts:
     desc: Detect and backup files that conflict with stow operation
     internal: true
+    silent: true
     vars:
       PACKAGE: '{{.PACKAGE}}'
       PACKAGES_DIR: '{{.PACKAGES_DIR}}'
@@ -213,6 +214,7 @@ tasks:
   list:details:
     desc: List details for a specific backup
     internal: true
+    silent: true
     vars:
       TIMESTAMP: '{{.TIMESTAMP}}'
       BACKUP_PATH: '{{.BACKUP_BASE}}/{{.TIMESTAMP}}'
