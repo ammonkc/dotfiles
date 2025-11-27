@@ -37,7 +37,7 @@ brew 'lazygit'              # Simple terminal UI for git commands
 brew 'midnight-commander'   # Terminal-based visual file manager
 brew 'mise'                 # Polyglot runtime manager (asdf rust clone)
 brew 'neovim'               # Ambitious Vim-fork focused on extensibility and agility
-brew 'opencode'             # AI coding agent, built for the terminal
+brew 'oh-my-posh'           # Prompt theme engine for any shell
 brew 'optipng'              # PNG file optimizer
 brew 'pinentry-mac'         # Pinentry for GPG on Mac
 brew 'pkgconf'              # Package compiler and linker metadata toolkit
