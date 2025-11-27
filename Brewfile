@@ -126,7 +126,7 @@ if OS.mac?
     cask 'github'              # GitHub Desktop
     cask 'google-chrome'       # Google Chrome browser
     cask 'hammerspoon'         # Desktop automation application
-    cask 'handbrake'           # Open-source video transcoder available for Linux, Mac, and Windows
+    cask 'handbrake-app'           # Open-source video transcoder available for Linux, Mac, and Windows
     cask 'iina'                # Free and open-source media player
     cask 'imagealpha'          # Utility to reduce the size of 24-bit PNG files
     cask 'imageoptim'          # Tool to optimise images to a smaller size
@@ -152,7 +152,7 @@ if OS.mac?
     cask 'subler'              # Mux and tag mp4 files
     cask 'superwhisper'        # Dictation tool including LLM reformatting
     cask 'tableplus'           # Native GUI tool for relational databases
-    cask 'tailscale'           # Mesh VPN based on WireGuard
+    cask 'tailscale-app'           # Mesh VPN based on WireGuard
     cask 'transmit'            # File transfer application
     cask 'utm'                 # Virtual machines UI using QEMU
     cask 'vlc'                 # Multimedia player
