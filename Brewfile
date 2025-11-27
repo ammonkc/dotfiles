@@ -92,7 +92,6 @@ brew 'shivammathur/extensions/imagick@8.1'
 brew 'shivammathur/extensions/redis@8.1'
 
 # Agentic AI
-brew 'claude-code'             # Terminal-based AI coding assistant
 brew 'opencode'                # AI coding agent, built for the terminal
 
 if OS.mac?
