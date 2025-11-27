@@ -6,6 +6,13 @@
 # Based on: https://github.com/mathiasbynens/dotfiles
 #
 # IMPORTANT: Some changes require logout/restart to take effect
+#
+# Validated for: macOS 26.1 (Tahoe)
+# Previous validation: macOS 15.7 (Sequoia)
+#
+# Note: Safari and Mail are containerized apps in modern macOS.
+#       Their preferences may require the apps to be closed first,
+#       or may need to be set through the apps' UI instead.
 ###############################################################################
 
 set -e
@@ -14,11 +21,18 @@ set -e
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || \
 osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
 
+# Close Safari and Mail to allow writing to their containerized preferences
+# (Note: Containerized apps may still prevent direct defaults writes)
+killall Safari 2>/dev/null || true
+killall Mail 2>/dev/null || true
+
 # Back up current defaults
 now=$(date -u "+%Y-%m-%d-%H%M%S")
-printf "📦 Backing up current macOS defaults to:\n   %s\n\n" \
-  "$HOME/Desktop/macos-defaults-$now.txt"
-defaults read >"$HOME/Desktop/macos-defaults-$now.txt"
+backup_file="$HOME/Desktop/macos-defaults-$now.txt"
+printf "📦 Backing up current macOS defaults to:\n   %s\n\n" "$backup_file"
+if ! defaults read >"$backup_file" 2>/dev/null; then
+  printf "⚠️  Warning: Could not create backup. Continuing anyway...\n\n"
+fi
 
 printf "⚙️  Applying macOS preferences...\n\n"
 
@@ -318,26 +332,30 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 
 printf "  → Safari settings\n"
 
+# Note: Safari is a containerized app. These preferences may require Safari
+# to be closed first, or may need to be set through Safari's preferences UI.
+# The commands will attempt to set preferences but may show warnings.
+
 # Privacy: don't send search queries to Apple
-defaults write com.apple.Safari UniversalSearchEnabled -bool false
-defaults write com.apple.Safari SuppressSearchSuggestions -bool true
+defaults write com.apple.Safari UniversalSearchEnabled -bool false 2>/dev/null || true
+defaults write com.apple.Safari SuppressSearchSuggestions -bool true 2>/dev/null || true
 
 # Show the full URL in the address bar
-defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true 2>/dev/null || true
 
 # Prevent Safari from opening 'safe' files automatically after downloading
-defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
+defaults write com.apple.Safari AutoOpenSafeDownloads -bool false 2>/dev/null || true
 
 # Enable the Develop menu and the Web Inspector
-defaults write com.apple.Safari IncludeDevelopMenu -bool true
-defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
-defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
+defaults write com.apple.Safari IncludeDevelopMenu -bool true 2>/dev/null || true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true 2>/dev/null || true
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true 2>/dev/null || true
 
 # Warn about fraudulent websites
-defaults write com.apple.Safari WarnAboutFraudulentWebsites -bool true
+defaults write com.apple.Safari WarnAboutFraudulentWebsites -bool true 2>/dev/null || true
 
 # Update extensions automatically
-defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
+defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true 2>/dev/null || true
 
 ###############################################################################
 # Mail                                                                        #
@@ -345,24 +363,28 @@ defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 
 printf "  → Mail settings\n"
 
+# Note: Mail is a containerized app. These preferences may require Mail
+# to be closed first, or may need to be set through Mail's preferences UI.
+# The commands will attempt to set preferences but may show warnings.
+
 # Copy addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>`
-defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
+defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false 2>/dev/null || true
 
 # Disable send and reply animations
-defaults write com.apple.mail DisableReplyAnimations -bool true
-defaults write com.apple.mail DisableSendAnimations -bool true
+defaults write com.apple.mail DisableReplyAnimations -bool true 2>/dev/null || true
+defaults write com.apple.mail DisableSendAnimations -bool true 2>/dev/null || true
 
 # Most recent first in conversations
-defaults write com.apple.mail ConversationViewSortDescending -bool true
+defaults write com.apple.mail ConversationViewSortDescending -bool true 2>/dev/null || true
 
 # Disable inline attachments (show icons only)
-defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
+defaults write com.apple.mail DisableInlineAttachmentViewing -bool true 2>/dev/null || true
 
 # Compose mail in plain-text
-defaults write com.apple.mail SendFormat Plain
+defaults write com.apple.mail SendFormat Plain 2>/dev/null || true
 
 # Disable remote content
-defaults write com.apple.mail DisableURLLoading -bool true
+defaults write com.apple.mail DisableURLLoading -bool true 2>/dev/null || true
 
 ###############################################################################
 # Spotlight                                                                   #
