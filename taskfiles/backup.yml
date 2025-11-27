@@ -164,7 +164,6 @@ tasks:
       - test ! -e "$HOME/{{.FILE_PATH}}"
     cmds:
       - mkdir -p "{{.DEST_DIR}}/$(dirname '{{.FILE_PATH}}')"
-      - echo "      Backing up:" "$HOME/{{.FILE_PATH}}"
       - cp -a "$HOME/{{.FILE_PATH}}" "{{.DEST_DIR}}/{{.FILE_PATH}}"
       - rm -rf "$HOME/{{.FILE_PATH}}"
 
@@ -178,13 +177,14 @@ tasks:
     preconditions:
       - sh: 'test -z "{{.CONFLICTS}}"'
         msg: |
-          ⚠️  Found conflicts for {{.PACKAGE}}, backing up existing files...
+          ⚠️  Backing up existing files for {{.PACKAGE}}...
     cmds:
-      - echo "    No conflicts for {{.PACKAGE}}"
+      - 'true'  # No-op when no conflicts
 
   restore_latest_package:
     desc: Restore the latest backup for a specific package (if it exists)
     internal: true
+    silent: true
     vars:
       PACKAGE: '{{.PACKAGE}}'
       # Find the most recent backup containing this package (sorted newest first)
@@ -194,7 +194,6 @@ tasks:
       # Skip if no backup exists for this package
       - test -z "{{.LATEST_BACKUP}}"
     cmds:
-      - echo "    📦 Restoring backed up files for {{.PACKAGE}} from {{.LATEST_BACKUP}}..."
       - task: restore:package
         vars:
           TIMESTAMP: '{{.LATEST_BACKUP}}'
@@ -203,12 +202,12 @@ tasks:
   restore:package:
     desc: Restore a single package from backup
     internal: true
+    silent: true
     vars:
       TIMESTAMP: '{{.TIMESTAMP}}'
       PACKAGE: '{{.PACKAGE}}'
       PACKAGE_PATH: '{{.BACKUP_BASE}}/{{.TIMESTAMP}}/{{.PACKAGE}}'
     cmds:
-      - echo "  → Restoring {{.PACKAGE}}..."
       - cp -a "{{.PACKAGE_PATH}}/." "$HOME/"
 
   list:details:
@@ -246,18 +245,18 @@ tasks:
   clean:old_backup:
     desc: Remove a single old backup directory
     internal: true
+    silent: true
     vars:
       BACKUP_DIR: '{{.BACKUP_DIR}}'
     cmds:
-      - echo "  Removing:" "{{.BACKUP_DIR}}"
       - rm -rf "{{.BACKUP_BASE}}/{{.BACKUP_DIR}}"
 
   clean:empty_backup:
     desc: Remove a single empty backup directory
     internal: true
+    silent: true
     vars:
       BACKUP_DIR: '{{.BACKUP_DIR}}'
     cmds:
-      - echo "  Removing empty:" "{{.BACKUP_DIR}}"
       - rm -rf "{{.BACKUP_BASE}}/{{.BACKUP_DIR}}"
 

@@ -9,7 +9,7 @@ includes:
 vars:
   DOTFILES_DIR: '{{.ROOT_DIR}}'
   PACKAGES_DIR: '{{.DOTFILES_DIR}}/packages'
-  STOW_FLAGS: '--verbose --restow --no-folding'
+  STOW_FLAGS: '--restow --no-folding'
   # Dynamically get list of all package directories
   PACKAGES:
     sh: cd {{.PACKAGES_DIR}} && find . -maxdepth 1 -type d ! -name ".*" -exec basename {} \; | sort
@@ -115,7 +115,7 @@ tasks:
       PACKAGE: '{{.PACKAGE}}'
     cmds:
       - echo "  → Unstowing {{.PACKAGE}}..."
-      - stow --verbose --delete --dir={{.PACKAGES_DIR}} -t $HOME "{{.PACKAGE}}"
+      - stow --delete --dir={{.PACKAGES_DIR}} -t $HOME "{{.PACKAGE}}"
       - task: backup:restore_latest_package
         vars:
           PACKAGE: '{{.PACKAGE}}'
