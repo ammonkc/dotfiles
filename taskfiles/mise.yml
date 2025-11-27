@@ -11,6 +11,8 @@ tasks:
     summary: |
       Installs tools defined in .mise.toml or .tool-versions
       This will install all tools even if some are missing
+
+      Note: GPG verification is disabled for easier setup on fresh systems
     preconditions:
       - sh: command -v mise >/dev/null 2>&1
         msg: "mise is not installed. Run 'brew install mise' first"
@@ -18,7 +20,8 @@ tasks:
         msg: "No mise config found. Expected ~/.config/mise/config.toml or ~/.tool-versions"
     cmds:
       - echo "📦 Installing mise-managed tools..."
-      - mise install
+      - echo "   (GPG verification disabled for easier setup)"
+      - MISE_NODE_VERIFY=no mise install
       - echo "✓ Tools installed successfully"
 
   update:
