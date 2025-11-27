@@ -47,7 +47,7 @@ This dotfiles setup will:
 
 ## 🏡 Clean Home Directory (XDG Base Directory)
 
-These dotfiles strictly adhere to the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) to keep your home directory clean and organized:
+These dotfiles try to be compliant with [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) to keep your home directory clean and organized:
 
 ```bash
 ~/.config/           # Configuration files (XDG_CONFIG_HOME)
@@ -134,11 +134,6 @@ curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/boots
 
 On a fresh Linux system:
 
-```bash
-# Run the bootstrap script
-curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/bootstrap.sh | bash
-```
-
 **What happens:**
 1. Checks for and installs git (if needed, requires sudo)
 2. Clones this repository to `~/.dotfiles` (customizable via `$DOTFILES_DIR`)
@@ -149,7 +144,7 @@ curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/boots
 
 **Duration:** ~20-40 minutes depending on internet speed and system
 
-**Note:** Linux support is secondary. macOS-specific features (system preferences, 1Password integration, GUI apps) are not available on Linux.
+**Note:** Linux support is a WIP
 
 ---
 
