@@ -51,7 +51,6 @@ tasks:
       Usage: task dot:restow PACKAGE=zsh
     vars:
       PACKAGE: '{{.PACKAGE | default ""}}'
-    dir: '{{.PACKAGES_DIR}}'
     preconditions:
       - sh: test -n "{{.PACKAGE}}"
         msg: "PACKAGE variable is required. Usage: task dot:restow PACKAGE=zsh"
@@ -59,7 +58,7 @@ tasks:
         msg: "Package '{{.PACKAGE}}' not found in {{.PACKAGES_DIR}}"
     cmds:
       - echo "🔄 Restowing {{.PACKAGE}}..."
-      - stow {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}"
+      - stow {{.STOW_FLAGS}} --dir={{.PACKAGES_DIR}} -t $HOME "{{.PACKAGE}}"
       - echo "✓ {{.PACKAGE}} restowed successfully"
 
   # ============================================================================
@@ -89,7 +88,6 @@ tasks:
     internal: true
     vars:
       PACKAGE: '{{.PACKAGE}}'
-    dir: '{{.PACKAGES_DIR}}'
     cmds:
       - echo "  → Stowing {{.PACKAGE}}..."
       - task: backup:backup_conflicts
@@ -97,7 +95,7 @@ tasks:
           PACKAGE: '{{.PACKAGE}}'
           PACKAGES_DIR: '{{.PACKAGES_DIR}}'
           STOW_FLAGS: '{{.STOW_FLAGS}}'
-      - stow {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}"
+      - stow {{.STOW_FLAGS}} --dir={{.PACKAGES_DIR}} -t $HOME "{{.PACKAGE}}"
 
   unstow:packages:
     internal: true
@@ -115,10 +113,9 @@ tasks:
     internal: true
     vars:
       PACKAGE: '{{.PACKAGE}}'
-    dir: '{{.PACKAGES_DIR}}'
     cmds:
       - echo "  → Unstowing {{.PACKAGE}}..."
-      - stow --verbose --delete -t $HOME "{{.PACKAGE}}"
+      - stow --verbose --delete --dir={{.PACKAGES_DIR}} -t $HOME "{{.PACKAGE}}"
       - task: backup:restore_latest_package
         vars:
           PACKAGE: '{{.PACKAGE}}'
