@@ -61,7 +61,6 @@ tasks:
       Run 'task mac:set:defaults' separately if you want to apply them.
     cmds:
       - task: system:install
-      - task: dot:install
       - task: mise:install
 
   doctor:

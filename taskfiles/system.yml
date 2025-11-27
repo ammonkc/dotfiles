@@ -14,6 +14,10 @@ includes:
     taskfile: ./mise.yml
     internal: true
 
+  dotfiles:
+    aliases: [dot]
+    taskfile: ./taskfiles/dotfiles.yml
+
 vars:
   HOME: '{{env "HOME"}}'
 
@@ -31,7 +35,16 @@ tasks:
   install:requirements:
     internal: true
     cmds:
+      - task: install:stow
+      - task: dot:install
       - task: install:platform_tools
+
+  install:stow:
+    internal: true
+    desc: Install stow (required before dotfiles can be stowed)
+    cmds:
+      - task: brew:install
+      - task: linux:install:stow
 
   update:
     desc: Update all system dependencies
@@ -50,5 +63,5 @@ tasks:
   install:platform_tools:
     internal: true
     cmds:
-      - task: brew:install
+      - task: brew:install:tools
       - task: linux:install

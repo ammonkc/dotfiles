@@ -127,6 +127,48 @@ tasks:
         grep -v '^#' "{{.PACKAGES_FILE}}" | grep -v '^$' | xargs sudo pacman -S --needed --noconfirm
       - echo "✓ Packages installed"
 
+  install:stow:
+    internal: true
+    platforms: [linux]
+    desc: Install stow package manager (required before dotfiles can be stowed)
+    status:
+      - command -v stow >/dev/null 2>&1
+    cmds:
+      - task: install:stow_{{.PKG_MANAGER}}
+
+  install:stow_apt:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "apt"
+        msg: "This task is for apt package manager only"
+    cmds:
+      - echo "📦 Installing stow..."
+      - sudo apt-get update
+      - sudo apt-get install -y stow
+      - echo "✓ stow installed"
+
+  install:stow_pacman:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "pacman"
+        msg: "This task is for pacman package manager only"
+    cmds:
+      - echo "📦 Installing stow..."
+      - sudo pacman -S --needed --noconfirm stow
+      - echo "✓ stow installed"
+
+  install:stow_unknown:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "unknown"
+        msg: "Unsupported package manager: {{.PKG_MANAGER}}"
+    cmds:
+      - echo "⚠️  Unsupported Linux distribution"
+      - echo "Please install stow manually before running dot:install"
+
   export:packages:
     desc: Export currently installed packages to Linuxfile
     platforms: [linux]

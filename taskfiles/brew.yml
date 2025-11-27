@@ -14,7 +14,7 @@ tasks:
     desc: Install Homebrew and tools defined in Brewfile
     cmds:
       - task: install:homebrew
-      - task: install:tools
+      - task: install:gnu_stow
 
   upgrade:
     platforms: [darwin]
@@ -67,6 +67,17 @@ tasks:
         else
           eval "$(/usr/local/bin/brew shellenv)"
         fi
+
+  install:gnu_stow:
+    internal: true
+    platforms: [darwin]
+    # NOTE: the leading slash here is a bit annoying, but required due to a bug
+    # in go-task see https://github.com/go-task/task/issues/828
+    dir: "/{{.DOTFILES}}"
+    deps:
+      - install:homebrew
+    cmds:
+      - brew install stow
 
   install:tools:
     internal: true
