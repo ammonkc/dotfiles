@@ -63,7 +63,6 @@ brew 'zsh-fast-syntax-highlighting' # Feature-rich syntax highlighting for Zsh
 brew 'zsh-history-substring-search' # Zsh port of Fish shell's history search
 
 # Development
-brew 'node'                     # Open-source, cross-platform JavaScript runtime environment
 brew 'php'                      # php language
 brew 'composer'                 # Package Manager for PHP
 brew 'imagemagick'              # Tools and libraries to manipulate images in many formats
