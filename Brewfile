@@ -166,7 +166,6 @@ if OS.mac?
 
     # Quicklook
     cask 'qlcolorcode'      #
-    cask 'qlimagesize'      #
     cask 'qlmarkdown'       # Quick Look generator for Markdown files
     cask 'qlstephen'        #
     cask 'quicklook-json'   # depricated
