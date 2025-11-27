@@ -24,7 +24,8 @@ info "Running preflight checks..."
 # Request sudo access upfront (needed for Homebrew installation)
 if [[ "$OSTYPE" == "darwin"* ]]; then
   info "Requesting sudo access for Homebrew installation..."
-  if ! sudo -v; then
+  # Redirect to /dev/tty to allow password prompt when piped from curl
+  if ! sudo -v < /dev/tty; then
     error "Sudo access is required for Homebrew installation"
     error "Please ensure your user has administrator privileges"
     exit 1
