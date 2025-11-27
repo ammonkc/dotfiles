@@ -48,7 +48,7 @@ tasks:
     status:
       - which brew
     cmds:
-      - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       - |
         # Add Homebrew to PATH for current session
         echo "Adding Homebrew to PATH..."

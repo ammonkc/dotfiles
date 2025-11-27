@@ -12,6 +12,12 @@ DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/ammonkc/dotfiles.git}"
 DOTFILES_BRANCH="${DOTFILES_BRANCH:-main}"
 
+# Check if running in non-interactive mode (piped from curl)
+if [ ! -t 0 ]; then
+  export NONINTERACTIVE=1
+  info "Running in non-interactive mode (NONINTERACTIVE=1)"
+fi
+
 # Preflight checks
 info "Running preflight checks..."
 
@@ -34,10 +40,14 @@ fi
 if [[ "$AVAILABLE_SPACE" -lt 2 ]]; then
   warning "Low disk space detected (${AVAILABLE_SPACE}GB available)"
   warning "Installation requires at least 2GB of free space"
-  read -p "Continue anyway? (y/N) " -n 1 -r
-  echo
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    exit 1
+  if [[ -z "$NONINTERACTIVE" ]]; then
+    read -p "Continue anyway? (y/N) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      exit 1
+    fi
+  else
+    warning "Continuing anyway in non-interactive mode..."
   fi
 fi
 
