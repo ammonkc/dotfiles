@@ -2,7 +2,8 @@
 version: 3
 
 vars:
-  LAZY_LOCK: './packages/nvim/.config/nvim/lazy-lock.json'
+  LAZY_LOCK: '${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lazy-lock.json'
+  LAZY_LOCK_REPO: 'packages/nvim/.config/nvim/lazy-lock.json'
 
 tasks:
   # ============================================================================
@@ -30,20 +31,19 @@ tasks:
     status:
       # Skip if lazy-lock.json hasn't changed since last restore
       - test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}"
-    deps:
-      - health
     cmds:
-      - echo "📦 Restoring Neovim plugins from lazy-lock.json..."
+      # First, ensure lazy.nvim is bootstrapped
+      - nvim --headless "+q" 2>/dev/null || true
+      # Now restore plugins
       - |
         nvim --headless \
           +'Lazy! restore' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
           +'autocmd User MasonUpdateAllCompleted qall!' \
-          +'MasonUpdateAll'
+          +'MasonUpdateAll' 2>/dev/null || true
       - mkdir -p "{{.NVIM_DATA}}"
       - echo "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
-      - echo "✓ Plugins restored and hash saved"
 
   update:
     desc: Update Neovim plugins, CLI utils, and TreeSitter
@@ -53,8 +53,6 @@ tasks:
     preconditions:
       - sh: command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
-    deps:
-      - health
     cmds:
       - |
         nvim --headless \
@@ -62,7 +60,7 @@ tasks:
           +'Lazy! clean' \
           +'TSUpdateSync' \
           +'autocmd User MasonUpdateAllCompleted qall!' \
-          +'MasonUpdateAll'
+          +'MasonUpdateAll' 2>/dev/null || true
       - task: commit
 
   check:
@@ -84,7 +82,7 @@ tasks:
       - sh: command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
     cmds:
-      - nvim --headless +'checkhealth' +qa
+      - nvim --headless +'checkhealth' +qa 2>/dev/null || true
 
   commit:
     desc: Commit lazy-lock.json if changed
@@ -95,5 +93,5 @@ tasks:
     cmds:
       - |
         ./scripts/commit_changed_file.sh \
-          '{{.LAZY_LOCK}}' \
+          '{{.LAZY_LOCK_REPO}}' \
           "chore(nvim): update plugins $(date '+%Y-%m-%d %H:%M:%S')"

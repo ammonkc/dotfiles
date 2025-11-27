@@ -57,9 +57,7 @@ tasks:
       - sh: test -d "{{.PACKAGES_DIR}}/{{.PACKAGE}}"
         msg: "Package '{{.PACKAGE}}' not found in {{.PACKAGES_DIR}}"
     cmds:
-      - echo "🔄 Restowing {{.PACKAGE}}..."
       - stow {{.STOW_FLAGS}} --dir={{.PACKAGES_DIR}} -t $HOME "{{.PACKAGE}}"
-      - echo "✓ {{.PACKAGE}} restowed successfully"
 
   # ============================================================================
   # Internal Tasks
@@ -101,7 +99,6 @@ tasks:
     internal: true
     desc: Unstow all packages
     cmds:
-      - echo "📦 Unstowing packages from {{.PACKAGES_DIR}}..."
       - for:
           var: PACKAGES
           as: PACKAGE

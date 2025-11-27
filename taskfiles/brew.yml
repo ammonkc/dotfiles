@@ -46,9 +46,7 @@ tasks:
     platforms: [darwin]
     dir: "/{{.DOTFILES}}"
     cmds:
-      - echo "🔄 Retrying Homebrew package installation..."
       - brew bundle
-      - echo "✓ Installation complete"
 
   # ============================================================================
   # Internal Tasks

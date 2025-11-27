@@ -13,7 +13,6 @@ tasks:
 
       Equivalent to: exec $SHELL
     cmds:
-      - echo "🔄 Reloading shell..."
       - exec $SHELL
 
   source:
@@ -22,10 +21,8 @@ tasks:
       Sources zsh configuration without starting a new shell
       Useful for testing config changes
     cmds:
-      - echo "📂 Sourcing zsh configuration..."
       - source ~/.zshenv
       - source {{.ZDOTDIR}}/.zshrc
-      - echo "✓ Configuration sourced"
 
   clear_cache:
     desc: Clear zsh caches
@@ -35,6 +32,4 @@ tasks:
     cmds:
       - rm -rf ~/.cache/zsh/zsh-eval-cache/*
       - rm -f {{.ZDOTDIR}}/.zcompdump*
-      - echo "✓ Zsh cache cleared"
-      - echo "ℹ️  Run 'exec \$SHELL' to restart your shell"
 
