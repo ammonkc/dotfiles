@@ -20,6 +20,7 @@ fi
 
 # Check if we're in the dotfiles directory
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+DOTFILES_BRANCH="${DOTFILES_BRANCH:-main}"
 
 if [[ ! -d "$DOTFILES_DIR" ]]; then
   echo -e "${RED}Error: Dotfiles directory not found at $DOTFILES_DIR${NC}"
@@ -31,6 +32,24 @@ echo -e "${BLUE}Updating system packages and dotfiles...${NC}"
 echo ""
 
 cd "$DOTFILES_DIR"
+# Stash any local changes
+if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+  echo -e "${BLUE}⚠️  Local changes detected - auto-stashing for safety${NC}"
+  git stash push -m "Auto-stash before bootstrap pull $(date +%Y-%m-%d-%H%M%S)"
+  echo -e "${BLUE}ℹ️  Your changes are saved in: git stash list${NC}"
+fi
+
+# Pull latest changes
+echo -e "${BLUE}📥 Updating from remote...${NC}"
+git pull origin $DOTFILES_BRANCH
+
+# Inform about stash but don't auto-pop (safer)
+if git stash list | grep -q "Auto-stash before bootstrap"; then
+  echo ""
+  echo -e "${BLUE}ℹ️  Note: Stashed changes can be restored with: git stash pop${NC}"
+  echo -e "${BLUE}ℹ️  Or review with: git stash list${NC}"
+fi
+
 task system:update
 
 echo ""
