@@ -40,9 +40,9 @@ tasks:
           echo "  → Bootstrapping lazy.nvim..."
           GIT_CONFIG_GLOBAL='' git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
         fi
-      # Now restore plugins (show output for progress)
+      # Now restore plugins (show output for progress, use GIT_CONFIG_GLOBAL='' to avoid SSH rewrite)
       - |
-        nvim --headless \
+        GIT_CONFIG_GLOBAL='' nvim --headless \
           +'Lazy! restore' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
@@ -63,7 +63,7 @@ tasks:
     cmds:
       - echo "📦 Updating Neovim plugins..."
       - |
-        nvim --headless \
+        GIT_CONFIG_GLOBAL='' nvim --headless \
           +'Lazy! sync' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
