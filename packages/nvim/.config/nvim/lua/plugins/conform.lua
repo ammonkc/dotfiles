@@ -1,70 +1,55 @@
+local util = require("conform.util")
 return {
-    "stevearc/conform.nvim",
-    event = { "BufWritePre" },
-    cmd = { "ConformInfo" },
-    keys = {
-        {
-            "<leader>cf",
-            function()
-                require("conform").format({ async = true }, function(err, did_edit)
-                    if not err and did_edit then
-                        vim.notify("Code formatted", vim.log.levels.INFO, { title = "Conform" })
-                    end
-                end)
-            end,
-            mode = { "n", "v" },
-            desc = "Format buffer",
-        },
-    },
-    opts = {
-        formatters_by_ft = {
-            -- Go
-            go = { "goimports", "gofmt" },
-
-            -- Lua
-            lua = { "stylua" },
-
-            -- Web technologies
-            javascript = { "prettier" },
-            typescript = { "prettier" },
-            javascriptreact = { "prettier" },
-            typescriptreact = { "prettier" },
-            json = { "prettier" },
-            jsonc = { "prettier" },
-            yaml = { "prettier" },
-            markdown = { "prettier" },
-            html = { "prettier" },
-            css = { "prettier" },
-            scss = { "prettier" },
-
-            -- Python
-            python = { "isort", "black" },
-
-            -- PHP/Laravel
-            php = { "pint" },
-
-            -- Shell
-            sh = { "shfmt" },
-            bash = { "shfmt" },
-
-            -- Other (system tools)
-            rust = { "rustfmt" }, -- comes with Rust installation
-
-            -- Additional file types (uncomment as needed)
-            -- markdown = { "markdownlint" },
-            -- yaml = { "yamllint" },
-            -- toml = { "taplo" },
-        },
-        default_format_opts = {
-            lsp_format = "fallback",
-        },
-        -- format_on_save = {
-        --     timeout_ms = 1000,
-        --     lsp_format = "fallback",
+  "stevearc/conform.nvim",
+  opts = function()
+    ---@type conform.setupOpts
+    local opts = {
+      default_format_opts = {
+        timeout_ms = 3000,
+        async = false, -- not recommended to change
+        quiet = false, -- not recommended to change
+        lsp_format = "fallback", -- not recommended to change
+      },
+      formatters_by_ft = {
+        lua = { "stylua" },
+        fish = { "fish_indent" },
+        sh = { "shfmt" },
+        php = { "pint" },
+        blade = { "blade-formatter", "rustywind" },
+        python = { "black" },
+        javascript = { "prettierd" },
+        -- rust = { "rustfmt" },
+      },
+      -- LazyVim will merge the options you set here with builtin formatters.
+      -- You can also define any custom formatters here.
+      ---@type table<string, conform.FormatterConfigOverride|fun(bufnr: integer): nil|conform.FormatterConfigOverride>
+      formatters = {
+        injected = { options = { ignore_errors = true } },
+        -- # Example of using dprint only when a dprint.json file is present
+        -- dprint = {
+        --   condition = function(ctx)
+        --     return vim.fs.find({ "dprint.json" }, { path = ctx.filename, upward = true })[1]
+        --   end,
         -- },
-
-    },
-    init = function()
-        vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-    end,
+        --
+        -- # Example of using shfmt with extra args
+        -- shfmt = {
+        --   extra_args = { "-i", "2", "-ci" },
+        -- },
+        pint = {
+          meta = {
+            url = "https://github.com/laravel/pint",
+            description = "Laravel Pint is an opinionated PHP code style fixer for minimalists. Pint is built on top of PHP-CS-Fixer and makes it simple to ensure that your code style stays clean and consistent.",
+          },
+          command = util.find_executable({
+            vim.fn.stdpath("data") .. "/mason/bin/pint",
+            "vendor/bin/pint",
+          }, "pint"),
+          args = { "$FILENAME" },
+          stdin = false,
+        },
+      },
+    }
+    return opts
+  end,
 }
