@@ -57,7 +57,7 @@ fi
 
 # Init mise with caching
 if (( $+commands[mise] )); then
-  cached-eval mise 'mise activate zsh'
+  cached-eval mise 'mise activate zsh --quiet'
 fi
 
 # Init zoxide with caching
