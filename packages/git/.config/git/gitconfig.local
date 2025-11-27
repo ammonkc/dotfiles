@@ -18,4 +18,4 @@
 # BOOTSTRAP ONLY: Use HTTPS for git (no SSH keys needed)
 # Remove these 2 lines after setting up SSH keys (via 1Password or ssh-keygen)
 [url "https://github.com/"]
-  insteadOf = git@github.com:
+  insteadOf = "git@github.com:"
