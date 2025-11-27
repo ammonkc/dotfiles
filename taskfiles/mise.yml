@@ -19,10 +19,7 @@ tasks:
       - sh: test -f ~/.config/mise/config.toml || test -f ~/.tool-versions || test -f ~/.config/mise/.mise.local.toml
         msg: "No mise config found. Expected ~/.config/mise/config.toml or ~/.tool-versions"
     cmds:
-      - echo "📦 Installing mise-managed tools..."
-      - echo "   (GPG verification disabled for easier setup)"
       - MISE_NODE_VERIFY=no mise install
-      - echo "✓ Tools installed successfully"
 
   update:
     aliases: [up, upgrade]
@@ -31,9 +28,7 @@ tasks:
       - sh: command -v mise >/dev/null 2>&1
         msg: "mise is not installed"
     cmds:
-      - echo "🔄 Updating mise-managed tools..."
       - mise up
-      - echo "✓ Tools updated successfully"
 
   list:
     aliases: [ls]
@@ -56,7 +51,4 @@ tasks:
       Runs mise doctor to check for issues
       Note: Warnings about missing tools are expected during initial setup
     cmds:
-      - echo "🔍 Running mise health check..."
       - mise doctor || true
-      - echo ""
-      - echo "💡 Tip - Warnings about missing tools are normal during setup"
