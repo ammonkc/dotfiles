@@ -25,11 +25,18 @@ Personal dotfiles and automated setup scripts for macOS with secondary Linux sup
 curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/bootstrap.sh | bash
 ```
 
-**Prerequisites:** macOS 11+ with admin access
+**Prerequisites:**
+- macOS 11+
+- Administrator access (you'll be prompted for your password for Homebrew installation)
+
+**Note:** The script will request sudo access at the beginning for Homebrew installation.
 
 ### **Linux** (Debian/Ubuntu or Arch)
 
-Same command as above. **Note:** You'll need sudo access for package installation.
+Same command as above.
+
+**Prerequisites:**
+- Sudo access (you'll be prompted for your password during package installation)
 
 **What gets installed:**
 - Homebrew (macOS) or native package managers (Linux)

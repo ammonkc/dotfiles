@@ -21,6 +21,19 @@ fi
 # Preflight checks
 info "Running preflight checks..."
 
+# Request sudo access upfront (needed for Homebrew installation)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  info "Requesting sudo access for Homebrew installation..."
+  if ! sudo -v; then
+    error "Sudo access is required for Homebrew installation"
+    error "Please ensure your user has administrator privileges"
+    exit 1
+  fi
+
+  # Keep sudo alive in the background
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+fi
+
 # Check internet connectivity
 if ! ping -c 1 -W 2 github.com >/dev/null 2>&1; then
   error "No internet connection detected"
