@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Wrapper script to update system packages and dotfiles
+# Executes: task system:update
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Check if task is available
+if ! command -v task >/dev/null 2>&1; then
+  echo -e "${RED}Error: 'task' command not found${NC}"
+  echo "Please ensure go-task is installed and in your PATH"
+  exit 1
+fi
+
+# Check if we're in the dotfiles directory
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+
+if [[ ! -d "$DOTFILES_DIR" ]]; then
+  echo -e "${RED}Error: Dotfiles directory not found at $DOTFILES_DIR${NC}"
+  exit 1
+fi
+
+# Run the update task from the dotfiles directory
+echo -e "${BLUE}Updating system packages and dotfiles...${NC}"
+echo ""
+
+cd "$DOTFILES_DIR"
+task system:update
+
+echo ""
+echo -e "${GREEN}✓ Update complete!${NC}"
+

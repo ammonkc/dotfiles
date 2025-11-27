@@ -149,6 +149,9 @@ alias dart=docker-artisan
 # ---- genAI -----
 alias genailogin='export AWS_PROFILE=genai;aws sso login --profile genai'
 
+# ---- Taskfile (dotfiles) -----
+alias dot='task --taskfile ~/.dotfiles/taskfile.dist.yml --dir ~/.dotfiles'
+
 # ---- Shortcuts -----
 alias clear-zsh-cache='rm -rf ~/.cache/zsh/zsh-eval-cache/* && echo "Cache cleared!"'
 alias reloadshell="source $ZDOTDIR/.zshrc"
