@@ -32,18 +32,20 @@ tasks:
       # Skip if lazy-lock.json hasn't changed since last restore
       - test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}"
     cmds:
-      # First, ensure lazy.nvim is bootstrapped
+      - echo "📦 Installing Neovim plugins (this may take a few minutes)..."
+      # First, ensure lazy.nvim is bootstrapped (silent)
       - nvim --headless "+q" 2>/dev/null || true
-      # Now restore plugins
+      # Now restore plugins (show output for progress)
       - |
         nvim --headless \
           +'Lazy! restore' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
           +'autocmd User MasonUpdateAllCompleted qall!' \
-          +'MasonUpdateAll' 2>/dev/null || true
+          +'MasonUpdateAll' || true
       - mkdir -p "{{.NVIM_DATA}}"
       - echo "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
+      - echo "✓ Neovim plugins installed"
 
   update:
     desc: Update Neovim plugins, CLI utils, and TreeSitter
@@ -54,13 +56,14 @@ tasks:
       - sh: command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
     cmds:
+      - echo "📦 Updating Neovim plugins..."
       - |
         nvim --headless \
           +'Lazy! sync' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
           +'autocmd User MasonUpdateAllCompleted qall!' \
-          +'MasonUpdateAll' 2>/dev/null || true
+          +'MasonUpdateAll' || true
       - task: commit
 
   check:
