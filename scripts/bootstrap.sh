@@ -12,15 +12,68 @@ DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/ammonkc/dotfiles.git}"
 DOTFILES_BRANCH="${DOTFILES_BRANCH:-main}"
 
+# Preflight checks
+info "Running preflight checks..."
+
+# Check internet connectivity
+if ! ping -c 1 -W 2 github.com >/dev/null 2>&1; then
+  error "No internet connection detected"
+  error "Please check your network connection and try again"
+  exit 1
+fi
+
+# Check available disk space (need at least 2GB)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  AVAILABLE_SPACE=$(df -g "$HOME" | tail -1 | awk '{print $4}')
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  AVAILABLE_SPACE=$(df -BG "$HOME" | tail -1 | awk '{print $4}' | sed 's/G//')
+else
+  AVAILABLE_SPACE=999  # Skip check on unknown OS
+fi
+
+if [[ "$AVAILABLE_SPACE" -lt 2 ]]; then
+  warning "Low disk space detected (${AVAILABLE_SPACE}GB available)"
+  warning "Installation requires at least 2GB of free space"
+  read -p "Continue anyway? (y/N) " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+fi
+
+success "Preflight checks passed"
+echo ""
+
 # Check for git
 if ! command -v git >/dev/null 2>&1; then
   error "Git is not installed"
-  info "Installing Xcode Command Line Tools..."
-  xcode-select --install
-  echo ""
-  warning "Please run this script again after Xcode Command Line Tools installation completes"
-  warning "You may need to accept the license agreement in a popup window"
-  exit 1
+
+  # Detect OS and install git accordingly
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    info "Installing Xcode Command Line Tools..."
+    xcode-select --install
+    echo ""
+    warning "Please run this script again after Xcode Command Line Tools installation completes"
+    warning "You may need to accept the license agreement in a popup window"
+    exit 1
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    info "Installing git..."
+    if command -v apt-get >/dev/null 2>&1; then
+      sudo apt-get update && sudo apt-get install -y git
+      success "Git installed successfully"
+    elif command -v pacman >/dev/null 2>&1; then
+      sudo pacman -S --needed --noconfirm git
+      success "Git installed successfully"
+    else
+      error "Unsupported package manager"
+      error "Please install git manually and run this script again"
+      exit 1
+    fi
+  else
+    error "Unsupported operating system: $OSTYPE"
+    error "Please install git manually and run this script again"
+    exit 1
+  fi
 fi
 
 if [[ ! -d $DOTFILES_DIR ]]; then

@@ -1,0 +1,655 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+# Manual Tool Installation Notes:
+# - All tools support x86_64 (Intel/AMD 64-bit)
+# - ARM64 support: Most tools support aarch64/arm64, but naming conventions vary:
+#   * eza, yazi, procs, git-delta: use "aarch64"
+#   * glow, lazygit, lazydocker: use "arm64"
+# - Versions are hardcoded and need periodic updates (see bottom of file)
+# - All installations use status: checks to skip if already installed
+# - All installations use ignore_error: true to allow bootstrap to continue on failure
+
+vars:
+  DOTFILES: "{{.ROOT_DIR}}"
+  # Package list files (like Brewfile)
+  DEBIAN_PACKAGES_FILE: '{{.ROOT_DIR}}/Linuxfile.debian'
+  ARCH_PACKAGES_FILE: '{{.ROOT_DIR}}/Linuxfile.arch'
+
+  # Package manager detection
+  PKG_MANAGER:
+    sh: |
+      if command -v pacman >/dev/null 2>&1; then
+        echo "pacman"
+      elif command -v apt-get >/dev/null 2>&1; then
+        echo "apt"
+      else
+        echo "unknown"
+      fi
+
+  # Get the appropriate package file based on distro
+  PACKAGES_FILE:
+    sh: |
+      if command -v apt-get >/dev/null 2>&1; then
+        echo "{{.DEBIAN_PACKAGES_FILE}}"
+      elif command -v pacman >/dev/null 2>&1; then
+        echo "{{.ARCH_PACKAGES_FILE}}"
+      else
+        echo ""
+      fi
+
+  # Distribution info
+  DISTRO_NAME:
+    sh: |
+      lsb_release -d 2>/dev/null | cut -f2 || \
+      grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d'=' -f2 | tr -d '"' || \
+      echo "Unknown Linux"
+  KERNEL_VERSION:
+    sh: uname -r
+  ARCHITECTURE:
+    sh: uname -m
+
+  # Architecture mappings for manual tool installations
+  # Different tools use different naming conventions for ARM64
+  ARCH_STANDARD: # For tools using "aarch64" (eza, yazi, procs, git-delta)
+    sh: |
+      case $(uname -m) in
+        x86_64) echo "x86_64" ;;
+        aarch64|arm64) echo "aarch64" ;;
+        *) echo "unsupported" ;;
+      esac
+
+  ARCH_ARM64: # For tools using "arm64" (glow, lazygit, lazydocker)
+    sh: |
+      case $(uname -m) in
+        x86_64) echo "x86_64" ;;
+        aarch64|arm64) echo "arm64" ;;
+        *) echo "unsupported" ;;
+      esac
+
+tasks:
+  install:
+    platforms: [linux]
+    desc: Install Linux packages from Linuxfile
+    summary: |
+      Installs Linux packages from Linuxfile.debian or Linuxfile.arch
+
+      Similar to 'brew bundle', this reads a simple text file with
+      package names and installs them using the appropriate package manager.
+
+      Automatically detects your distribution and uses the correct package list:
+      - Debian/Ubuntu: Uses Linuxfile.debian with apt-get
+      - Arch Linux: Uses Linuxfile.arch with pacman
+
+      After installing system packages, also installs:
+      - External tools (mise, go-task, GitHub CLI)
+      - Manual tools not in repos (eza, yazi, glow, etc.)
+    cmds:
+      - task: install:system_packages
+      - task: install:external_tools
+      - task: install:manual_tools
+
+  install:system_packages:
+    internal: true
+    platforms: [linux]
+    desc: Install system packages from Linuxfile
+    preconditions:
+      - sh: test -n "{{.PACKAGES_FILE}}"
+        msg: "No package file found for {{.PKG_MANAGER}}"
+      - sh: test -f "{{.PACKAGES_FILE}}"
+        msg: "Package file not found at {{.PACKAGES_FILE}}"
+    cmds:
+      - echo "📦 Installing packages from {{.PACKAGES_FILE}}..."
+      - task: install:packages_{{.PKG_MANAGER}}
+
+  install:packages_apt:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "apt"
+        msg: "This task is for apt package manager only"
+    cmds:
+      - sudo apt-get update
+      - |
+        # Read package file, filter comments and empty lines, install
+        grep -v '^#' "{{.PACKAGES_FILE}}" | grep -v '^$' | xargs sudo apt-get install -y
+      - echo "✓ Packages installed"
+
+  install:packages_pacman:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "pacman"
+        msg: "This task is for pacman package manager only"
+    cmds:
+      - |
+        # Read package file, filter comments and empty lines, install
+        grep -v '^#' "{{.PACKAGES_FILE}}" | grep -v '^$' | xargs sudo pacman -S --needed --noconfirm
+      - echo "✓ Packages installed"
+
+  export:packages:
+    desc: Export currently installed packages to Linuxfile
+    platforms: [linux]
+    summary: |
+      Exports currently installed packages to the appropriate Linuxfile
+
+      For Debian/Ubuntu: Exports manually installed packages to Linuxfile.debian
+      For Arch Linux: Exports explicitly installed packages to Linuxfile.arch
+
+      This is useful for keeping your package list up to date
+    preconditions:
+      - sh: test -n "{{.PACKAGES_FILE}}"
+        msg: "No package file found for {{.PKG_MANAGER}}"
+    cmds:
+      - echo "📝 Exporting installed packages to {{.PACKAGES_FILE}}..."
+      - task: export:packages_{{.PKG_MANAGER}}
+
+  export:packages_apt:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "apt"
+        msg: "This task is for apt package manager only"
+    cmds:
+      - echo "# Linuxfile.debian - Generated on $(date)" > "{{.PACKAGES_FILE}}"
+      - echo "# Manually installed packages" >> "{{.PACKAGES_FILE}}"
+      - echo "" >> "{{.PACKAGES_FILE}}"
+      - apt-mark showmanual | sort >> "{{.PACKAGES_FILE}}"
+      - echo "✓ Package list saved to {{.PACKAGES_FILE}}"
+
+  export:packages_pacman:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "pacman"
+        msg: "This task is for pacman package manager only"
+    cmds:
+      - echo "# Linuxfile.arch - Generated on $(date)" > "{{.PACKAGES_FILE}}"
+      - echo "# Explicitly installed packages" >> "{{.PACKAGES_FILE}}"
+      - echo "" >> "{{.PACKAGES_FILE}}"
+      - pacman -Qe | awk '{print $1}' | sort >> "{{.PACKAGES_FILE}}"
+      - echo "✓ Package list saved to {{.PACKAGES_FILE}}"
+
+  install:external_tools:
+    internal: true
+    platforms: [linux]
+    desc: Install external tools not available in package managers
+    cmds:
+      - task: install:mise
+      - task: install:go_task
+      - task: install:github_cli
+
+  install:mise:
+    internal: true
+    platforms: [linux]
+    status:
+      - command -v mise >/dev/null 2>&1
+    cmds:
+      - curl -fsSL https://mise.run | sh
+
+  install:go_task:
+    internal: true
+    platforms: [linux]
+    vars:
+      XDG_BIN_DIR: '{{.XDG_BIN_DIR | default "$HOME/.local/bin"}}'
+    status:
+      - command -v task >/dev/null 2>&1
+    cmds:
+      - mkdir -p "{{.XDG_BIN_DIR}}"
+      - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b "{{.XDG_BIN_DIR}}"
+
+  install:github_cli:
+    internal: true
+    platforms: [linux]
+    status:
+      - command -v gh >/dev/null 2>&1
+    cmds:
+      - task: install:github_cli_{{.PKG_MANAGER}}
+
+  install:github_cli_apt:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "apt"
+        msg: "This task is for apt package manager only"
+    cmds:
+      - curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+      - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+      - sudo apt-get update
+      - sudo apt-get install -y gh
+
+  install:github_cli_pacman:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "pacman"
+        msg: "This task is for pacman package manager only"
+    cmds:
+      - sudo pacman -S --needed --noconfirm github-cli
+
+  install:manual_tools:
+    desc: Install CLI tools not available in package managers
+    platforms: [linux]
+    summary: |
+      Installs modern CLI tools that aren't available in official repos
+
+      Installed tools:
+      - eza: Modern replacement for ls
+      - yazi: Terminal file manager
+      - glow: Markdown renderer
+      - procs: Modern replacement for ps (Debian only, Arch has it in repos)
+      - git-delta: Syntax-highlighting pager for git
+      - lazygit: Simple terminal UI for git
+      - lazydocker: Terminal UI for docker
+
+      These are installed to ~/.local/bin
+
+      Note: Tool installations that fail will be skipped (best-effort)
+    cmds:
+      - echo "📦 Installing manual tools from GitHub releases..."
+      - echo "   (This may take a few minutes, failures will be skipped)"
+      # Call each install task individually with || true to continue on error
+      - task: install:eza || true
+      - task: install:yazi || true
+      - task: install:glow || true
+      - task: install:procs_manual || true
+      - task: install:git_delta || true
+      - task: install:lazygit || true
+      - task: install:lazydocker || true
+      - echo "✓ Manual tools installation complete (check above for any failures)"
+
+  install:eza:
+    internal: true
+    platforms: [linux]
+    vars:
+      XDG_BIN_DIR: '{{.XDG_BIN_DIR | default "$HOME/.local/bin"}}'
+      EZA_VERSION: 'v0.18.0'  # Update as needed
+      EZA_ARCH: '{{.ARCH_STANDARD}}'
+    preconditions:
+      - sh: test "{{.EZA_ARCH}}" != "unsupported"
+        msg: "Unsupported architecture for eza: {{.ARCHITECTURE}}"
+    status:
+      - command -v eza >/dev/null 2>&1
+    cmds:
+      - echo "📦 Installing eza (modern ls)..."
+      - mkdir -p "{{.XDG_BIN_DIR}}"
+      - |
+        cd /tmp
+        curl -fsSL "https://github.com/eza-community/eza/releases/download/{{.EZA_VERSION}}/eza_{{.EZA_ARCH}}-unknown-linux-gnu.tar.gz" -o eza.tar.gz
+        tar xzf eza.tar.gz
+        mv eza "{{.XDG_BIN_DIR}}/"
+        chmod +x "{{.XDG_BIN_DIR}}/eza"
+        rm -f eza.tar.gz
+      - echo "✓ eza installed to {{.XDG_BIN_DIR}}/eza"
+
+  install:yazi:
+    internal: true
+    platforms: [linux]
+    vars:
+      XDG_BIN_DIR: '{{.XDG_BIN_DIR | default "$HOME/.local/bin"}}'
+      YAZI_VERSION: 'v0.2.5'  # Update as needed
+      YAZI_ARCH: '{{.ARCH_STANDARD}}'
+    preconditions:
+      - sh: test "{{.YAZI_ARCH}}" != "unsupported"
+        msg: "Unsupported architecture for yazi: {{.ARCHITECTURE}}"
+    status:
+      - command -v yazi >/dev/null 2>&1
+    cmds:
+      - echo "📦 Installing yazi (terminal file manager)..."
+      - mkdir -p "{{.XDG_BIN_DIR}}"
+      - |
+        cd /tmp
+        curl -fsSL "https://github.com/sxyazi/yazi/releases/download/{{.YAZI_VERSION}}/yazi-{{.YAZI_ARCH}}-unknown-linux-gnu.zip" -o yazi.zip
+        unzip -q yazi.zip
+        mv "yazi-{{.YAZI_ARCH}}-unknown-linux-gnu/yazi" "{{.XDG_BIN_DIR}}/"
+        chmod +x "{{.XDG_BIN_DIR}}/yazi"
+        rm -rf yazi.zip "yazi-{{.YAZI_ARCH}}-unknown-linux-gnu"
+      - echo "✓ yazi installed to {{.XDG_BIN_DIR}}/yazi"
+
+  install:glow:
+    internal: true
+    platforms: [linux]
+    vars:
+      XDG_BIN_DIR: '{{.XDG_BIN_DIR | default "$HOME/.local/bin"}}'
+      GLOW_VERSION: 'v1.5.1'  # Update as needed
+      GLOW_ARCH: '{{.ARCH_ARM64}}'
+    preconditions:
+      - sh: test "{{.GLOW_ARCH}}" != "unsupported"
+        msg: "Unsupported architecture for glow: {{.ARCHITECTURE}}"
+    status:
+      - command -v glow >/dev/null 2>&1
+    cmds:
+      - echo "📦 Installing glow (markdown renderer)..."
+      - mkdir -p "{{.XDG_BIN_DIR}}"
+      - |
+        cd /tmp
+        curl -fsSL "https://github.com/charmbracelet/glow/releases/download/{{.GLOW_VERSION}}/glow_Linux_{{.GLOW_ARCH}}.tar.gz" -o glow.tar.gz
+        tar xzf glow.tar.gz glow
+        mv glow "{{.XDG_BIN_DIR}}/"
+        chmod +x "{{.XDG_BIN_DIR}}/glow"
+        rm -f glow.tar.gz
+      - echo "✓ glow installed to {{.XDG_BIN_DIR}}/glow"
+
+  install:procs_manual:
+    internal: true
+    platforms: [linux]
+    vars:
+      XDG_BIN_DIR: '{{.XDG_BIN_DIR | default "$HOME/.local/bin"}}'
+      PROCS_VERSION: 'v0.14.4'  # Update as needed
+      PROCS_ARCH: '{{.ARCH_STANDARD}}'
+    preconditions:
+      - sh: test "{{.PROCS_ARCH}}" != "unsupported"
+        msg: "Unsupported architecture for procs: {{.ARCHITECTURE}}"
+    status:
+      - command -v procs >/dev/null 2>&1
+    cmds:
+      - echo "📦 Installing procs (modern ps)..."
+      - mkdir -p "{{.XDG_BIN_DIR}}"
+      - |
+        cd /tmp
+        curl -fsSL "https://github.com/dalance/procs/releases/download/{{.PROCS_VERSION}}/procs-{{.PROCS_VERSION}}-{{.PROCS_ARCH}}-linux.zip" -o procs.zip
+        unzip -q procs.zip
+        mv procs "{{.XDG_BIN_DIR}}/"
+        chmod +x "{{.XDG_BIN_DIR}}/procs"
+        rm -f procs.zip
+      - echo "✓ procs installed to {{.XDG_BIN_DIR}}/procs"
+
+  install:git_delta:
+    internal: true
+    platforms: [linux]
+    vars:
+      XDG_BIN_DIR: '{{.XDG_BIN_DIR | default "$HOME/.local/bin"}}'
+      DELTA_VERSION: '0.17.0'  # Update as needed
+      DELTA_ARCH: '{{.ARCH_STANDARD}}'
+    preconditions:
+      - sh: test "{{.DELTA_ARCH}}" != "unsupported"
+        msg: "Unsupported architecture for git-delta: {{.ARCHITECTURE}}"
+    status:
+      - command -v delta >/dev/null 2>&1
+    cmds:
+      - echo "📦 Installing git-delta (syntax-highlighting pager)..."
+      - mkdir -p "{{.XDG_BIN_DIR}}"
+      - |
+        cd /tmp
+        curl -fsSL "https://github.com/dandavison/delta/releases/download/{{.DELTA_VERSION}}/delta-{{.DELTA_VERSION}}-{{.DELTA_ARCH}}-unknown-linux-gnu.tar.gz" -o delta.tar.gz
+        tar xzf delta.tar.gz
+        mv "delta-{{.DELTA_VERSION}}-{{.DELTA_ARCH}}-unknown-linux-gnu/delta" "{{.XDG_BIN_DIR}}/"
+        chmod +x "{{.XDG_BIN_DIR}}/delta"
+        rm -rf delta.tar.gz "delta-{{.DELTA_VERSION}}-{{.DELTA_ARCH}}-unknown-linux-gnu"
+      - echo "✓ git-delta installed to {{.XDG_BIN_DIR}}/delta"
+
+  install:lazygit:
+    internal: true
+    platforms: [linux]
+    vars:
+      XDG_BIN_DIR: '{{.XDG_BIN_DIR | default "$HOME/.local/bin"}}'
+      LAZYGIT_VERSION: '0.43.1'  # Update as needed
+      LAZYGIT_ARCH: '{{.ARCH_ARM64}}'
+    preconditions:
+      - sh: test "{{.LAZYGIT_ARCH}}" != "unsupported"
+        msg: "Unsupported architecture for lazygit: {{.ARCHITECTURE}}"
+    status:
+      - command -v lazygit >/dev/null 2>&1
+    cmds:
+      - echo "📦 Installing lazygit (terminal UI for git)..."
+      - mkdir -p "{{.XDG_BIN_DIR}}"
+      - |
+        cd /tmp
+        curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/v{{.LAZYGIT_VERSION}}/lazygit_{{.LAZYGIT_VERSION}}_Linux_{{.LAZYGIT_ARCH}}.tar.gz" -o lazygit.tar.gz
+        tar xzf lazygit.tar.gz lazygit
+        mv lazygit "{{.XDG_BIN_DIR}}/"
+        chmod +x "{{.XDG_BIN_DIR}}/lazygit"
+        rm -f lazygit.tar.gz
+      - echo "✓ lazygit installed to {{.XDG_BIN_DIR}}/lazygit"
+
+  install:lazydocker:
+    internal: true
+    platforms: [linux]
+    vars:
+      XDG_BIN_DIR: '{{.XDG_BIN_DIR | default "$HOME/.local/bin"}}'
+      LAZYDOCKER_VERSION: '0.23.3'  # Update as needed
+      LAZYDOCKER_ARCH: '{{.ARCH_ARM64}}'
+    preconditions:
+      - sh: test "{{.LAZYDOCKER_ARCH}}" != "unsupported"
+        msg: "Unsupported architecture for lazydocker: {{.ARCHITECTURE}}"
+    status:
+      - command -v lazydocker >/dev/null 2>&1
+    cmds:
+      - echo "📦 Installing lazydocker (terminal UI for docker)..."
+      - mkdir -p "{{.XDG_BIN_DIR}}"
+      - |
+        cd /tmp
+        curl -fsSL "https://github.com/jesseduffield/lazydocker/releases/download/v{{.LAZYDOCKER_VERSION}}/lazydocker_{{.LAZYDOCKER_VERSION}}_Linux_{{.LAZYDOCKER_ARCH}}.tar.gz" -o lazydocker.tar.gz
+        tar xzf lazydocker.tar.gz lazydocker
+        mv lazydocker "{{.XDG_BIN_DIR}}/"
+        chmod +x "{{.XDG_BIN_DIR}}/lazydocker"
+        rm -f lazydocker.tar.gz
+      - echo "✓ lazydocker installed to {{.XDG_BIN_DIR}}/lazydocker"
+
+  update:
+    platforms: [linux]
+    desc: Update Linux packages
+    summary: |
+      Updates system packages using the detected package manager
+
+      For Debian/Ubuntu: apt-get update && apt-get upgrade
+      For Arch Linux: pacman -Syu
+    cmds:
+      - task: update:{{.PKG_MANAGER}}
+
+  update:apt:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "apt"
+        msg: "This task is for apt package manager only"
+    cmds:
+      - sudo apt-get update
+      - sudo apt-get upgrade -y
+
+  update:pacman:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "pacman"
+        msg: "This task is for pacman package manager only"
+    cmds:
+      - sudo pacman -Syu --noconfirm
+
+  update:unknown:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "unknown"
+        msg: "Unsupported package manager: {{.PKG_MANAGER}}"
+    cmds:
+      - echo "⚠️  Unsupported Linux distribution"
+      - echo "This dotfiles setup supports Debian/Ubuntu and Arch Linux only"
+
+  cleanup:
+    desc: Remove unused Linux packages
+    platforms: [linux]
+    summary: |
+      Removes unused packages and cleans package cache
+      Frees up disk space by removing orphaned packages
+    cmds:
+      - task: cleanup:{{.PKG_MANAGER}}
+
+  cleanup:apt:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "apt"
+        msg: "This task is for apt package manager only"
+    cmds:
+      - sudo apt-get autoremove -y
+      - sudo apt-get autoclean
+
+  cleanup:pacman:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "pacman"
+        msg: "This task is for pacman package manager only"
+    cmds:
+      - sudo pacman -Rns $(pacman -Qtdq) 2>/dev/null || echo "No orphaned packages to remove"
+      - sudo pacman -Scc --noconfirm
+
+  cleanup:unknown:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "unknown"
+        msg: "Unsupported package manager: {{.PKG_MANAGER}}"
+    cmds:
+      - echo "⚠️  Unsupported Linux distribution"
+      - echo "This dotfiles setup supports Debian/Ubuntu and Arch Linux only"
+
+  doctor:
+    desc: Check Linux system and package manager health
+    platforms: [linux]
+    summary: |
+      Performs health checks on the Linux system:
+      - Verifies package manager functionality
+      - Checks for broken packages
+      - Reports system information
+    cmds:
+      - task: doctor:system_info
+      - task: doctor:package_manager
+      - task: doctor:broken_packages
+
+  doctor:system_info:
+    internal: true
+    platforms: [linux]
+    cmds:
+      - echo "🐧 Linux System Information:"
+      - echo "  Distribution{{printf ":" | .}} {{.DISTRO_NAME}}"
+      - echo "  Kernel{{printf ":" | .}} {{.KERNEL_VERSION}}"
+      - echo "  Architecture{{printf ":" | .}} {{.ARCHITECTURE}}"
+      - echo ""
+
+  doctor:package_manager:
+    internal: true
+    platforms: [linux]
+    cmds:
+      - echo "📦 Package Manager Information:"
+      - task: doctor:{{.PKG_MANAGER}}
+      - echo ""
+
+  doctor:apt:
+    internal: true
+    platforms: [linux]
+    vars:
+      INSTALLED_COUNT:
+        sh: dpkg -l | grep -c '^ii'
+      UPGRADABLE_COUNT:
+        sh: apt list --upgradable 2>/dev/null | tail -n +2 | wc -l
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "apt"
+        msg: "This task is for apt package manager only"
+    cmds:
+      - echo "  Package Manager{{printf ":" | .}} apt-get (Debian/Ubuntu)"
+      - echo "  Installed packages{{printf ":" | .}} {{.INSTALLED_COUNT}}"
+      - echo "  Upgradeable packages{{printf ":" | .}} {{.UPGRADABLE_COUNT}}"
+
+  doctor:pacman:
+    internal: true
+    platforms: [linux]
+    vars:
+      INSTALLED_COUNT:
+        sh: pacman -Q | wc -l
+      EXPLICIT_COUNT:
+        sh: pacman -Qe | wc -l
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "pacman"
+        msg: "This task is for pacman package manager only"
+    cmds:
+      - echo "  Package Manager{{printf ":" | .}} pacman (Arch Linux)"
+      - echo "  Installed packages{{printf ":" | .}} {{.INSTALLED_COUNT}}"
+      - echo "  Explicitly installed{{printf ":" | .}} {{.EXPLICIT_COUNT}}"
+
+  doctor:unknown:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "unknown"
+        msg: "Unsupported package manager: {{.PKG_MANAGER}}"
+    cmds:
+      - echo "  ⚠️  Unsupported Linux distribution"
+      - echo "  This dotfiles setup supports Debian/Ubuntu and Arch Linux only"
+
+  # ============================================================================
+  # MANUAL TOOL VERSION MANAGEMENT
+  # ============================================================================
+  # The following tools are installed from GitHub releases with hardcoded versions:
+  #
+  # Tool Versions (update these periodically):
+  # - eza:        v0.18.0  (https://github.com/eza-community/eza/releases)
+  # - yazi:       v0.2.5   (https://github.com/sxyazi/yazi/releases)
+  # - glow:       v1.5.1   (https://github.com/charmbracelet/glow/releases)
+  # - procs:      v0.14.4  (https://github.com/dalance/procs/releases)
+  # - git-delta:  0.17.0   (https://github.com/dandavison/delta/releases)
+  # - lazygit:    0.43.1   (https://github.com/jesseduffield/lazygit/releases)
+  # - lazydocker: 0.23.3   (https://github.com/jesseduffield/lazydocker/releases)
+  #
+  # To update versions:
+  # 1. Check the GitHub releases page for the tool (links above)
+  # 2. Find the VERSION variable in the corresponding install task above
+  # 3. Update the version number (keep the format: some use 'v' prefix, some don't)
+  # 4. Test the installation: task linux:install:manual_tools
+  # 5. Commit the change
+  #
+  # Architecture support:
+  # - All tools support x86_64 (Intel/AMD 64-bit)
+  # - Most support ARM64, but naming varies:
+  #   * eza, yazi, procs, git-delta: "aarch64"
+  #   * glow, lazygit, lazydocker: "arm64"
+  # ============================================================================
+
+  doctor:broken_packages:
+    internal: true
+    platforms: [linux]
+    cmds:
+      - echo "🔍 Checking for broken packages:"
+      - task: doctor:broken_{{.PKG_MANAGER}}
+      - echo ""
+
+  doctor:broken_apt:
+    internal: true
+    platforms: [linux]
+    vars:
+      BROKEN_COUNT:
+        sh: dpkg -l | grep -c "^..r" || echo "0"
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "apt"
+        msg: "This task is for apt package manager only"
+    cmds:
+      - echo "  Broken packages{{printf ":" | .}} {{.BROKEN_COUNT}}"
+      - |
+        if ! apt-get check >/dev/null 2>&1; then
+          echo "  ⚠️  Unmet dependencies detected. Run: sudo apt-get -f install"
+        else
+          echo "  ✓ No unmet dependencies"
+        fi
+
+  doctor:broken_pacman:
+    internal: true
+    platforms: [linux]
+    vars:
+      BROKEN_COUNT:
+        sh: pacman -Qk 2>/dev/null | grep -c "warning" || echo "0"
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "pacman"
+        msg: "This task is for pacman package manager only"
+    cmds:
+      - echo "  Broken package files{{printf ":" | .}} {{.BROKEN_COUNT}}"
+
+  doctor:broken_unknown:
+    internal: true
+    platforms: [linux]
+    preconditions:
+      - sh: test "{{.PKG_MANAGER}}" = "unknown"
+        msg: "Unsupported package manager: {{.PKG_MANAGER}}"
+    cmds:
+      - echo "  ⚠️  Unsupported Linux distribution"
+      - echo "  This dotfiles setup supports Debian/Ubuntu and Arch Linux only"

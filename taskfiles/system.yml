@@ -6,6 +6,10 @@ includes:
     taskfile: ./brew.yml
     internal: true
 
+  linux:
+    taskfile: ./linux.yml
+    internal: true
+
   mise:
     taskfile: ./mise.yml
     internal: true
@@ -32,55 +36,19 @@ tasks:
   update:
     desc: Update all system dependencies
     summary: |
-      Updates Homebrew packages and mise-managed tools
+      Updates system packages and mise-managed tools
+
+      On macOS: Updates Homebrew packages
+      On Linux: Updates system packages via package manager and cargo tools
+
       Run this periodically to keep your system up to date
     cmds:
       - task: brew:upgrade
+      - task: linux:update
       - task: mise:update
 
   install:platform_tools:
     internal: true
     cmds:
       - task: brew:install
-      - task: install:linux_tools
-
-  ####### Linux Tools #######
-  install:linux_tools:
-    internal: true
-    platforms: [linux]
-    cmds:
-      - task: install:linux_binstall_tools
-      - task: install:linux_fzf
-
-  install:linux_zoxide:
-    internal: true
-    status:
-      - which zoxide
-    cmds:
-      - curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-
-  install:linux_binstall_tools:
-    internal: true
-    cmds:
-      - for: [eza, bat, git-delta, sd]
-        task: install:linux_binstall_tool
-        vars: { TOOL: "{{.ITEM}}" }
-
-  install:linux_binstall_tool:
-    internal: true
-    vars:
-      TOOL: "{{.TOOL}}"
-      BINARY: '{{if eq .TOOL "git-delta"}}delta{{else}}{{.TOOL}}{{end}}'
-    status:
-      - which {{.BINARY}}
-    cmds:
-      - cargo binstall --locked --no-confirm {{.TOOL}}
-
-  install:linux_fzf:
-    internal: true
-    dir: $HOME
-    status:
-      - test -d $HOME/.fzf
-    cmds:
-      - git clone https://github.com/junegunn/fzf.git $HOME/.fzf
-      - $HOME/.fzf/install --bin
+      - task: linux:install

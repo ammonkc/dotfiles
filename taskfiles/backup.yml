@@ -6,13 +6,9 @@ vars:
   BACKUP_BASE: '${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles/backups'
   BACKUP_DIR:
     sh: echo "{{.BACKUP_BASE}}/$(date +%Y%m%d-%H%M%S)"
-  # Get list of all backup timestamps
+  # Get list of all backup timestamps (sorted newest first)
   BACKUP_TIMESTAMPS:
-    sh: |
-      BACKUP_BASE="{{.BACKUP_BASE}}"
-      if [ -d "$BACKUP_BASE" ]; then
-        find "$BACKUP_BASE" -maxdepth 1 -type d ! -name "backups" -exec basename {} \; | sort -r
-      fi
+    sh: find "{{.BACKUP_BASE}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | xargs -n1 basename 2>/dev/null | sort -r || true
 
 tasks:
   check_conflicts:
@@ -103,7 +99,7 @@ tasks:
       BACKUP_PATH: '{{.BACKUP_BASE}}/{{.TIMESTAMP}}'
       # Get packages in this backup
       BACKUP_PACKAGES:
-        sh: find "{{.BACKUP_BASE}}/{{.TIMESTAMP}}" -maxdepth 1 -type d ! -name "{{.TIMESTAMP}}" -exec basename {} \; | sort
+        sh: find "{{.BACKUP_BASE}}/{{.TIMESTAMP}}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort || true
     cmds:
       - echo "  📅 {{.TIMESTAMP}}"
       - for:
@@ -139,10 +135,7 @@ tasks:
       BACKUP_PATH: '{{.BACKUP_BASE}}/{{.TIMESTAMP}}'
       # Get packages to restore
       RESTORE_PACKAGES:
-        sh: |
-          if [ -d "{{.BACKUP_BASE}}/{{.TIMESTAMP}}" ]; then
-            find "{{.BACKUP_BASE}}/{{.TIMESTAMP}}" -maxdepth 1 -type d ! -name "{{.TIMESTAMP}}" -exec basename {} \;
-          fi
+        sh: find "{{.BACKUP_BASE}}/{{.TIMESTAMP}}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort || true
     preconditions:
       - sh: test -n "{{.TIMESTAMP}}"
         msg: "TIMESTAMP variable is required. Usage: task backup:restore TIMESTAMP=20240325-143022"
@@ -178,18 +171,9 @@ tasks:
     internal: true
     vars:
       PACKAGE: '{{.PACKAGE}}'
-      # Find the most recent backup containing this package
+      # Find the most recent backup containing this package (sorted newest first)
       LATEST_BACKUP:
-        sh: |
-          BACKUP_BASE="{{.BACKUP_BASE}}"
-          if [ -d "$BACKUP_BASE" ]; then
-            for timestamp in $(find "$BACKUP_BASE" -maxdepth 1 -type d ! -name "backups" -exec basename {} \; | sort -r); do
-              if [ -d "$BACKUP_BASE/$timestamp/{{.PACKAGE}}" ]; then
-                echo "$timestamp"
-                exit 0
-              fi
-            done
-          fi
+        sh: find "{{.BACKUP_BASE}}" -mindepth 2 -maxdepth 2 -type d -name "{{.PACKAGE}}" 2>/dev/null | sort -r | head -n1 | xargs dirname 2>/dev/null | xargs basename 2>/dev/null || true
     status:
       # Skip if no backup exists for this package
       - test -z "{{.LATEST_BACKUP}}"
@@ -209,12 +193,7 @@ tasks:
       KEEP: '{{.KEEP | default "5"}}'
       # Get list of old backups to remove (all except the most recent KEEP)
       OLD_BACKUPS:
-        sh: |
-          BACKUP_BASE="{{.BACKUP_BASE}}"
-          if [ -d "$BACKUP_BASE" ]; then
-            cd "$BACKUP_BASE"
-            ls -t | tail -n +$(({{.KEEP}} + 1))
-          fi
+        sh: find "{{.BACKUP_BASE}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | xargs -n1 basename 2>/dev/null | sort -r | tail -n +$(({{.KEEP}} + 1)) || true
     preconditions:
       - sh: test -d "{{.BACKUP_BASE}}"
         msg: "ℹ️  No backups found"
@@ -248,16 +227,7 @@ tasks:
     vars:
       # Get list of empty backup directories
       EMPTY_BACKUPS:
-        sh: |
-          BACKUP_BASE="{{.BACKUP_BASE}}"
-          if [ -d "$BACKUP_BASE" ]; then
-            cd "$BACKUP_BASE"
-            for dir in */; do
-              if [ -d "$dir" ] && [ -z "$(find "$dir" -type f)" ]; then
-                basename "$dir"
-              fi
-            done
-          fi
+        sh: find "{{.BACKUP_BASE}}" -mindepth 1 -maxdepth 1 -type d -empty 2>/dev/null | xargs -n1 basename 2>/dev/null || true
     preconditions:
       - sh: test -d "{{.BACKUP_BASE}}"
         msg: "ℹ️  No backups found"

@@ -8,25 +8,9 @@ vars:
   # Get git username from config (fallback to "personal")
   GIT_USER:
     sh: git config --get user.name 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr ' ' '-' || echo "personal"
-  # Default organizations - reads from ~/.env.local or environment variable
-  # Priority: $DEFAULT_ORGS > ~/.env.local > git config username + "work"
+  # Default organizations - Priority: env var > ~/.env.local > git username + "work"
   DEFAULT_ORGS:
-    sh: |
-      # 1. Check if DEFAULT_ORGS is already set in environment
-      if [ -n "$DEFAULT_ORGS" ]; then
-        echo "$DEFAULT_ORGS"
-        exit 0
-      fi
-
-      # 2. Check for DEFAULT_ORGS in ~/.env.local
-      if [ -f "$HOME/.env.local" ] && grep -q "^export DEFAULT_ORGS=" "$HOME/.env.local"; then
-        grep "^export DEFAULT_ORGS=" "$HOME/.env.local" | cut -d'=' -f2- | tr -d '"' | tr -d "'"
-        exit 0
-      fi
-
-      # 3. Use git username + "work" as sensible defaults
-      git_user=$(git config --get user.name 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr ' ' '-' || echo "personal")
-      echo "$git_user work"
+    sh: echo "${DEFAULT_ORGS:-$(grep '^export DEFAULT_ORGS=' ~/.env.local 2>/dev/null | cut -d'=' -f2- | tr -d '"' | tr -d "'" || echo "{{.GIT_USER}} work")}"
 
 tasks:
   setup:
@@ -94,20 +78,22 @@ tasks:
     silent: true
     vars:
       CODE_PROJECTS:
-        sh: find "{{.CODE_DIR}}" -mindepth 1 -maxdepth 1 2>/dev/null | sort
+        sh: find "{{.CODE_DIR}}" -mindepth 1 -maxdepth 1 -exec basename {} \; 2>/dev/null | sort || true
+      PROJECT_COUNT:
+        sh: find "{{.CODE_DIR}}" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | xargs || echo "0"
     preconditions:
       - sh: test -d "{{.CODE_DIR}}"
         msg: ""
     cmds:
       - echo "Code projects ({{.CODE_DIR}}):"
       - |
-        if [ -n "{{.CODE_PROJECTS}}" ]; then
-          echo "{{.CODE_PROJECTS}}" | while read -r project; do
-            echo "  - $(basename "$project")"
-          done
-        else
+        if [ "{{.PROJECT_COUNT}}" -eq 0 ]; then
           echo "  (empty)"
         fi
+      - for:
+          var: CODE_PROJECTS
+          split: '\n'
+        cmd: echo "  - {{.ITEM}}"
       - echo ""
 
   list:repos:
@@ -115,35 +101,35 @@ tasks:
     silent: true
     vars:
       ORGS:
-        sh: find "{{.REPOS_DIR}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort
+        sh: find "{{.REPOS_DIR}}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort || true
+      ORG_COUNT:
+        sh: find "{{.REPOS_DIR}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | xargs || echo "0"
     preconditions:
       - sh: test -d "{{.REPOS_DIR}}"
         msg: ""
     cmds:
       - echo "Repositories:"
       - |
-        if [ -z "{{.ORGS}}" ]; then
+        if [ "{{.ORG_COUNT}}" -eq 0 ]; then
           echo "  (no organizations)"
-          exit 0
         fi
       - for:
           var: ORGS
           split: '\n'
         task: list:org
         vars:
-          ORG_PATH: '{{.ITEM}}'
+          ORG_NAME: '{{.ITEM}}'
 
   list:org:
     internal: true
     silent: true
     vars:
-      ORG_PATH: '{{.ORG_PATH}}'
-      ORG_NAME:
-        sh: basename "{{.ORG_PATH}}"
+      ORG_NAME: '{{.ORG_NAME}}'
+      ORG_PATH: '{{.REPOS_DIR}}/{{.ORG_NAME}}'
       REPOS:
-        sh: find "{{.ORG_PATH}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort
+        sh: find "{{.ORG_PATH}}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort || true
       REPO_COUNT:
-        sh: find "{{.ORG_PATH}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | xargs
+        sh: find "{{.ORG_PATH}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | xargs || echo "0"
     cmds:
       - echo "  {{.ORG_NAME}}/ ({{.REPO_COUNT}} repos)"
       - for:
@@ -151,15 +137,13 @@ tasks:
           split: '\n'
         task: list:repo
         vars:
-          REPO_PATH: '{{.ITEM}}'
+          REPO_NAME: '{{.ITEM}}'
 
   list:repo:
     internal: true
     silent: true
     vars:
-      REPO_PATH: '{{.REPO_PATH}}'
-      REPO_NAME:
-        sh: basename "{{.REPO_PATH}}"
+      REPO_NAME: '{{.REPO_NAME}}'
     cmds:
       - echo "    - {{.REPO_NAME}}"
 
@@ -186,41 +170,18 @@ tasks:
     vars:
       REPO: '{{.REPO}}'
       ORG: '{{.ORG | default ""}}'
+      # Detect if using GitHub shorthand format (user/repo)
+      IS_GH_SHORTHAND:
+        sh: echo "{{.REPO}}" | grep -qE '^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$' && echo "true" || echo "false"
+      # Extract org/username from repo URL or shorthand
       DETECTED_ORG:
         sh: |
-          if [ -n "{{.ORG}}" ]; then
-            echo "{{.ORG}}"
-          else
-            # Try to detect org from repo URL (GitHub, GitLab, etc.)
-            repo="{{.REPO}}"
-
-            # Handle GitHub shorthand (username/repo)
-            if [[ "$repo" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]; then
-              echo "$repo" | cut -d'/' -f1
-            # Handle full URLs
-            elif [[ "$repo" =~ (github\.com|gitlab\.com|bitbucket\.org)[:/]([^/]+)/([^/]+) ]]; then
-              echo "$repo" | sed -E 's|.*[:/]([^/]+)/[^/]+.*|\1|'
-            else
-              echo "{{.GIT_USER}}"
-            fi
-          fi
+          [ -n "{{.ORG}}" ] && echo "{{.ORG}}" || \
+          echo "{{.REPO}}" | sed -E 's|^([^/]+)/.*|\1|; t; s|.*[:/]([^/]+)/[^/]+.*|\1|; t; s|.*|{{.GIT_USER}}|'
+      # Extract repo name from URL or shorthand
       REPO_NAME:
-        sh: |
-          repo="{{.REPO}}"
-          # Handle GitHub shorthand
-          if [[ "$repo" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]; then
-            echo "$repo" | cut -d'/' -f2
-          else
-            echo "$repo" | sed -E 's|.*[:/][^/]+/([^/]+)(\.git)?$|\1|' | sed 's/\.git$//'
-          fi
+        sh: echo "{{.REPO}}" | sed -E 's|^[^/]+/([^/]+)$|\1|; t; s|.*[:/][^/]+/([^/]+)(\.git)?$|\1|' | sed 's/\.git$//'
       TARGET_DIR: '{{.REPOS_DIR}}/{{.DETECTED_ORG}}/{{.REPO_NAME}}'
-      IS_GH_SHORTHAND:
-        sh: |
-          if [[ "{{.REPO}}" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]; then
-            echo "true"
-          else
-            echo "false"
-          fi
     preconditions:
       - sh: test -n "{{.REPO}}"
         msg: "REPO is required. Usage: task dev:clone REPO=<git-url-or-user/repo>"

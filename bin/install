@@ -58,21 +58,34 @@ if task install; then
   echo ""
   echo "  1. Restart your terminal or run: $(tput bold)exec \$SHELL$(tput sgr0)"
   echo ""
-  echo "  2. $(tput bold)[Optional]$(tput sgr0) Apply macOS system preferences:"
-  echo "     • Configures Finder, Dock, keyboard, and more"
-  echo "     • Run: $(tput bold)task mac:set:defaults$(tput sgr0)"
-  echo "     • Review first: $(tput bold)cat scripts/macos.sh$(tput sgr0)"
+
+  # macOS-specific next steps
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "  2. $(tput bold)[Optional]$(tput sgr0) Apply macOS system preferences:"
+    echo "     • Configures Finder, Dock, keyboard, and more"
+    echo "     • Run: $(tput bold)task mac:set:defaults$(tput sgr0)"
+    echo "     • Review first: $(tput bold)cat scripts/macos.sh$(tput sgr0)"
+    echo ""
+    echo "  3. $(tput bold)[Optional]$(tput sgr0) Enable 1Password SSH agent:"
+    echo "     • Open 1Password → Settings → Developer"
+    echo "     • Enable 'Use the SSH agent'"
+    echo "     • Run: $(tput bold)task mac:op:setup$(tput sgr0)"
+    echo ""
+    echo "  4. Customize local configs if needed:"
+  else
+    echo "  2. Customize local configs if needed:"
+  fi
+
+  echo "     • ~/.config/git/config.local"
+  echo "     • ~/.config/zsh/.zshrc.local"
+  echo "     • ~/.config/mise/.mise.local.toml"
   echo ""
-  echo "  3. $(tput bold)[Optional]$(tput sgr0) Enable 1Password SSH agent:"
-  echo "     • Open 1Password → Settings → Developer"
-  echo "     • Enable 'Use the SSH agent'"
-  echo "     • Run: $(tput bold)task mac:op:setup$(tput sgr0)"
-  echo ""
-  echo "  4. Customize local configs if needed:"
-  echo "     • ~/.gitconfig.local"
-  echo "     • ~/.zshrc.local"
-  echo ""
-  echo "  5. Run: $(tput bold)task --list$(tput sgr0) to see all available commands"
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "  5. Run: $(tput bold)task --list$(tput sgr0) to see all available commands"
+  else
+    echo "  3. Run: $(tput bold)task --list$(tput sgr0) to see all available commands"
+  fi
   echo ""
 else
   error "Installation failed"

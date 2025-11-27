@@ -12,6 +12,9 @@ includes:
     aliases: [dev]
     taskfile: ./taskfiles/develop.yml
 
+  linux:
+    taskfile: ./taskfiles/linux.yml
+
   dotfiles:
     aliases: [dot]
     taskfile: ./taskfiles/dotfiles.yml

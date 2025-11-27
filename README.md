@@ -4,9 +4,9 @@
   <img src="art/dotfiles-logo.png" alt="Dotfiles">
 </p>
 
-> 🚀 Automated macOS development environment setup using GNU Stow and Taskfile
+> 🚀 Automated development environment setup for macOS (and Linux) using GNU Stow and Taskfile
 
-This repository contains my personal dotfiles and automated setup scripts for macOS. It's designed to get a fresh Mac from zero to fully configured development environment with a single command.
+This repository contains my personal dotfiles and automated setup scripts for macOS, with secondary support for Linux (Debian/Ubuntu and Arch). It's designed to get a fresh Mac from zero to fully configured development environment with a single command.
 
 ---
 
@@ -81,7 +81,7 @@ These dotfiles strictly adhere to the [XDG Base Directory Specification](https:/
 - Node.js, Python, Go, Rust, etc.
 - Configurable in `packages/mise/.config/mise/config.toml`
 
-### **CLI Utilities**
+### **Modern CLI Utilities**
 - `bat` - Better `cat` with syntax highlighting
 - `fd` - Better `find` command
 - `ripgrep` - Better `grep` command
@@ -104,12 +104,17 @@ These dotfiles strictly adhere to the [XDG Base Directory Specification](https:/
 
 ### **Prerequisites**
 
+#### **macOS** (Primary Platform)
 - macOS (tested on Sequoia 15.x, works on Big Sur 11.x+)
 - Xcode Command Line Tools (installed automatically if missing)
-- Internet connection
 - Admin access (for Homebrew and some system tools)
 
-### **Fresh Machine Setup**
+#### **Linux** (Secondary Support - Debian/Ubuntu or Arch)
+- Debian/Ubuntu (tested on Ubuntu 22.04+) or Arch Linux
+- Git (installed automatically if missing, requires sudo)
+- Sudo access (**you'll be prompted for password during package installation**)
+
+### **Fresh macOS Setup**
 
 On a brand new Mac, run this single command:
 
@@ -125,6 +130,27 @@ curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/boots
 5. Shows you next steps for customization
 
 **Duration:** ~15-30 minutes depending on internet speed
+
+### **Fresh Linux Setup (Debian/Ubuntu or Arch)**
+
+On a fresh Linux system:
+
+```bash
+# Run the bootstrap script
+curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/bootstrap.sh | bash
+```
+
+**What happens:**
+1. Checks for and installs git (if needed, requires sudo)
+2. Clones this repository to `~/.dotfiles` (customizable via `$DOTFILES_DIR`)
+3. Installs Taskfile and mise
+4. Installs packages from `Linuxfile.debian` or `Linuxfile.arch`
+5. Installs modern CLI tools (eza, lazygit, yazi, etc.)
+6. Sets up dotfiles and development environment
+
+**Duration:** ~20-40 minutes depending on internet speed and system
+
+**Note:** Linux support is secondary. macOS-specific features (system preferences, 1Password integration, GUI apps) are not available on Linux.
 
 ---
 

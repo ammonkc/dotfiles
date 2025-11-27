@@ -1,0 +1,94 @@
+# Linuxfile.debian - Debian/Ubuntu packages
+# One package per line, comments supported
+# This file is used by: task linux:install
+
+# Core utilities
+git
+git-lfs
+curl
+wget
+vim
+neovim
+tmux
+zsh
+stow
+bash
+
+# Build essentials
+build-essential
+gcc
+g++
+make
+cmake
+pkg-config
+
+# Modern CLI tools
+fzf
+ripgrep
+fd-find
+bat
+btop
+zoxide
+
+# Modern CLI tools installed manually (see task linux:install:manual_tools)
+# These are not in Debian repos but installed to ~/.local/bin:
+# - eza (modern ls replacement)
+# - procs (modern ps replacement)
+# - yazi (terminal file manager)
+# - glow (markdown renderer)
+# - git-delta (syntax-highlighting pager for git)
+# - lazygit (terminal UI for git)
+# - lazydocker (terminal UI for docker)
+
+# Development tools (managed by mise)
+# python, nodejs, go, rust, etc. are installed via mise
+# See: ~/.config/mise/config.toml
+
+# Git tools
+git-flow
+
+# System monitoring
+htop
+btop
+# Note: fastfetch and atuin not included (not in Ubuntu 22.04 default repos)
+# To install manually:
+#   fastfetch: Available in Ubuntu 23.04+ or via https://github.com/fastfetch-cli/fastfetch
+#   atuin:     curl --proto '=https' --tlsv1.2 -sSf https://setup.atuin.sh | bash
+
+# Shell enhancements
+zsh-autosuggestions
+zsh-syntax-highlighting
+
+# Network tools
+net-tools
+openssh-client
+ca-certificates
+awscli
+
+# Image optimization tools
+jpegoptim
+optipng
+pngquant
+imagemagick
+gifsicle
+
+# Compression tools
+zip
+unzip
+tar
+gzip
+bzip2
+xz-utils
+
+# Additional utilities
+tree
+jq
+less
+man-db
+apt-transport-https
+software-properties-common
+gnupg
+lsb-release
+ack
+gawk
+httpie

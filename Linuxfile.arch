@@ -1,0 +1,79 @@
+# Linuxfile.arch - Arch Linux packages
+# One package per line, comments supported
+# This file is used by: task linux:install
+
+# Core utilities
+git
+git-lfs
+curl
+wget
+vim
+neovim
+tmux
+zsh
+stow
+bash
+
+# Build essentials
+base-devel
+gcc
+cmake
+pkgconf
+
+# Modern CLI tools
+fzf
+ripgrep
+fd
+bat
+eza
+zoxide
+procs
+yazi-fm
+glow
+
+# Development tools (managed by mise)
+# python, nodejs, go, rust, etc. are installed via mise
+# See: ~/.config/mise/config.toml
+
+# Git tools
+git-flow
+
+# System monitoring
+htop
+btop
+fastfetch
+atuin
+
+# Shell enhancements
+zsh-autosuggestions
+zsh-syntax-highlighting
+
+# Network tools
+net-tools
+openssh
+aws-cli
+
+# Image optimization tools
+jpegoptim
+optipng
+pngquant
+imagemagick
+gifsicle
+
+# Compression tools
+zip
+unzip
+tar
+gzip
+bzip2
+xz
+
+# Additional utilities
+tree
+jq
+less
+man-db
+ack
+gawk
+httpie
+
