@@ -5,12 +5,42 @@ vars:
   DOTFILES: "{{.ROOT_DIR}}"
 
 tasks:
+  # ============================================================================
+  # Primary Tasks
+  # ============================================================================
+
   install:
     platforms: [darwin]
     desc: Install Homebrew and tools defined in Brewfile
     cmds:
       - task: install:homebrew
       - task: install:tools
+
+  upgrade:
+    platforms: [darwin]
+    desc: Update Homebrew and upgrade all installed packages
+    cmds:
+      - brew update
+      - brew upgrade
+      - task: update
+
+  update:
+    platforms: [darwin]
+    desc: Update Brewfile with current brew packages and commit changes
+    cmds:
+      - task: update_no_commit
+      - task: commit
+
+  cleanup:
+    desc: Remove unused brew dependencies
+    platforms: [darwin]
+    cmds:
+      - brew cleanup
+      - brew autoremove
+
+  # ============================================================================
+  # Internal Tasks
+  # ============================================================================
 
   install:homebrew:
     internal: true
@@ -28,38 +58,6 @@ tasks:
           eval "$(/usr/local/bin/brew shellenv)"
         fi
 
-  commit:
-    desc: Commits the Brewfile file if changed
-    internal: true
-    silent: true
-    cmd: |
-      ./scripts/commit_changed_file.sh \
-        'Brewfile' \
-        "chore(brew): update packages $(date '+%Y-%m-%d %H:%M:%S')"
-
-  upgrade:
-    platforms: [darwin]
-    desc: Update Homebrew and upgrade all installed packages
-    cmds:
-      - brew update
-      - brew upgrade
-      - task: update
-
-  update_no_commit:
-    platforms: [darwin]
-    # NOTE: the leading slash here is a bit annoying, but required due to a bug
-    # in go-task see https://github.com/go-task/task/issues/828
-    dir: "/{{.DOTFILES}}"
-    cmds:
-      - brew bundle dump --force --describe
-
-  update:
-    platforms: [darwin]
-    desc: Update Brewfile with current brew packages and commit changes
-    cmds:
-      - task: update_no_commit
-      - task: commit
-
   install:tools:
     internal: true
     platforms: [darwin]
@@ -71,9 +69,20 @@ tasks:
     cmds:
       - brew bundle
 
-  cleanup:
-    desc: Remove unused brew dependencies
+  update_no_commit:
+    internal: true
     platforms: [darwin]
+    # NOTE: the leading slash here is a bit annoying, but required due to a bug
+    # in go-task see https://github.com/go-task/task/issues/828
+    dir: "/{{.DOTFILES}}"
     cmds:
-      - brew cleanup
-      - brew autoremove
+      - brew bundle dump --force --describe
+
+  commit:
+    desc: Commits the Brewfile file if changed
+    internal: true
+    silent: true
+    cmd: |
+      ./scripts/commit_changed_file.sh \
+        'Brewfile' \
+        "chore(brew): update packages $(date '+%Y-%m-%d %H:%M:%S')"

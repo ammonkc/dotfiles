@@ -5,14 +5,9 @@ vars:
   LAZY_LOCK: './packages/nvim/.config/nvim/lazy-lock.json'
 
 tasks:
-  health:
-    desc: Run Neovim health checks
-    internal: true
-    preconditions:
-      - sh: command -v nvim >/dev/null 2>&1
-        msg: "Neovim is not installed"
-    cmds:
-      - nvim --headless +'checkhealth' +qa
+  # ============================================================================
+  # Primary Tasks
+  # ============================================================================
 
   restore:
     desc: Restore Neovim plugins to the state in lazy-lock.json
@@ -70,6 +65,27 @@ tasks:
           +'MasonUpdateAll'
       - task: commit
 
+  check:
+    desc: Verify Neovim setup and configuration
+    summary: |
+      Runs health checks to verify Neovim is properly configured
+      Useful for debugging issues after fresh install
+    cmds:
+      - task: health
+
+  # ============================================================================
+  # Internal Tasks
+  # ============================================================================
+
+  health:
+    desc: Run Neovim health checks
+    internal: true
+    preconditions:
+      - sh: command -v nvim >/dev/null 2>&1
+        msg: "Neovim is not installed"
+    cmds:
+      - nvim --headless +'checkhealth' +qa
+
   commit:
     desc: Commit lazy-lock.json if changed
     internal: true
@@ -81,11 +97,3 @@ tasks:
         ./scripts/commit_changed_file.sh \
           '{{.LAZY_LOCK}}' \
           "chore(nvim): update plugins $(date '+%Y-%m-%d %H:%M:%S')"
-
-  check:
-    desc: Verify Neovim setup and configuration
-    summary: |
-      Runs health checks to verify Neovim is properly configured
-      Useful for debugging issues after fresh install
-    cmds:
-      - task: health

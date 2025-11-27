@@ -5,6 +5,10 @@ vars:
   MACOS_SCRIPT: '{{.ROOT_DIR}}/scripts/macos.sh'
 
 tasks:
+  # ============================================================================
+  # Primary Tasks
+  # ============================================================================
+
   set:defaults:
     desc: Apply all macOS system preferences
     summary: |
@@ -24,27 +28,15 @@ tasks:
     cmds:
       - bash "{{.MACOS_SCRIPT}}"
 
-  restart:dock:
-    desc: Restart Dock to apply settings
+  sync:
+    desc: Apply macOS defaults and restart UI components
+    summary: |
+      Convenience task that applies macOS defaults and restarts affected apps
+      Equivalent to running: task mac:set:defaults && task mac:restart:all
     platforms: [darwin]
     cmds:
-      - killall Dock
-
-  restart:finder:
-    desc: Restart Finder to apply settings
-    platforms: [darwin]
-    cmds:
-      - killall Finder
-
-  restart:all:
-    desc: Restart Dock, Finder, and SystemUIServer
-    platforms: [darwin]
-    cmds:
-      - echo "🔄 Restarting system UI components..."
-      - killall Dock || true
-      - killall Finder || true
-      - killall SystemUIServer || true
-      - echo "✓ UI components restarted"
+      - task: set:defaults
+      - task: restart:all
 
   xcode:install:
     desc: Install Xcode command line tools
@@ -78,12 +70,28 @@ tasks:
       - ln -s ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ~/.1password/agent.sock
       - echo "✓ Symlink created successfully"
 
-  sync:
-    desc: Apply macOS defaults and restart UI components
-    summary: |
-      Convenience task that applies macOS defaults and restarts affected apps
-      Equivalent to running: task mac:set:defaults && task mac:restart:all
+  # ============================================================================
+  # Utility Tasks
+  # ============================================================================
+
+  restart:dock:
+    desc: Restart Dock to apply settings
     platforms: [darwin]
     cmds:
-      - task: set:defaults
-      - task: restart:all
+      - killall Dock
+
+  restart:finder:
+    desc: Restart Finder to apply settings
+    platforms: [darwin]
+    cmds:
+      - killall Finder
+
+  restart:all:
+    desc: Restart Dock, Finder, and SystemUIServer
+    platforms: [darwin]
+    cmds:
+      - echo "🔄 Restarting system UI components..."
+      - killall Dock || true
+      - killall Finder || true
+      - killall SystemUIServer || true
+      - echo "✓ UI components restarted"

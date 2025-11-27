@@ -2,11 +2,9 @@
 version: 3
 
 tasks:
-  doctor:
-    desc: Check mise installation and configuration
-    internal: true
-    cmds:
-      - mise doctor
+  # ============================================================================
+  # Primary Tasks
+  # ============================================================================
 
   install:
     desc: Install all mise-managed tools from config
@@ -44,3 +42,13 @@ tasks:
     desc: List all outdated tools
     cmds:
       - mise outdated -l
+
+  # ============================================================================
+  # Health Check
+  # ============================================================================
+
+  doctor:
+    desc: Check mise installation and configuration
+    internal: true
+    cmds:
+      - mise doctor

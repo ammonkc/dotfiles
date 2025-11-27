@@ -13,6 +13,10 @@ vars:
     sh: echo "${DEFAULT_ORGS:-$(grep '^export DEFAULT_ORGS=' ~/.env.local 2>/dev/null | cut -d'=' -f2- | tr -d '"' | tr -d "'" || echo "{{.GIT_USER}} work")}"
 
 tasks:
+  # ============================================================================
+  # Primary Tasks
+  # ============================================================================
+
   setup:
     desc: Setup development directory structure
     summary: |
@@ -45,19 +49,6 @@ tasks:
       - echo ""
       - echo "Current orgs:" "{{.DEFAULT_ORGS}}"
 
-  create_dirs:
-    internal: true
-    vars:
-      DEFAULT_ORGS: '{{.DEFAULT_ORGS}}'
-    cmds:
-      - mkdir -p "{{.CODE_DIR}}"
-      - |
-        for org in {{.DEFAULT_ORGS}}; do
-          mkdir -p "{{.REPOS_DIR}}/$org"
-        done
-    status:
-      - test -d "{{.CODE_DIR}}"
-
   list:
     desc: List development directories
     summary: |
@@ -72,6 +63,109 @@ tasks:
       - echo ""
       - task: list:code
       - task: list:repos
+
+  clone:
+    desc: Clone a repository to the appropriate directory
+    summary: |
+      Clones a Git repository to ~/Developer/repos/{org}/
+
+      The organization is automatically detected from the repo URL.
+      You can override it with the ORG parameter.
+
+      Usage:
+        # Auto-detect org from URL
+        task dev:clone REPO=git@github.com:username/project.git
+        → Clones to ~/Developer/repos/username/project
+
+        # Specify custom org
+        task dev:clone REPO=https://github.com/foo/bar.git ORG=work
+        → Clones to ~/Developer/repos/work/bar
+
+        # GitHub shorthand (requires gh CLI)
+        task dev:clone REPO=username/repo
+        → Uses gh to clone from GitHub
+    vars:
+      REPO: '{{.REPO}}'
+      ORG: '{{.ORG | default ""}}'
+      # Detect if using GitHub shorthand format (user/repo)
+      IS_GH_SHORTHAND:
+        sh: echo "{{.REPO}}" | grep -qE '^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$' && echo "true" || echo "false"
+      # Extract org/username from repo URL or shorthand
+      DETECTED_ORG:
+        sh: |
+          [ -n "{{.ORG}}" ] && echo "{{.ORG}}" || \
+          echo "{{.REPO}}" | sed -E 's|^([^/]+)/.*|\1|; t; s|.*[:/]([^/]+)/[^/]+.*|\1|; t; s|.*|{{.GIT_USER}}|'
+      # Extract repo name from URL or shorthand
+      REPO_NAME:
+        sh: echo "{{.REPO}}" | sed -E 's|^[^/]+/([^/]+)$|\1|; t; s|.*[:/][^/]+/([^/]+)(\.git)?$|\1|' | sed 's/\.git$//'
+      TARGET_DIR: '{{.REPOS_DIR}}/{{.DETECTED_ORG}}/{{.REPO_NAME}}'
+    preconditions:
+      - sh: test -n "{{.REPO}}"
+        msg: "REPO is required. Usage: task dev:clone REPO=<git-url-or-user/repo>"
+    cmds:
+      - mkdir -p "{{.REPOS_DIR}}/{{.DETECTED_ORG}}"
+      - echo "📥 Cloning {{.REPO_NAME}} to {{.DETECTED_ORG}}/"
+      - |
+        if [ "{{.IS_GH_SHORTHAND}}" = "true" ]; then
+          # Use gh CLI for GitHub shorthand
+          if command -v gh >/dev/null 2>&1; then
+            gh repo clone "{{.REPO}}" "{{.TARGET_DIR}}"
+          else
+            echo "Error: gh CLI not found. Install with: brew install gh"
+            exit 1
+          fi
+        else
+          git clone "{{.REPO}}" "{{.TARGET_DIR}}"
+        fi
+      - echo "✓ Cloned to:" "{{.TARGET_DIR}}"
+    status:
+      - test -d "{{.TARGET_DIR}}"
+
+  # ============================================================================
+  # Placeholder Tasks (Future Development)
+  # ============================================================================
+
+  sync:
+    desc: Sync all repositories (placeholder)
+    summary: |
+      Future: Sync all repos in ~/Developer/repos/
+      Could pull latest changes, check for updates, etc.
+    cmds:
+      - echo "🚧 Not implemented yet"
+      - echo "This will sync all repositories in {{.REPOS_DIR}}/"
+
+  update:
+    desc: Update all repositories (placeholder)
+    summary: |
+      Future: Update all repos (pull, fetch, etc.)
+    cmds:
+      - echo "🚧 Not implemented yet"
+      - echo "This will update all repositories"
+
+  status:
+    desc: Show git status for all repositories (placeholder)
+    summary: |
+      Future: Show git status for all repos
+    cmds:
+      - echo "🚧 Not implemented yet"
+      - echo "This will show status of all repositories"
+
+  # ============================================================================
+  # Internal Tasks
+  # ============================================================================
+
+  create_dirs:
+    internal: true
+    vars:
+      DEFAULT_ORGS: '{{.DEFAULT_ORGS}}'
+    cmds:
+      - mkdir -p "{{.CODE_DIR}}"
+      - |
+        for org in {{.DEFAULT_ORGS}}; do
+          mkdir -p "{{.REPOS_DIR}}/$org"
+        done
+    status:
+      - test -d "{{.CODE_DIR}}"
 
   list:code:
     internal: true
@@ -146,87 +240,4 @@ tasks:
       REPO_NAME: '{{.REPO_NAME}}'
     cmds:
       - echo "    - {{.REPO_NAME}}"
-
-  clone:
-    desc: Clone a repository to the appropriate directory
-    summary: |
-      Clones a Git repository to ~/Developer/repos/{org}/
-
-      The organization is automatically detected from the repo URL.
-      You can override it with the ORG parameter.
-
-      Usage:
-        # Auto-detect org from URL
-        task dev:clone REPO=git@github.com:username/project.git
-        → Clones to ~/Developer/repos/username/project
-
-        # Specify custom org
-        task dev:clone REPO=https://github.com/foo/bar.git ORG=work
-        → Clones to ~/Developer/repos/work/bar
-
-        # GitHub shorthand (requires gh CLI)
-        task dev:clone REPO=username/repo
-        → Uses gh to clone from GitHub
-    vars:
-      REPO: '{{.REPO}}'
-      ORG: '{{.ORG | default ""}}'
-      # Detect if using GitHub shorthand format (user/repo)
-      IS_GH_SHORTHAND:
-        sh: echo "{{.REPO}}" | grep -qE '^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$' && echo "true" || echo "false"
-      # Extract org/username from repo URL or shorthand
-      DETECTED_ORG:
-        sh: |
-          [ -n "{{.ORG}}" ] && echo "{{.ORG}}" || \
-          echo "{{.REPO}}" | sed -E 's|^([^/]+)/.*|\1|; t; s|.*[:/]([^/]+)/[^/]+.*|\1|; t; s|.*|{{.GIT_USER}}|'
-      # Extract repo name from URL or shorthand
-      REPO_NAME:
-        sh: echo "{{.REPO}}" | sed -E 's|^[^/]+/([^/]+)$|\1|; t; s|.*[:/][^/]+/([^/]+)(\.git)?$|\1|' | sed 's/\.git$//'
-      TARGET_DIR: '{{.REPOS_DIR}}/{{.DETECTED_ORG}}/{{.REPO_NAME}}'
-    preconditions:
-      - sh: test -n "{{.REPO}}"
-        msg: "REPO is required. Usage: task dev:clone REPO=<git-url-or-user/repo>"
-    cmds:
-      - mkdir -p "{{.REPOS_DIR}}/{{.DETECTED_ORG}}"
-      - echo "📥 Cloning {{.REPO_NAME}} to {{.DETECTED_ORG}}/"
-      - |
-        if [ "{{.IS_GH_SHORTHAND}}" = "true" ]; then
-          # Use gh CLI for GitHub shorthand
-          if command -v gh >/dev/null 2>&1; then
-            gh repo clone "{{.REPO}}" "{{.TARGET_DIR}}"
-          else
-            echo "Error: gh CLI not found. Install with: brew install gh"
-            exit 1
-          fi
-        else
-          git clone "{{.REPO}}" "{{.TARGET_DIR}}"
-        fi
-      - echo "✓ Cloned to:" "{{.TARGET_DIR}}"
-    status:
-      - test -d "{{.TARGET_DIR}}"
-
-  # Placeholder tasks for future development
-  sync:
-    desc: Sync all repositories (placeholder)
-    summary: |
-      Future: Sync all repos in ~/Developer/repos/
-      Could pull latest changes, check for updates, etc.
-    cmds:
-      - echo "🚧 Not implemented yet"
-      - echo "This will sync all repositories in {{.REPOS_DIR}}/"
-
-  update:
-    desc: Update all repositories (placeholder)
-    summary: |
-      Future: Update all repos (pull, fetch, etc.)
-    cmds:
-      - echo "🚧 Not implemented yet"
-      - echo "This will update all repositories"
-
-  status:
-    desc: Show git status for all repositories (placeholder)
-    summary: |
-      Future: Show git status for all repos
-    cmds:
-      - echo "🚧 Not implemented yet"
-      - echo "This will show status of all repositories"
 
