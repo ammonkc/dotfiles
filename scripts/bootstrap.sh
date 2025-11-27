@@ -109,4 +109,7 @@ fi
 info "Running dotfiles installation..."
 cd "$DOTFILES_DIR" || exit 1
 
+# Ensure install script is executable
+chmod +x ./bin/install
+
 ./bin/install
