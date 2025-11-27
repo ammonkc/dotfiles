@@ -16,7 +16,7 @@ includes:
 
   dotfiles:
     aliases: [dot]
-    taskfile: ./taskfiles/dotfiles.yml
+    taskfile: ./dotfiles.yml
 
 vars:
   HOME: '{{env "HOME"}}'
