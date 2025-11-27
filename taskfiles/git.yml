@@ -1,0 +1,113 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+vars:
+  DOTFILES_DIR: '{{.ROOT_DIR}}'
+
+tasks:
+  status:
+    desc: Show git status of dotfiles repository
+    summary: |
+      Shows current git status including:
+      - Current branch
+      - Uncommitted changes
+      - Untracked files
+    dir: '{{.DOTFILES_DIR}}'
+    cmds:
+      - git status --short --branch
+
+  diff:
+    desc: Show uncommitted changes in dotfiles
+    summary: |
+      Shows diff of:
+      - Unstaged changes
+      - Staged changes
+    dir: '{{.DOTFILES_DIR}}'
+    cmds:
+      - echo "📝 Unstaged changes:"
+      - git diff || true
+      - echo ""
+      - echo "📋 Staged changes:"
+      - git diff --staged || true
+
+  pull:
+    desc: Pull latest dotfiles changes from remote
+    summary: |
+      Pulls latest changes using rebase to maintain clean history
+      Run this to get updates from the remote repository
+    dir: '{{.DOTFILES_DIR}}'
+    preconditions:
+      - sh: git rev-parse --git-dir > /dev/null 2>&1
+        msg: "Not a git repository"
+    cmds:
+      - echo "📥 Pulling latest changes..."
+      - git pull --rebase
+      - echo "✓ Pull complete"
+
+  sync:
+    desc: Pull latest changes and restow dotfiles
+    summary: |
+      Safely sync dotfiles from remote:
+      1. Stash local changes if any
+      2. Pull latest from origin
+      3. Restow all packages
+      4. Report if stash exists (won't auto-pop)
+
+      This is useful after pulling updates to ensure symlinks are current
+    dir: '{{.DOTFILES_DIR}}'
+    cmds:
+      - task: pull
+      - task: dot:install
+
+  push:
+    desc: Push dotfiles changes to remote
+    summary: |
+      Push committed changes to the remote repository
+      Note: This only pushes - you must commit first
+    dir: '{{.DOTFILES_DIR}}'
+    preconditions:
+      - sh: git rev-parse --git-dir > /dev/null 2>&1
+        msg: "Not a git repository"
+    cmds:
+      - echo "📤 Pushing changes..."
+      - git push
+      - echo "✓ Push complete"
+
+  commit:
+    desc: Commit all dotfiles changes
+    summary: |
+      Stages and commits all changes with the provided message
+
+      Usage: task git:commit MESSAGE="Your commit message"
+    dir: '{{.DOTFILES_DIR}}'
+    requires:
+      vars: [MESSAGE]
+    cmds:
+      - git add -A
+      - git commit -m "{{.MESSAGE}}"
+      - echo "✓ Changes committed"
+
+  log:
+    desc: Show recent commit history
+    summary: |
+      Shows last 10 commits with compact format
+    dir: '{{.DOTFILES_DIR}}'
+    cmds:
+      - git log --oneline --decorate --graph -n 10
+
+  uncommitted:
+    desc: Check for uncommitted changes
+    summary: |
+      Returns success if there are no uncommitted changes
+      Useful for CI/CD or pre-push checks
+    dir: '{{.DOTFILES_DIR}}'
+    cmds:
+      - |
+        if [[ -n $(git status --porcelain) ]]; then
+          echo "⚠️  You have uncommitted changes:"
+          git status --short
+          exit 1
+        else
+          echo "✓ No uncommitted changes"
+        fi
+

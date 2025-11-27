@@ -8,9 +8,18 @@ includes:
   brew:
     taskfile: ./taskfiles/brew.yml
 
+  clean:
+    taskfile: ./taskfiles/clean.yml
+
   develop:
     aliases: [dev]
     taskfile: ./taskfiles/develop.yml
+
+  git:
+    taskfile: ./taskfiles/git.yml
+
+  info:
+    taskfile: ./taskfiles/info.yml
 
   linux:
     taskfile: ./taskfiles/linux.yml
@@ -27,6 +36,9 @@ includes:
 
   nvim:
     taskfile: ./taskfiles/nvim.yml
+
+  shell:
+    taskfile: ./taskfiles/shell.yml
 
   system:
     taskfile: ./taskfiles/system.yml
@@ -52,3 +64,52 @@ tasks:
       - task: dot:install
       - task: mise:install
       - task: nvim:restore
+
+  doctor:
+    desc: Run comprehensive health checks on your dotfiles setup
+    summary: |
+      Performs health checks for:
+      - Dotfiles symlinks and integrity
+      - Neovim configuration
+      - mise runtime manager
+      - System package manager (Linux only)
+
+      Run this to diagnose issues with your environment
+    cmds:
+      - echo "🏥 Running dotfiles health checks..."
+      - echo ""
+      - task: dot:doctor
+      - echo ""
+      - task: mise:doctor
+      - echo ""
+      - task: nvim:check
+      - echo ""
+      - task: linux:doctor
+      - echo ""
+      - echo "✓ Health check complete"
+
+  clean:
+    desc: Clean up caches, old backups, and temporary files
+    summary: |
+      Comprehensive cleanup:
+      - Shell caches (zsh)
+      - Old backup files (keeps 5 most recent)
+      - Package manager artifacts
+      - Old log files (30+ days)
+      - Reports on broken symlinks
+
+      Safe to run regularly
+    cmds:
+      - task: clean:all
+
+  info:
+    desc: Show comprehensive dotfiles environment information
+    summary: |
+      Displays detailed information about:
+      - System environment (OS, architecture, shell)
+      - Dotfiles configuration
+      - Installed tool versions
+      - Package counts
+      - Git repository status
+    cmds:
+      - task: info:all

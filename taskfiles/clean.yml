@@ -1,0 +1,126 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+vars:
+  HOME: '{{env "HOME"}}'
+  XDG_CACHE_HOME: '${XDG_CACHE_HOME:-$HOME/.cache}'
+  XDG_STATE_HOME: '${XDG_STATE_HOME:-$HOME/.local/state}'
+
+tasks:
+  all:
+    desc: Run all cleanup tasks
+    summary: |
+      Comprehensive cleanup:
+      - Shell caches
+      - Old backups (keeps 5 most recent)
+      - Package manager cleanup
+      - Old log files
+      - Dead symlinks report
+    cmds:
+      - task: caches
+      - task: backups
+      - task: packages
+      - task: logs
+      - task: dead_symlinks
+
+  caches:
+    desc: Clean shell and application caches
+    summary: |
+      Removes cached files for:
+      - Zsh evaluation cache
+      - Zsh completion dumps
+
+      Safe to run - these will be regenerated automatically
+    cmds:
+      - echo "🧹 Cleaning shell caches..."
+      - rm -rf {{.XDG_CACHE_HOME}}/zsh/zsh-eval-cache/*
+      - rm -f ~/.config/zsh/.zcompdump*
+      - echo "✓ Caches cleaned"
+
+  backups:
+    desc: Clean old dotfiles backups
+    summary: |
+      Removes old backup directories
+      Keeps the 5 most recent backups by default
+
+      Override with: task clean:backups KEEP=10
+    cmds:
+      - task: backup:clean
+      - task: backup:clean:empty
+      - echo "✓ Old backups cleaned"
+
+  packages:
+    desc: Clean up package manager artifacts
+    summary: |
+      Runs cleanup for your package manager:
+      - macOS: brew cleanup and autoremove
+      - Linux: apt autoremove or pacman clean
+    cmds:
+      - task: brew:cleanup
+      - task: linux:cleanup
+      - echo "✓ Package manager cleanup complete"
+
+  logs:
+    desc: Clean old log files
+    summary: |
+      Removes log files older than 30 days from:
+      - ~/.local/share
+
+      Modify DAYS variable to change retention: task clean:logs DAYS=60
+    vars:
+      DAYS: '{{.DAYS | default "30"}}'
+    cmds:
+      - echo "🧹 Cleaning logs older than {{.DAYS}} days..."
+      - find {{.XDG_STATE_HOME}} -name "*.log" -mtime +{{.DAYS}} -delete 2>/dev/null || true
+      - find ~/.local/share -name "*.log" -mtime +{{.DAYS}} -delete 2>/dev/null || true
+      - echo "✓ Old logs cleaned"
+
+  dead_symlinks:
+    desc: Find and report broken symlinks
+    summary: |
+      Scans home directory (3 levels deep) for broken symlinks
+
+      NOTE: This only reports - it does not delete them
+      To remove: task clean:remove_dead_symlinks
+    cmds:
+      - echo "🔍 Scanning for broken symlinks..."
+      - |
+        BROKEN=$(find ~ -maxdepth 3 -type l ! -exec test -e {} \; -print 2>/dev/null | wc -l | tr -d ' ')
+        if [[ "$BROKEN" -eq 0 ]]; then
+          echo "✓ No broken symlinks found"
+        else
+          echo "⚠️  Found $BROKEN broken symlink(s):"
+          find ~ -maxdepth 3 -type l ! -exec test -e {} \; -print 2>/dev/null
+          echo ""
+          echo "To remove them, run: task clean:remove_dead_symlinks"
+        fi
+
+  remove_dead_symlinks:
+    desc: Remove all broken symlinks from home directory
+    summary: |
+      Finds and removes broken symlinks (3 levels deep)
+
+      WARNING: This will permanently delete broken symlinks
+      Run 'task clean:dead_symlinks' first to preview what will be removed
+    prompt: This will remove all broken symlinks. Continue?
+    cmds:
+      - echo "🗑️  Removing broken symlinks..."
+      - |
+        COUNT=$(find ~ -maxdepth 3 -type l ! -exec test -e {} \; -delete -print 2>/dev/null | wc -l | tr -d ' ')
+        if [[ "$COUNT" -eq 0 ]]; then
+          echo "✓ No broken symlinks to remove"
+        else
+          echo "✓ Removed $COUNT broken symlink(s)"
+        fi
+
+  temp:
+    desc: Clean temporary files
+    summary: |
+      Removes temporary files created by various tools
+      Safe to run frequently
+    cmds:
+      - echo "🧹 Cleaning temporary files..."
+      - rm -rf /tmp/dotfiles-* 2>/dev/null || true
+      - rm -rf /tmp/stow-* 2>/dev/null || true
+      - echo "✓ Temporary files cleaned"
+

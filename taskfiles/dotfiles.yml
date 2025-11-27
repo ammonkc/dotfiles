@@ -18,12 +18,53 @@ vars:
     sh: cd {{.PACKAGES_DIR}} && find . -type f -name "*.local" | sed 's|^\./||'
 
 tasks:
+  # ============================================================================
+  # Primary Tasks
+  # ============================================================================
+
   install:
     desc: Install all dotfiles using GNU Stow
     cmds:
       - task: ensure_dirs
       - task: stow:packages
       - task: copy_local_configs
+
+  uninstall:
+    desc: Remove dotfile symlinks
+    cmds:
+      - task: unstow:packages
+
+  list:
+    desc: List all available packages
+    silent: true
+    cmds:
+      - echo "📦 Available packages:"
+      - for:
+          var: PACKAGES
+          as: PACKAGE
+        cmd: echo "  - {{.PACKAGE}}"
+
+  restow:
+    desc: Restow a specific package
+    summary: |
+      Restow a specific package by name
+      Usage: task dot:restow PACKAGE=zsh
+    vars:
+      PACKAGE: '{{.PACKAGE | default ""}}'
+    dir: '{{.PACKAGES_DIR}}'
+    preconditions:
+      - sh: test -n "{{.PACKAGE}}"
+        msg: "PACKAGE variable is required. Usage: task dot:restow PACKAGE=zsh"
+      - sh: test -d "{{.PACKAGES_DIR}}/{{.PACKAGE}}"
+        msg: "Package '{{.PACKAGE}}' not found in {{.PACKAGES_DIR}}"
+    cmds:
+      - echo "🔄 Restowing {{.PACKAGE}}..."
+      - stow {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}"
+      - echo "✓ {{.PACKAGE}} restowed successfully"
+
+  # ============================================================================
+  # Internal Tasks
+  # ============================================================================
 
   ensure_dirs:
     internal: true
@@ -82,39 +123,6 @@ tasks:
         vars:
           PACKAGE: '{{.PACKAGE}}'
 
-  uninstall:
-    desc: Remove dotfile symlinks
-    cmds:
-      - task: unstow:packages
-
-  list:
-    desc: List all available packages
-    silent: true
-    cmds:
-      - echo "📦 Available packages:"
-      - for:
-          var: PACKAGES
-          as: PACKAGE
-        cmd: echo "  - {{.PACKAGE}}"
-
-  restow:
-    desc: Restow a specific package
-    summary: |
-      Restow a specific package by name
-      Usage: task dot:restow PACKAGE=zsh
-    vars:
-      PACKAGE: '{{.PACKAGE | default ""}}'
-    dir: '{{.PACKAGES_DIR}}'
-    preconditions:
-      - sh: test -n "{{.PACKAGE}}"
-        msg: "PACKAGE variable is required. Usage: task dot:restow PACKAGE=zsh"
-      - sh: test -d "{{.PACKAGES_DIR}}/{{.PACKAGE}}"
-        msg: "Package '{{.PACKAGE}}' not found in {{.PACKAGES_DIR}}"
-    cmds:
-      - echo "🔄 Restowing {{.PACKAGE}}..."
-      - stow {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}"
-      - echo "✓ {{.PACKAGE}} restowed successfully"
-
   copy_local_configs:
     internal: true
     desc: Copy .local template files from packages to $HOME if they don't exist
@@ -141,3 +149,90 @@ tasks:
       - echo "Copying {{.FILENAME}} to {{.DEST_FILE}}..."
       - cp "{{.PACKAGES_DIR}}/{{.LOCAL_FILE}}" "{{.DEST_FILE}}"
       - echo "✓ Created {{.DEST_FILE}} - please customize it"
+
+  # ============================================================================
+  # Health Check / Doctor Tasks
+  # ============================================================================
+
+  doctor:
+    desc: Check dotfiles health and integrity
+    summary: |
+      Runs comprehensive checks on dotfiles:
+      - Verifies stowed symlinks point to correct locations
+      - Finds broken symlinks in home directory
+      - Checks for required directories
+      - Validates .local template files exist
+
+      Run this if something seems wrong with your dotfiles
+    cmds:
+      - task: doctor:symlinks
+      - task: doctor:broken_links
+      - task: doctor:directories
+      - task: doctor:templates
+
+  doctor:symlinks:
+    desc: Check stowed symlinks integrity
+    internal: true
+    vars:
+      STOWED_COUNT:
+        sh: find ~ -maxdepth 3 -type l -lname "*/.dotfiles/*" 2>/dev/null | wc -l | tr -d ' '
+    cmds:
+      - echo "🔍 Checking stowed symlinks..."
+      - |
+        if [[ "{{.STOWED_COUNT}}" -eq 0 ]]; then
+          echo "⚠️  No dotfiles symlinks found - run 'task dot:install' first"
+        else
+          echo "✓ Found {{.STOWED_COUNT}} stowed symlink(s)"
+        fi
+
+  doctor:broken_links:
+    desc: Check for broken symlinks
+    internal: true
+    cmds:
+      - echo "🔍 Checking for broken symlinks..."
+      - |
+        BROKEN=$(find ~ -maxdepth 3 -type l ! -exec test -e {} \; -print 2>/dev/null | wc -l | tr -d ' ')
+        if [[ "$BROKEN" -eq 0 ]]; then
+          echo "✓ No broken symlinks found"
+        else
+          echo "⚠️  Found $BROKEN broken symlink(s) - run 'task clean:dead_symlinks' for details"
+        fi
+
+  doctor:directories:
+    desc: Check required directories exist
+    internal: true
+    cmds:
+      - echo "🔍 Checking required directories..."
+      - |
+        MISSING=0
+        for dir in ~/.config ~/.ssh ~/.local/bin ~/.local/share; do
+          if [[ ! -d "$dir" ]]; then
+            echo "  ✗ Missing: $dir"
+            MISSING=$((MISSING + 1))
+          fi
+        done
+        if [[ $MISSING -eq 0 ]]; then
+          echo "✓ All required directories exist"
+        else
+          echo "⚠️  $MISSING director(ies) missing - run 'task dot:install' to create them"
+        fi
+
+  doctor:templates:
+    desc: Verify .local template files
+    internal: true
+    cmds:
+      - echo "🔍 Checking .local template files..."
+      - |
+        MISSING=0
+        while IFS= read -r file; do
+          if [[ ! -f "{{.PACKAGES_DIR}}/$file" ]]; then
+            echo "  ✗ Template missing: $file"
+            MISSING=$((MISSING + 1))
+          fi
+        done < <(cd {{.PACKAGES_DIR}} && find . -type f -name "*.local" | sed 's|^\./||')
+
+        if [[ $MISSING -eq 0 ]]; then
+          echo "✓ All template files found"
+        else
+          echo "⚠️  $MISSING template(s) missing"
+        fi

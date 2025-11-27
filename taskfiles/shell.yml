@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+vars:
+  ZDOTDIR: '${ZDOTDIR:-$HOME/.config/zsh}'
+
+tasks:
+  reload:
+    desc: Reload shell configuration
+    summary: |
+      Reloads the current shell by executing a new instance
+      This will pick up any changes to shell configuration
+
+      Equivalent to: exec $SHELL
+    cmds:
+      - echo "🔄 Reloading shell..."
+      - exec $SHELL
+
+  source:
+    desc: Source zsh configuration files
+    summary: |
+      Sources zsh configuration without starting a new shell
+      Useful for testing config changes
+    cmds:
+      - echo "📂 Sourcing zsh configuration..."
+      - source ~/.zshenv
+      - source {{.ZDOTDIR}}/.zshrc
+      - echo "✓ Configuration sourced"
+
+  clear_cache:
+    desc: Clear zsh caches
+    summary: |
+      Clears zsh evaluation cache and completion cache
+      Run this if you're experiencing shell slowness or stale completions
+    cmds:
+      - rm -rf ~/.cache/zsh/zsh-eval-cache/*
+      - rm -f {{.ZDOTDIR}}/.zcompdump*
+      - echo "✓ Zsh cache cleared"
+      - echo "ℹ️  Run 'exec \$SHELL' to restart your shell"
+

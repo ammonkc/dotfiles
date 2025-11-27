@@ -1,0 +1,120 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+vars:
+  DOTFILES_DIR: '{{.ROOT_DIR}}'
+  PACKAGES_DIR: '{{.DOTFILES_DIR}}/packages'
+  HOME: '{{env "HOME"}}'
+
+tasks:
+  all:
+    desc: Show comprehensive dotfiles environment information
+    summary: |
+      Displays detailed information about:
+      - System environment
+      - Dotfiles configuration
+      - Installed tools and versions
+      - Package counts
+      - Git status
+    cmds:
+      - task: system
+      - task: dotfiles
+      - task: versions
+      - task: packages
+      - task: git_info
+
+  system:
+    desc: Show system information
+    internal: true
+    cmds:
+      - echo "💻 System Information"
+      - echo "  OS:           $(uname -s)"
+      - echo "  Architecture: $(uname -m)"
+      - echo "  Kernel:       $(uname -r)"
+      - echo "  Hostname:     $(hostname)"
+      - echo "  Shell:        $SHELL"
+      - echo "  User:         $USER"
+      - echo ""
+
+  dotfiles:
+    desc: Show dotfiles configuration
+    internal: true
+    vars:
+      STOWED_COUNT:
+        sh: find ~ -maxdepth 3 -type l -lname "*/.dotfiles/*" 2>/dev/null | wc -l | tr -d ' '
+      BACKUP_COUNT:
+        sh: test -d "$XDG_STATE_HOME/dotfiles/backups" && find "$XDG_STATE_HOME/dotfiles/backups" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ' || echo "0"
+    cmds:
+      - echo "📦 Dotfiles Configuration"
+      - echo "  Directory:    {{.DOTFILES_DIR}}"
+      - echo "  Packages Dir: {{.PACKAGES_DIR}}"
+      - echo "  Stowed Links: {{.STOWED_COUNT}}"
+      - echo "  Backups:      {{.BACKUP_COUNT}}"
+      - echo ""
+
+  versions:
+    desc: Show versions of key tools
+    internal: true
+    cmds:
+      - echo "🔧 Tool Versions"
+      - command -v stow >/dev/null 2>&1 && echo "  stow:    $(stow --version 2>&1 | head -n1 | awk '{print $NF}')" || echo "  stow:    not installed"
+      - command -v task >/dev/null 2>&1 && echo "  task:    $(task --version)" || echo "  task:    not installed"
+      - command -v mise >/dev/null 2>&1 && echo "  mise:    $(mise --version)" || echo "  mise:    not installed"
+      - command -v nvim >/dev/null 2>&1 && echo "  nvim:    $(nvim --version | head -n1 | awk '{print $2}')" || echo "  nvim:    not installed"
+      - command -v git >/dev/null 2>&1 && echo "  git:     $(git --version | awk '{print $3}')" || echo "  git:     not installed"
+      - command -v zsh >/dev/null 2>&1 && echo "  zsh:     $(zsh --version | awk '{print $2}')" || echo "  zsh:     not installed"
+      - command -v brew >/dev/null 2>&1 && echo "  brew:    $(brew --version | head -n1 | awk '{print $2}')" || echo "  brew:    not installed"
+      - echo ""
+
+  packages:
+    desc: Show package counts and details
+    internal: true
+    vars:
+      PACKAGE_COUNT:
+        sh: find {{.PACKAGES_DIR}} -maxdepth 1 -type d ! -name ".*" ! -name "packages" | wc -l | tr -d ' '
+      PACKAGE_LIST:
+        sh: cd {{.PACKAGES_DIR}} && find . -maxdepth 1 -type d ! -name ".*" -exec basename {} \; | sort | tr '\n' ' '
+    cmds:
+      - echo "📊 Package Information"
+      - echo "  Total Packages: {{.PACKAGE_COUNT}}"
+      - echo "  Packages: {{.PACKAGE_LIST}}"
+      - echo ""
+
+  git_info:
+    desc: Show git repository information
+    internal: true
+    dir: '{{.DOTFILES_DIR}}'
+    vars:
+      GIT_BRANCH:
+        sh: git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown"
+      GIT_REMOTE:
+        sh: git remote get-url origin 2>/dev/null || echo "none"
+      GIT_STATUS:
+        sh: git status --porcelain 2>/dev/null | wc -l | tr -d ' '
+      GIT_LAST_COMMIT:
+        sh: git log -1 --format="%h - %s (%cr)" 2>/dev/null || echo "none"
+    cmds:
+      - echo "🔀 Git Information"
+      - echo "  Branch:       {{.GIT_BRANCH}}"
+      - echo "  Remote:       {{.GIT_REMOTE}}"
+      - echo "  Uncommitted:  {{.GIT_STATUS}} file(s)"
+      - echo "  Last Commit:  {{.GIT_LAST_COMMIT}}"
+      - echo ""
+
+  paths:
+    desc: Show important paths and their status
+    summary: |
+      Shows all important paths used by dotfiles:
+      - XDG directories
+      - Config locations
+      - Data directories
+      - Whether they exist
+    cmds:
+      - echo "📁 Important Paths"
+      - echo "  XDG_CONFIG_HOME: ${XDG_CONFIG_HOME:-$HOME/.config} $(test -d ${XDG_CONFIG_HOME:-$HOME/.config} && echo '✓' || echo '✗')"
+      - echo "  XDG_DATA_HOME:   ${XDG_DATA_HOME:-$HOME/.local/share} $(test -d ${XDG_DATA_HOME:-$HOME/.local/share} && echo '✓' || echo '✗')"
+      - echo "  XDG_STATE_HOME:  ${XDG_STATE_HOME:-$HOME/.local/state} $(test -d ${XDG_STATE_HOME:-$HOME/.local/state} && echo '✓' || echo '✗')"
+      - echo "  XDG_CACHE_HOME:  ${XDG_CACHE_HOME:-$HOME/.cache} $(test -d ${XDG_CACHE_HOME:-$HOME/.cache} && echo '✓' || echo '✗')"
+      - echo "  ZDOTDIR:         ${ZDOTDIR:-$HOME/.config/zsh} $(test -d ${ZDOTDIR:-$HOME/.config/zsh} && echo '✓' || echo '✗')"
+      - echo ""
+
