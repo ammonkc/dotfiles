@@ -74,22 +74,18 @@ brew 'shivammathur/php/php@8.1' # php version 8.1
 brew 'shivammathur/extensions/pcov@8.4'
 brew 'shivammathur/extensions/xdebug@8.4'
 brew 'shivammathur/extensions/imagick@8.4'
-brew 'shivammathur/extensions/redis@8.4'
 # php 8.3 exts
 brew 'shivammathur/extensions/pcov@8.3'
 brew 'shivammathur/extensions/xdebug@8.3'
 brew 'shivammathur/extensions/imagick@8.3'
-brew 'shivammathur/extensions/redis@8.3'
 # php 8.2 exts
 brew 'shivammathur/extensions/pcov@8.2'
 brew 'shivammathur/extensions/xdebug@8.2'
 brew 'shivammathur/extensions/imagick@8.2'
-brew 'shivammathur/extensions/redis@8.2'
 # php 8.1 exts
 brew 'shivammathur/extensions/pcov@8.1'
 brew 'shivammathur/extensions/xdebug@8.1'
 brew 'shivammathur/extensions/imagick@8.1'
-brew 'shivammathur/extensions/redis@8.1'
 
 # Agentic AI
 brew 'opencode'                # AI coding agent, built for the terminal
