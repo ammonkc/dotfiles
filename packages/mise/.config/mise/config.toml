@@ -17,7 +17,6 @@ usage = "latest"
 "npm:typescript" = "latest"
 "npm:mcp-hub" = "latest"
 "npm:@zed-industries/claude-code-acp" = "latest"
-"npm:@mermaid-js/mermaid-cli" = "latest"
 "npm:sort-package-json" = "latest"
 "npm:ccstatusline" = "latest"
 
