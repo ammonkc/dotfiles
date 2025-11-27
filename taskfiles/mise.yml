@@ -19,7 +19,7 @@ tasks:
       - sh: test -f ~/.config/mise/config.toml || test -f ~/.tool-versions || test -f ~/.config/mise/.mise.local.toml
         msg: "No mise config found. Expected ~/.config/mise/config.toml or ~/.tool-versions"
     cmds:
-      - MISE_LOG_LEVEL=error MISE_NODE_VERIFY=no mise install
+      - MISE_LOG_LEVEL=error MISE_QUIET=1 MISE_NODE_VERIFY=no mise install
 
   update:
     aliases: [up, upgrade]
@@ -28,7 +28,7 @@ tasks:
       - sh: command -v mise >/dev/null 2>&1
         msg: "mise is not installed"
     cmds:
-      - MISE_LOG_LEVEL=error mise up
+      - MISE_LOG_LEVEL=error MISE_QUIET=1 mise up
 
   list:
     aliases: [ls]
