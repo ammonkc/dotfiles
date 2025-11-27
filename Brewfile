@@ -22,6 +22,7 @@ brew 'git'                  # Distributed revision control system
 brew 'git-delta'            # Syntax-highlighting pager for git and diff output
 brew 'git-flow'             # Extensions to follow Vincent Driessen's branching model
 brew 'git-lfs'              # Git extension for versioning large files
+brew 'github-keygen'        # Bootstrap GitHub SSH configuration
 brew 'glow'                 # markdown viewer
 brew 'gnu-sed'              # GNU implementation of the famous stream editor
 brew 'gnu-tar'              # GNU version of the tar archiving utility
