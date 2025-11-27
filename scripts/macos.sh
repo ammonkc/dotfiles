@@ -10,6 +10,9 @@
 # Validated for: macOS 26.1 (Tahoe)
 # Previous validation: macOS 15.7 (Sequoia)
 #
+# Last synced with system: 2025-11-26
+# All preference values in this script match the current system configuration.
+#
 # Note: Safari and Mail are containerized apps in modern macOS.
 #       Their preferences may require the apps to be closed first,
 #       or may need to be set through the apps' UI instead.
@@ -427,7 +430,9 @@ printf "  → Terminal and iTerm2 settings\n"
 defaults write com.apple.terminal StringEncodings -array 4
 
 # Don't display the annoying prompt when quitting iTerm
-defaults write com.googlecode.iterm2 PromptOnQuit -bool false
+# Note: iTerm2 preference will be set if the app is installed.
+# If not installed, this command will succeed but have no effect until the app is installed.
+defaults write com.googlecode.iterm2 PromptOnQuit -bool false 2>/dev/null || true
 
 ###############################################################################
 # Time Machine                                                                #
@@ -510,7 +515,9 @@ defaults write com.apple.commerce AutoUpdate -bool true
 printf "  → Google Chrome settings\n"
 
 # Expand print dialog by default
-defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true
+# Note: Chrome preferences will be set if the app is installed.
+# If not installed, these commands will succeed but have no effect until the app is installed.
+defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true 2>/dev/null || true
 defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool true 2>/dev/null || true
 
 ###############################################################################
@@ -519,47 +526,50 @@ defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool t
 
 printf "  → Transmission settings\n"
 
+# Note: Transmission preferences will be set if the app is installed.
+# If not installed, these commands will succeed but have no effect until the app is installed.
+
 # General settings
-defaults write org.m0k.transmission AutoSize -bool false
-defaults write org.m0k.transmission AutoStartDownload -bool true
-defaults write org.m0k.transmission CheckDownload -bool false
-defaults write org.m0k.transmission CheckQuit -bool false
-defaults write org.m0k.transmission CheckRemove -bool true
-defaults write org.m0k.transmission CheckRemoveDownloading -bool true
-defaults write org.m0k.transmission CheckUpload -bool false
-defaults write org.m0k.transmission DeleteOriginalTorrent -bool false
-defaults write org.m0k.transmission DownloadAsk -bool true
-defaults write org.m0k.transmission DownloadAskManual -bool false
-defaults write org.m0k.transmission DownloadAskMulti -bool false
-defaults write org.m0k.transmission DownloadLocationConstant -bool false
-defaults write org.m0k.transmission MagnetOpenAsk -bool false
-defaults write org.m0k.transmission PlayDownloadSound -bool false
-defaults write org.m0k.transmission RandomPort -bool false
-defaults write org.m0k.transmission SleepPrevent -bool true
-defaults write org.m0k.transmission SmallView -bool true
-defaults write org.m0k.transmission SUEnableAutomaticChecks -bool false
-defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool false
-defaults write org.m0k.transmission WarningDonate -bool false
-defaults write org.m0k.transmission WarningLegal -bool false
+defaults write org.m0k.transmission AutoSize -bool false 2>/dev/null || true
+defaults write org.m0k.transmission AutoStartDownload -bool true 2>/dev/null || true
+defaults write org.m0k.transmission CheckDownload -bool false 2>/dev/null || true
+defaults write org.m0k.transmission CheckQuit -bool false 2>/dev/null || true
+defaults write org.m0k.transmission CheckRemove -bool true 2>/dev/null || true
+defaults write org.m0k.transmission CheckRemoveDownloading -bool true 2>/dev/null || true
+defaults write org.m0k.transmission CheckUpload -bool false 2>/dev/null || true
+defaults write org.m0k.transmission DeleteOriginalTorrent -bool false 2>/dev/null || true
+defaults write org.m0k.transmission DownloadAsk -bool true 2>/dev/null || true
+defaults write org.m0k.transmission DownloadAskManual -bool false 2>/dev/null || true
+defaults write org.m0k.transmission DownloadAskMulti -bool false 2>/dev/null || true
+defaults write org.m0k.transmission DownloadLocationConstant -bool false 2>/dev/null || true
+defaults write org.m0k.transmission MagnetOpenAsk -bool false 2>/dev/null || true
+defaults write org.m0k.transmission PlayDownloadSound -bool false 2>/dev/null || true
+defaults write org.m0k.transmission RandomPort -bool false 2>/dev/null || true
+defaults write org.m0k.transmission SleepPrevent -bool true 2>/dev/null || true
+defaults write org.m0k.transmission SmallView -bool true 2>/dev/null || true
+defaults write org.m0k.transmission SUEnableAutomaticChecks -bool false 2>/dev/null || true
+defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool false 2>/dev/null || true
+defaults write org.m0k.transmission WarningDonate -bool false 2>/dev/null || true
+defaults write org.m0k.transmission WarningLegal -bool false 2>/dev/null || true
 
 # Display settings
-defaults write org.m0k.transmission DisplayProgressBarAvailable -bool true
+defaults write org.m0k.transmission DisplayProgressBarAvailable -bool true 2>/dev/null || true
 
 # Security settings
-defaults write org.m0k.transmission EncryptionRequire -bool true
+defaults write org.m0k.transmission EncryptionRequire -bool true 2>/dev/null || true
 
 # Blocklist settings
-defaults write org.m0k.transmission BlocklistAutoUpdate -bool true
+defaults write org.m0k.transmission BlocklistAutoUpdate -bool true 2>/dev/null || true
 defaults write org.m0k.transmission BlocklistURL -string \
-  "https://github.com/Naunter/BT_BlockLists/raw/master/bt_blocklists.gz"
+  "https://github.com/Naunter/BT_BlockLists/raw/master/bt_blocklists.gz" 2>/dev/null || true
 
 # Connection limits
-defaults write org.m0k.transmission PeersTorrent -int 10
-defaults write org.m0k.transmission PeersTotal -int 200
+defaults write org.m0k.transmission PeersTorrent -int 10 2>/dev/null || true
+defaults write org.m0k.transmission PeersTotal -int 200 2>/dev/null || true
 
 # Speed limits
-defaults write org.m0k.transmission SpeedLimitDownloadLimit -int 2000
-defaults write org.m0k.transmission SpeedLimitUploadLimit -int 1000
+defaults write org.m0k.transmission SpeedLimitDownloadLimit -int 2000 2>/dev/null || true
+defaults write org.m0k.transmission SpeedLimitUploadLimit -int 1000 2>/dev/null || true
 
 ###############################################################################
 # Networking                                                                  #
@@ -573,10 +583,12 @@ if networksetup -listallnetworkservices | grep -q "Ethernet"; then
 fi
 
 # Configure Proton VPN
-defaults write ch.protonvpn.mac AutoConnect -bool true
-defaults write ch.protonvpn.mac StartMinimized -bool true
-defaults write ch.protonvpn.mac StartOnBoot -bool true
-defaults write ch.protonvpn.mac VpnAcceleratorEnabled -bool true
+# Note: Proton VPN preferences will be set if the app is installed.
+# If not installed, these commands will succeed but have no effect until the app is installed.
+defaults write ch.protonvpn.mac AutoConnect -bool true 2>/dev/null || true
+defaults write ch.protonvpn.mac StartMinimized -bool true 2>/dev/null || true
+defaults write ch.protonvpn.mac StartOnBoot -bool true 2>/dev/null || true
+defaults write ch.protonvpn.mac VpnAcceleratorEnabled -bool true 2>/dev/null || true
 
 ###############################################################################
 # Kill/Restart affected applications                                          #
