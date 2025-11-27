@@ -10,16 +10,16 @@ tasks:
     desc: Install all mise-managed tools from config
     summary: |
       Installs tools defined in .mise.toml or .tool-versions
-      Runs mise doctor first to verify setup
+      This will install all tools even if some are missing
     preconditions:
       - sh: command -v mise >/dev/null 2>&1
         msg: "mise is not installed. Run 'brew install mise' first"
       - sh: test -f .mise.toml || test -f .tool-versions || test -f .mise.local.toml
         msg: "No mise config found (.mise.toml, .tool-versions, or .mise.local.toml)"
-    deps:
-      - doctor
     cmds:
+      - echo "📦 Installing mise-managed tools..."
       - mise install
+      - echo "✓ Tools installed successfully"
 
   update:
     aliases: [up, upgrade]
@@ -27,10 +27,10 @@ tasks:
     preconditions:
       - sh: command -v mise >/dev/null 2>&1
         msg: "mise is not installed"
-    deps:
-      - doctor
     cmds:
+      - echo "🔄 Updating mise-managed tools..."
       - mise up
+      - echo "✓ Tools updated successfully"
 
   list:
     aliases: [ls]
@@ -49,6 +49,11 @@ tasks:
 
   doctor:
     desc: Check mise installation and configuration
-    internal: true
+    summary: |
+      Runs mise doctor to check for issues
+      Note: Warnings about missing tools are expected during initial setup
     cmds:
-      - mise doctor
+      - echo "🔍 Running mise health check..."
+      - mise doctor || true
+      - echo ""
+      - echo "💡 Tip - Warnings about missing tools are normal during setup"
