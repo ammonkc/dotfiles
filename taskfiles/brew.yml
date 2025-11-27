@@ -22,7 +22,7 @@ tasks:
     cmds:
       - brew update
       - brew upgrade
-      - task: update
+      # - task: update
 
   update:
     platforms: [darwin]
@@ -103,6 +103,9 @@ tasks:
     desc: Commits the Brewfile file if changed
     internal: true
     silent: true
+    # NOTE: the leading slash here is a bit annoying, but required due to a bug
+    # in go-task see https://github.com/go-task/task/issues/828
+    dir: "/{{.DOTFILES}}"
     cmd: |
       ./scripts/commit_changed_file.sh \
         'Brewfile' \

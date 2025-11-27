@@ -52,7 +52,7 @@ tasks:
       Updates system packages and mise-managed tools
 
       On macOS: Updates Homebrew packages
-      On Linux: Updates system packages via package manager and cargo tools
+      On Linux: Updates system packages via package manager
 
       Run this periodically to keep your system up to date
     cmds:
