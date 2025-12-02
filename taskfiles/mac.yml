@@ -51,7 +51,7 @@ tasks:
     cmds:
       - bash "{{.ROOT_DIR}}/scripts/macos-preview.sh" "{{.MACOS_SCRIPT}}" "{{.PREVIEW_FILE}}"
       - defer: rm -f "{{.PREVIEW_FILE}}"
-      - glow -p "{{.PREVIEW_FILE}}"
+      - glow "{{.PREVIEW_FILE}}" | less -R
 
   sync:
     desc: Apply macOS defaults and restart UI components
