@@ -58,6 +58,9 @@ tasks:
     status:
       - which brew
     cmds:
+      - |
+        # Refresh sudo timestamp to ensure it's still valid
+        sudo -v
       - NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       - |
         # Add Homebrew to PATH for current session
