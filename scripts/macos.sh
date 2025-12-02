@@ -114,6 +114,28 @@ defaults write com.apple.controlcenter "NSStatusItem Visible Battery" -bool true
 # Show Display brightness in menu bar (macOS 11+)
 # defaults write com.apple.controlcenter "NSStatusItem Visible Display" -bool true
 
+# Time Machine - Show in menu bar
+# defaults write com.apple.systemuiserver "NSStatusItem Visible com.apple.menuextra.TimeMachine" -bool true
+
+# AirDrop
+# defaults write com.apple.controlcenter "NSStatusItem Visible AirDrop" -bool true
+# defaults write com.apple.controlcenter AirDrop -int 18
+
+# Screen Mirroring
+# defaults write com.apple.controlcenter "NSStatusItem Visible ScreenMirroring" -bool true
+
+# Now Playing (Music controls)
+# defaults write com.apple.controlcenter "NSStatusItem Visible NowPlaying" -bool true
+
+# Accessibility Shortcuts
+# defaults write com.apple.controlcenter "NSStatusItem Visible AccessibilityShortcuts" -bool true
+
+# Keyboard Brightness
+# defaults write com.apple.controlcenter "NSStatusItem Visible KeyboardBrightness" -bool true
+
+# User Switcher (Fast User Switching)
+# defaults write com.apple.controlcenter "NSStatusItem Visible UserSwitcher" -bool true
+
 ###############################################################################
 # Localization & Formats                                                      #
 ###############################################################################
