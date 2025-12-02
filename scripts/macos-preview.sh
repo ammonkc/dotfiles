@@ -92,6 +92,14 @@ while IFS= read -r line; do
   if [[ "$line" =~ ^(defaults|sudo\ defaults|sudo\ pmset|sudo\ systemsetup|networksetup|chflags) ]] && \
      [[ ! "$line" =~ ^# ]]; then
 
+    # Extract the key name from defaults write commands
+    key_name=""
+    if [[ "$line" =~ defaults\ write\ [^[:space:]]+\ ([^[:space:]]+) ]]; then
+      key_name="${BASH_REMATCH[1]}"
+      # Remove quotes if present
+      key_name="${key_name//\"/}"
+    fi
+
     # Extract the value being set (if applicable)
     value=""
     if [[ "$line" =~ -bool\ (true|false) ]]; then
@@ -106,8 +114,14 @@ while IFS= read -r line; do
       value="\`$value\`"
     fi
 
-    # Use comment as description, or use a generic one
-    description="${previous_comment:-Setting applied}"
+    # Use comment as description, fall back to key name, or generic message
+    if [[ -n "$previous_comment" ]]; then
+      description="$previous_comment"
+    elif [[ -n "$key_name" ]]; then
+      description="$key_name"
+    else
+      description="Setting applied"
+    fi
 
     # Add value to description if we have one
     if [[ -n "$value" ]]; then
