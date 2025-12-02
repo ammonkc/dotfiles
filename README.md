@@ -63,55 +63,56 @@ Same command as above.
 
 ## 💡 Usage
 
-After installation, you can manage your dotfiles from anywhere using the `dot` alias or `update` command:
+After installation, you can manage your dotfiles from anywhere using the `dotfiles` command or `dot` alias:
 
 ### **Global Commands**
 
 ```bash
-dot --list               # List all available tasks (from anywhere)
-dot doctor               # Run system health checks
-dot clean                # Clean caches and old backups
-dot info                 # Show environment information
-update                   # Update system packages and tools
+dotfiles --list             # List all available tasks (from anywhere)
+dotfiles doctor             # Run system health checks
+dotfiles clean              # Clean caches and old backups
+dotfiles info               # Show environment information
+update                      # Update system packages and tools
 ```
 
 ### **Common Tasks**
 
 ```bash
 # Dotfile Management
-dot install              # Install/update dotfiles
-dot list                 # List installed packages
-dot restow               # Re-stow all packages
+dotfiles install            # Install/update dotfiles
+dotfiles list               # List installed packages
+dotfiles restow             # Re-stow all packages
 
 # Package Management
-dot brew:update          # Update Homebrew packages (macOS)
-dot mise:update          # Update development tools
-dot nvim:update          # Update Neovim plugins
+dotfiles brew:update        # Update Homebrew packages (macOS)
+dotfiles mise:update        # Update development tools
+dotfiles nvim:update        # Update Neovim plugins
 
 # macOS Specific
-dot mac:set:defaults     # Apply macOS preferences
-dot mac:op:setup         # Setup 1Password SSH agent
+dotfiles mac:set:defaults   # Apply macOS preferences
+dotfiles mac:op:setup       # Setup 1Password SSH agent
 
 # Development
-dot dev:setup            # Setup development directories
-dot dev:list             # List development projects
-dot dev:clone REPO=url   # Clone repo to organized location
+dotfiles dev:setup          # Setup development directories
+dotfiles dev:list           # List development projects
+dotfiles dev:clone REPO=url # Clone repo to organized location
 
 # Git Operations
-dot git:status           # Git status of dotfiles repo
-dot git:pull             # Pull latest changes
-dot git:push             # Push changes
+dotfiles git:status         # Git status of dotfiles repo
+dotfiles git:pull           # Pull latest changes
+dotfiles git:push           # Push changes
 
 # Utilities
-dot backup:list          # List backups
-dot clean:all            # Clean system caches
-dot info:all             # Show detailed system info
+dotfiles backup:list        # List backups
+dotfiles clean:all          # Clean system caches
+dotfiles info:all           # Show detailed system info
 ```
 
 **How it works:**
-- `dot` is an alias for `task --taskfile ~/.dotfiles/taskfile.dist.yml --dir ~/.dotfiles`
-- `update` is a wrapper script in `~/.local/bin/` that runs `task system:update`
-- Both work from any directory without needing to `cd ~/.dotfiles`
+- `dotfiles` is a wrapper script in `~/.local/bin/` that runs `task -d ~/.dotfiles`
+- `dot` is a shell alias (shortcut for `dotfiles`)
+- `update` is a wrapper script that runs `task system:update`
+- All commands work from any directory without needing to `cd ~/.dotfiles`
 
 ## 🎨 Customization
 
@@ -141,16 +142,16 @@ cd packages && stow --target ~/ myapp
 ## 📋 Post-Installation
 
 1. **Restart terminal:** `exec $SHELL`
-2. **Verify installation:** `dot --list` (should show all tasks)
-3. **[Optional] Apply macOS preferences:** Review `scripts/macos.sh`, then `dot mac:set:defaults`
-4. **[Optional] Enable 1Password SSH:** Settings → Developer → Enable SSH agent, then `dot mac:op:setup`
+2. **Verify installation:** `dotfiles --list` (should show all tasks)
+3. **[Optional] Apply macOS preferences:** Review `scripts/macos.sh`, then `dotfiles mac:set:defaults`
+4. **[Optional] Enable 1Password SSH:** Settings → Developer → Enable SSH agent, then `dotfiles mac:op:setup`
 5. **Customize local configs:** Edit files in `~/.config/*/config.local`
 
 **Quick verification:**
 ```bash
-dot --list               # Should show all available tasks
-update                   # Should update all packages
-dot info                 # Should show system information
+dotfiles --list             # Should show all available tasks
+update                      # Should update all packages
+dotfiles info               # Should show system information
 ```
 
 ## 🐛 Troubleshooting

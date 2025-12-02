@@ -63,13 +63,13 @@ if task install; then
   if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "  2. $(tput bold)[Optional]$(tput sgr0) Apply macOS system preferences:"
     echo "     • Configures Finder, Dock, keyboard, and more"
-    echo "     • Run: $(tput bold)task mac:set:defaults$(tput sgr0)"
-    echo "     • Review first: $(tput bold)cat scripts/macos.sh$(tput sgr0)"
+    echo "     • Run: $(tput bold)dotfiles mac:set:defaults$(tput sgr0)"
+    echo "     • Review first: $(tput bold)cat ~/.dotfiles/scripts/macos.sh$(tput sgr0)"
     echo ""
     echo "  3. $(tput bold)[Optional]$(tput sgr0) Enable 1Password SSH agent:"
     echo "     • Open 1Password → Settings → Developer"
     echo "     • Enable 'Use the SSH agent'"
-    echo "     • Run: $(tput bold)task mac:op:setup$(tput sgr0)"
+    echo "     • Run: $(tput bold)dotfiles mac:op:setup$(tput sgr0)"
     echo ""
     echo "  4. Customize local configs if needed:"
   else
@@ -82,10 +82,12 @@ if task install; then
   echo ""
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "  5. Run: $(tput bold)task --list$(tput sgr0) to see all available commands"
+    echo "  5. Run: $(tput bold)dotfiles --list$(tput sgr0) to see all available commands"
   else
-    echo "  3. Run: $(tput bold)task --list$(tput sgr0) to see all available commands"
+    echo "  3. Run: $(tput bold)dotfiles --list$(tput sgr0) to see all available commands"
   fi
+  echo ""
+  info "💡 Tip: Use $(tput bold)dotfiles <command>$(tput sgr0) from anywhere to run dotfiles tasks"
   echo ""
 else
   error "Installation failed"

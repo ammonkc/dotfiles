@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# Dotfiles task runner wrapper
+# Allows running dotfiles tasks from any directory
+#
+# Usage:
+#   dotfiles install
+#   dotfiles --list
+#   dotfiles mac:set:defaults
+#   dotfiles doctor
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+
+# Check if dotfiles directory exists
+if [[ ! -d "$DOTFILES_DIR" ]]; then
+  echo -e "${RED}❌ Error: Dotfiles directory not found at $DOTFILES_DIR${NC}" >&2
+  echo -e "${YELLOW}💡 Tip: Set DOTFILES_DIR environment variable if using a custom location${NC}" >&2
+  exit 1
+fi
+
+# Check if task is installed
+if ! command -v task >/dev/null 2>&1; then
+  echo -e "${RED}❌ Error: 'task' command not found${NC}" >&2
+  echo -e "${YELLOW}💡 Tip: Please ensure go-task is installed and in your PATH${NC}" >&2
+  exit 1
+fi
+
+# Run task with dotfiles directory
+exec task -d "$DOTFILES_DIR" "$@"
+
