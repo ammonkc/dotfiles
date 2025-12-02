@@ -50,7 +50,7 @@ parse_params() {
     -v | --verbose) set -x ;;
     --no-color) NO_COLOR=1 ;;
     -l | --location)
-        location="${2-}" 
+        location="${2-}"
         shift
         ;;
     -?*) die "Unknown option: $1" ;;
