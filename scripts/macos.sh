@@ -401,6 +401,9 @@ defaults write com.apple.dock showhidden -bool true
 # Don't show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false
 
+# Disable "click wallpaper to show desktop" (macOS Sonoma 14.0+)
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
+
 # Hot corners
 # Possible values:
 #  0: no-op
