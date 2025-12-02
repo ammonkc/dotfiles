@@ -24,8 +24,6 @@ brew 'git-flow'             # Extensions to follow Vincent Driessen's branching 
 brew 'git-lfs'              # Git extension for versioning large files
 brew 'github-keygen'        # Bootstrap GitHub SSH configuration
 brew 'glow'                 # markdown viewer
-brew 'gnu-sed'              # GNU implementation of the famous stream editor
-brew 'gnu-tar'              # GNU version of the tar archiving utility
 brew 'gnupg'                # GNU Pretty Good Privacy (PGP) package
 brew 'go-task'              # Task is a task runner/build tool thats simpler and easier to use
 brew 'grex'                 # Command-line tool for generating regular expressions
@@ -100,6 +98,7 @@ if OS.mac?
     brew 'coreutils'           # Those that come with macOS are outdated
     brew 'findutils'           # Collection of GNU find, xargs, and locate
     brew 'gnu-sed'             # GNU implementation of the famous stream editor
+    brew 'gnu-tar'              # GNU version of the tar archiving utility
     brew 'grep'                # GNU grep, egrep and fgrep
 
     # Code Editors
@@ -117,7 +116,7 @@ if OS.mac?
     cask 'betterdisplay'       # Display management tool
     cask 'boop'                # Scriptable scratchpad for developers
     cask 'docker'              # Pack, ship and run any application as a lightweight container
-    cask 'espanso'             # Cross-platform Text Expander written in Rust
+    # cask 'espanso'             # Cross-platform Text Expander written in Rust
     cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
     cask 'github'              # GitHub Desktop
     cask 'google-chrome'       # Google Chrome browser
