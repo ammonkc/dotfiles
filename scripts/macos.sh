@@ -89,6 +89,32 @@ defaults write com.apple.helpviewer DevMode -bool true
 sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName 2>/dev/null || true
 
 ###############################################################################
+# Menu Bar Items                                                              #
+###############################################################################
+
+printf "  → Menu bar settings\n"
+
+# Show Wi-Fi in menu bar (macOS 11+)
+defaults write com.apple.controlcenter "NSStatusItem Visible WiFi" -bool true
+defaults write com.apple.controlcenter WiFi -int 18  # 18=always show, 17=when active, 16=don't show
+
+# Show Bluetooth in menu bar (macOS 11+)
+# defaults write com.apple.controlcenter "NSStatusItem Visible Bluetooth" -bool true
+# defaults write com.apple.controlcenter Bluetooth -int 17
+
+# Show Battery in menu bar (macOS 11+)
+defaults write com.apple.controlcenter "NSStatusItem Visible Battery" -bool true
+
+# Show Sound in menu bar (macOS 11+)
+# defaults write com.apple.controlcenter "NSStatusItem Visible Sound" -bool true
+
+# Show Focus/Do Not Disturb in menu bar (macOS 11+)
+# defaults write com.apple.controlcenter "NSStatusItem Visible DoNotDisturb" -bool true
+
+# Show Display brightness in menu bar (macOS 11+)
+# defaults write com.apple.controlcenter "NSStatusItem Visible Display" -bool true
+
+###############################################################################
 # Localization & Formats                                                      #
 ###############################################################################
 
