@@ -28,6 +28,31 @@ tasks:
     cmds:
       - bash "{{.MACOS_SCRIPT}}"
 
+  preview:defaults:
+    desc: Preview macOS defaults that will be applied
+    summary: |
+      Displays all the macOS defaults commands that will be run by macos.sh
+
+      This extracts and formats all active defaults write commands for review.
+      Useful for seeing what changes will be made before applying them.
+
+      Requires: glow (install with: brew install glow)
+    platforms: [darwin]
+    vars:
+      PREVIEW_FILE:
+        sh: mktemp /tmp/macos-defaults-preview.XXXXXX.md
+    preconditions:
+      - sh: test -f "{{.MACOS_SCRIPT}}"
+        msg: "macOS defaults script not found at {{.MACOS_SCRIPT}}"
+      - sh: command -v glow
+        msg: |
+          glow is not installed. Install it with:
+            brew install glow
+    cmds:
+      - bash "{{.ROOT_DIR}}/scripts/macos-preview.sh" "{{.MACOS_SCRIPT}}" "{{.PREVIEW_FILE}}"
+      - defer: rm -f "{{.PREVIEW_FILE}}"
+      - glow -p "{{.PREVIEW_FILE}}"
+
   sync:
     desc: Apply macOS defaults and restart UI components
     summary: |
