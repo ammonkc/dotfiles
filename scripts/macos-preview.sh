@@ -38,38 +38,91 @@ echo -e "${BLUE}📝 Generating macOS defaults preview...${NC}" >&2
 cat > "$OUTPUT_FILE" << 'HEADER'
 # macOS Defaults Preview
 
-The following defaults will be applied by `scripts/macos.sh`:
+The following preferences will be applied by `scripts/macos.sh`:
 
 ---
 
 HEADER
 
-# Extract defaults commands organized by section
+# Parse the script and extract settings with descriptions
 current_section=""
+previous_comment=""
+in_section=false
+
 while IFS= read -r line; do
   # Detect section headers (lines like: # Section Name #)
   if [[ "$line" =~ ^#\ (.*)[[:space:]]+#$ ]]; then
     section="${BASH_REMATCH[1]}"
     section="${section//# /}"
+
     if [[ -n "$section" && "$section" != "$current_section" ]]; then
       current_section="$section"
+
+      # Close previous table if exists
+      if [[ "$in_section" == true ]]; then
+        echo "" >> "$OUTPUT_FILE"
+      fi
+
       echo "" >> "$OUTPUT_FILE"
       echo "## $current_section" >> "$OUTPUT_FILE"
       echo "" >> "$OUTPUT_FILE"
+      echo "| Setting | Details |" >> "$OUTPUT_FILE"
+      echo "|---------|---------|" >> "$OUTPUT_FILE"
+      in_section=true
     fi
+    previous_comment=""
+    continue
   fi
 
-  # Extract active defaults write commands (not commented)
-  if [[ "$line" =~ ^(defaults|sudo\ defaults|sudo\ pmset|sudo\ systemsetup|networksetup|chflags|killall) ]] && \
-     [[ ! "$line" =~ ^#.*(defaults|sudo|chflags|killall) ]]; then
-    # Clean up the command for display
-    clean_line="$line"
-    clean_line="${clean_line// 2>\/dev\/null \|\| true/}"
-    clean_line="${clean_line// &>\/dev\/null \|\| true/}"
-    echo '```bash' >> "$OUTPUT_FILE"
-    echo "$clean_line" >> "$OUTPUT_FILE"
-    echo '```' >> "$OUTPUT_FILE"
-    echo "" >> "$OUTPUT_FILE"
+  # Capture comment lines (descriptions)
+  if [[ "$line" =~ ^#\ (.+)$ ]]; then
+    comment="${BASH_REMATCH[1]}"
+    # Skip lines that are just separators or empty
+    if [[ ! "$comment" =~ ^[-=]+$ ]]; then
+      if [[ -n "$previous_comment" ]]; then
+        previous_comment="$previous_comment $comment"
+      else
+        previous_comment="$comment"
+      fi
+    fi
+    continue
+  fi
+
+  # Extract active command lines (not commented)
+  if [[ "$line" =~ ^(defaults|sudo\ defaults|sudo\ pmset|sudo\ systemsetup|networksetup|chflags) ]] && \
+     [[ ! "$line" =~ ^# ]]; then
+
+    # Extract the value being set (if applicable)
+    value=""
+    if [[ "$line" =~ -bool\ (true|false) ]]; then
+      value="${BASH_REMATCH[1]}"
+      value="**${value}**"
+    elif [[ "$line" =~ -int\ ([0-9]+) ]]; then
+      value="${BASH_REMATCH[1]}"
+    elif [[ "$line" =~ -float\ ([0-9.]+) ]]; then
+      value="${BASH_REMATCH[1]}"
+    elif [[ "$line" =~ -string\ [\"\'](.*)[\"\']] ]]; then
+      value="${BASH_REMATCH[1]}"
+      value="\`$value\`"
+    fi
+
+    # Use comment as description, or use a generic one
+    description="${previous_comment:-Setting applied}"
+
+    # Add value to description if we have one
+    if [[ -n "$value" ]]; then
+      echo "| $description | $value |" >> "$OUTPUT_FILE"
+    else
+      echo "| $description | ✓ |" >> "$OUTPUT_FILE"
+    fi
+
+    previous_comment=""
+    continue
+  fi
+
+  # Reset comment if we hit a non-comment, non-command line
+  if [[ ! "$line" =~ ^# ]] && [[ -n "$line" ]]; then
+    previous_comment=""
   fi
 done < "$MACOS_SCRIPT"
 
