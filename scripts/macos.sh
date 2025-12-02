@@ -96,7 +96,9 @@ printf "  → Menu bar settings\n"
 
 # Show Wi-Fi in menu bar (macOS 11+)
 defaults write com.apple.controlcenter "NSStatusItem Visible WiFi" -bool true
-defaults write com.apple.controlcenter WiFi -int 18  # 18=always show, 17=when active, 16=don't show
+
+# Always show Wi-Fi in menu bar (18=always show, 17=when active, 16=don't show)
+defaults write com.apple.controlcenter WiFi -int 18
 
 # Show Bluetooth in menu bar (macOS 11+)
 # defaults write com.apple.controlcenter "NSStatusItem Visible Bluetooth" -bool true
@@ -147,8 +149,10 @@ printf "  → Localization settings\n"
 # defaults write NSGlobalDomain AppleMetricUnits -bool true
 # defaults write NSGlobalDomain AppleTemperatureUnit -string "Celsius"
 
-# Set menu bar clock format
+# Set menu bar clock to digital (not analog)
 defaults write com.apple.menuextra.clock IsAnalog -bool false
+
+# Set menu bar clock format to show weekday, date, and time
 defaults write com.apple.menuextra.clock DateFormat -string "EEE MMM d h:mm a"
 
 # Set the timezone (see `sudo systemsetup -listtimezones` for other values)
@@ -160,18 +164,28 @@ defaults write com.apple.menuextra.clock DateFormat -string "EEE MMM d h:mm a"
 
 printf "  → Keyboard, mouse, and trackpad settings\n"
 
-# Disable automatic text substitution and autocorrect
+# Disable automatic capitalization
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+
+# Disable smart dashes
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+
+# Disable period substitution (double-space to period)
 defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+
+# Disable smart quotes
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+
+# Disable automatic spelling correction
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 # Disable press-and-hold for keys in favor of key repeat
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
-# Set blazingly fast keyboard repeat rate
+# Set keyboard repeat rate to fastest (2)
 defaults write NSGlobalDomain KeyRepeat -int 2
+
+# Set delay until key repeat to shortest (15)
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
 # Disable "natural" scrolling (commented out - keeping system default)
@@ -180,9 +194,13 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 15
 # Enable full keyboard access for all controls (enable Tab in modal dialogs)
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
-# Trackpad: enable tap to click for this user and for the login screen
+# Enable tap to click on trackpad
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+
+# Enable tap to click for this user
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+
+# Enable tap to click on login screen
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
 # Increase sound quality for Bluetooth headphones/headsets
@@ -196,20 +214,37 @@ printf "  → Screen and energy settings\n"
 
 # Require password immediately after sleep or screen saver begins
 defaults write com.apple.screensaver askForPassword -int 1
+
+# Set password prompt delay to zero seconds
 defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 # Enable subpixel font rendering on non-Apple LCDs
 defaults write NSGlobalDomain AppleFontSmoothing -int 1
 
 # Energy saving settings
-sudo pmset -a lidwake 1 2>/dev/null || true                # Enable lid wakeup
-sudo pmset -a autorestart 1 2>/dev/null || true            # Restart on power loss
-sudo systemsetup -setrestartfreeze on 2>/dev/null || true  # Restart if frozen
-sudo pmset -a displaysleep 15 2>/dev/null || true          # Display sleep after 15 min
-sudo pmset -c sleep 0 2>/dev/null || true                  # No sleep while charging
-sudo pmset -b sleep 5 2>/dev/null || true                  # Sleep after 5 min on battery
-sudo pmset -a standbydelay 86400 2>/dev/null || true       # 24 hour standby delay
-sudo pmset -a hibernatemode 0 2>/dev/null || true          # Disable hibernation
+# Enable lid wake on all power sources
+sudo pmset -a lidwake 1 2>/dev/null || true
+
+# Restart automatically on power loss
+sudo pmset -a autorestart 1 2>/dev/null || true
+
+# Restart automatically if the computer freezes
+sudo systemsetup -setrestartfreeze on 2>/dev/null || true
+
+# Set display sleep to 15 minutes on all power sources
+sudo pmset -a displaysleep 15 2>/dev/null || true
+
+# Never sleep when connected to power adapter
+sudo pmset -c sleep 0 2>/dev/null || true
+
+# Sleep after 5 minutes on battery power
+sudo pmset -b sleep 5 2>/dev/null || true
+
+# Set standby delay to 24 hours (86400 seconds)
+sudo pmset -a standbydelay 86400 2>/dev/null || true
+
+# Disable hibernation (speeds up sleep)
+sudo pmset -a hibernatemode 0 2>/dev/null || true
 
 ###############################################################################
 # Finder                                                                      #
@@ -219,12 +254,20 @@ printf "  → Finder settings\n"
 
 # Set home directory as default location for new Finder windows
 defaults write com.apple.finder NewWindowTarget -string "PfHm"
+
+# Set home directory path for new Finder windows
 defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 
-# Show icons for external drives, servers, and removable media on desktop
+# Show external hard drives on desktop
 defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
+
+# Show internal hard drives on desktop
 defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
+
+# Show mounted servers on desktop
 defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
+
+# Show removable media on desktop
 defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
 # Show hidden files by default (commented out - keeping system default: false)
@@ -261,8 +304,10 @@ defaults write com.apple.finder DisableAllAnimations -bool true
 # Enable spring loading for directories
 defaults write NSGlobalDomain com.apple.springing.enabled -bool true
 
-# Avoid creating .DS_Store files on network or USB volumes
+# Avoid creating .DS_Store files on network volumes
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
+# Avoid creating .DS_Store files on USB volumes
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 # Disable warning before emptying the Trash
@@ -274,14 +319,22 @@ defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 # Show the ~/Library folder
 chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library 2>/dev/null || true
 
-# Enable snap-to-grid for icons on desktop and in other icon views
+# Enable snap-to-grid for desktop icons
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+
+# Enable snap-to-grid for standard icon views
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+
+# Enable snap-to-grid for all icon views
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
 
-# Increase grid spacing for icons
+# Set icon grid spacing to 100 for desktop
 /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+
+# Set icon grid spacing to 100 for standard views
 /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+
+# Set icon grid spacing to 100 for all icon views
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
 
 # Expand File Info panes: "General", "Open with", and "Sharing & Permissions"
@@ -362,16 +415,22 @@ defaults write com.apple.dock show-recents -bool false
 # 12: Notification Center
 # 13: Lock screen
 
-# Top right screen corner → Desktop
+# Set top right screen corner to show Desktop
 defaults write com.apple.dock wvous-tr-corner -int 4
+
+# Set top right screen corner modifier to none
 defaults write com.apple.dock wvous-tr-modifier -int 0
 
-# Bottom right screen corner → Mission Control
+# Set bottom right screen corner to Mission Control
 defaults write com.apple.dock wvous-br-corner -int 2
+
+# Set bottom right screen corner modifier to none
 defaults write com.apple.dock wvous-br-modifier -int 0
 
-# Bottom left screen corner → no-op
+# Set bottom left screen corner to no action
 defaults write com.apple.dock wvous-bl-corner -int 0
+
+# Set bottom left screen corner modifier to none
 defaults write com.apple.dock wvous-bl-modifier -int 0
 
 # Reset Launchpad (commented out - can cause unexpected layout changes)
@@ -387,8 +446,10 @@ printf "  → Safari settings\n"
 # to be closed first, or may need to be set through Safari's preferences UI.
 # The commands will attempt to set preferences but may show warnings.
 
-# Privacy: don't send search queries to Apple
+# Disable universal search (don't send search queries to Apple)
 defaults write com.apple.Safari UniversalSearchEnabled -bool false 2>/dev/null || true
+
+# Suppress Safari search suggestions
 defaults write com.apple.Safari SuppressSearchSuggestions -bool true 2>/dev/null || true
 
 # Show the full URL in the address bar
