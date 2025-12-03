@@ -33,9 +33,5 @@ mkdir -p "$(dirname $ZSH_DATA_DIR)"
 mkdir -p "$(dirname $ZSH_STATE_DIR)"
 mkdir -p "$(dirname $ZSH_COMPDUMP)"
 
-# Increase file descriptor limit (fixes "too many open files" errors)
-# macOS default is 256, which is too low for modern development tools like Neovim
-ulimit -n 10240
-
 # Local config
 [[ -f $HOME/.zshenv.local ]] && source $HOME/.zshenv.local
