@@ -1,3 +1,11 @@
 # This is copied on install and not overwritten on subsequent calls to install.
 # This is where to put:
 #   1. host-specific configuration
+#
+# Examples:
+#
+# Override oh-my-posh theme:
+# export OHMYPOSH_THEME="$XDG_CONFIG_HOME/oh-my-posh/themes/catppuccin.omp.json"
+#
+# Set custom editor:
+# export EDITOR="code"

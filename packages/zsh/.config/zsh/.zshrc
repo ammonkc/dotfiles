@@ -51,8 +51,12 @@ autoload -Uz $ZDOTDIR/functions/*(:tX)
 
 # Init oh-my-posh prompt with caching
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && (( $+commands[oh-my-posh] )); then
-  #eval "$(oh-my-posh init zsh --config $XDG_CONFIG_HOME/oh-my-posh/themes/p10k-rainbow.omp.toml)"
-  cached-eval oh-my-posh "oh-my-posh init zsh --config $XDG_CONFIG_HOME/oh-my-posh/themes/p10k-rainbow.omp.toml"
+  # Allow theme override via OHMYPOSH_THEME environment variable
+  # Set in ~/.zshenv.local to customize locally
+  local ohmyposh_theme="${OHMYPOSH_THEME:-$XDG_CONFIG_HOME/oh-my-posh/themes/p10k-rainbow.omp.toml}"
+
+  #eval "$(oh-my-posh init zsh --config $ohmyposh_theme)"
+  cached-eval oh-my-posh "oh-my-posh init zsh --config $ohmyposh_theme"
 fi
 
 # Init mise with caching
