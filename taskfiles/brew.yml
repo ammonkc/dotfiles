@@ -70,10 +70,7 @@ tasks:
         # Refresh sudo timestamp to ensure it's still valid
         sudo -v
       - NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      - |
-        # Add Homebrew to PATH for current session
-        echo "Adding Homebrew to PATH..."
-        eval "$({{.BREW_PREFIX}}/bin/brew shellenv)"
+      - eval "$({{.BREW_PREFIX}}/bin/brew shellenv)"
 
   install:gnu_stow:
     internal: true
