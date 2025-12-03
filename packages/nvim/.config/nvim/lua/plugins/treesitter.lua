@@ -29,12 +29,6 @@ return {
     },
   },
   config = function(_, opts)
-    vim.filetype.add({
-        pattern = {
-          [".*%.blade%.php"] = "blade",
-        },
-      })
-
     ---@class ParserInfo[]
     local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
     parser_config.blade = {
