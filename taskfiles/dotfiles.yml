@@ -29,9 +29,9 @@ vars:
   # Dynamically get list of all package directories
   PACKAGES:
     sh: cd {{.PACKAGES_DIR}} && find . -maxdepth 1 -type d ! -name ".*" -exec basename {} \; | sort
-  # Dynamically find all .local template files in packages
+  # Dynamically find all .local and *.local.* template files in packages
   LOCAL_FILES:
-    sh: cd {{.PACKAGES_DIR}} && find . -type f -name "*.local" | sed 's|^\./||'
+    sh: cd {{.PACKAGES_DIR}} && find . -type f \( -name "*.local" -o -name "*.local.*" \) | sed 's|^\./||'
 
 tasks:
   # ============================================================================
