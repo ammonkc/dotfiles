@@ -1,4 +1,4 @@
-{
+return {
   {
     -- Add the Laravel.nvim plugin which gives the ability to run Artisan commands
     -- from Neovim.
