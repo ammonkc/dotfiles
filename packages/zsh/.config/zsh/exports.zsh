@@ -70,6 +70,7 @@ export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 
 # bat (cat replacement) - Uses XDG by default, but can override
 export BAT_CONFIG_PATH="$XDG_CONFIG_HOME/bat/config"
+export BAT_THEME="Catppuccin Mocha"
 
 # ripgrep - Uses XDG by default for config
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
