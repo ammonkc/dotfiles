@@ -31,11 +31,12 @@ bindkey -v
 # ----------------------------
 # ---- Source config files ---
 # ----------------------------
-[[ -e $ZDOTDIR/history.zsh ]] && source $ZDOTDIR/history.zsh || true
-[[ -e $ZDOTDIR/setops.zsh ]] && source $ZDOTDIR/setops.zsh || true
-[[ -e $ZDOTDIR/zstyle.zsh ]] && source $ZDOTDIR/zstyle.zsh || true
-[[ -e $ZDOTDIR/aliases.zsh ]] && source $ZDOTDIR/aliases.zsh || true
-[[ -e $ZDOTDIR/fzf.zsh ]] && source $ZDOTDIR/fzf.zsh || true
+[[ -e $ZDOTDIR/history.zsh ]] && source $ZDOTDIR/history.zsh
+[[ -e $ZDOTDIR/setops.zsh ]] && source $ZDOTDIR/setops.zsh
+[[ -e $ZDOTDIR/zstyle.zsh ]] && source $ZDOTDIR/zstyle.zsh
+[[ -e $ZDOTDIR/aliases.zsh ]] && source $ZDOTDIR/aliases.zsh
+[[ -e $ZDOTDIR/fzf.zsh ]] && source $ZDOTDIR/fzf.zsh
+[[ -e $ZDOTDIR/eza.zsh ]] && source $ZDOTDIR/eza.zsh
 
 # ----------------------------
 # --- functions autoload -----
