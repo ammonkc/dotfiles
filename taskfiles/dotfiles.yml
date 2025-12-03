@@ -84,7 +84,7 @@ tasks:
       - sh: command -v stow >/dev/null 2>&1
         msg: "stow is not installed. Run 'task system:install' first to install it, or install stow manually (e.g., 'brew install stow' on macOS or 'sudo apt-get install stow' on Linux)."
     cmds:
-      - echo "📦 Stowing packages from {{.PACKAGES_DIR}}..."
+      - echo "Stowing packages from {{.PACKAGES_DIR}}..."
       - for:
           var: PACKAGES
           as: PACKAGE
@@ -98,7 +98,7 @@ tasks:
     vars:
       PACKAGE: '{{.PACKAGE}}'
     cmds:
-      - echo "  → Stowing {{.PACKAGE}}..."
+      - echo "  \033[0;32m→\033[0m Stowing {{.PACKAGE}}..."
       - task: backup:backup_conflicts
         vars:
           PACKAGE: '{{.PACKAGE}}'
@@ -124,7 +124,7 @@ tasks:
     vars:
       PACKAGE: '{{.PACKAGE}}'
     cmds:
-      - echo "  → Unstowing {{.PACKAGE}}..."
+      - echo "  \033[0;32m→\033[0m Unstowing {{.PACKAGE}}..."
       - stow --delete --dir={{.PACKAGES_DIR}} -t $HOME "{{.PACKAGE}}"
       - task: backup:restore_latest_package
         vars:
