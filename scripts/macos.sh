@@ -344,6 +344,27 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
   Privileges -bool true
 
 ###############################################################################
+# Window Management                                                           #
+###############################################################################
+
+printf "  → Window management settings\n"
+
+# Disable "click wallpaper to show desktop" (macOS Sonoma 14.0+)
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
+
+# Enable window tiling (macOS Sequoia 15.0+)
+# This controls both menu bar (fill screen) and edge (tile left/right) behaviors
+# Note: Separate controls for menu bar vs edges are not publicly documented
+defaults write com.apple.WindowManager GloballyEnabled -bool false
+
+# Enable tiled window margins (spacing between tiled windows, macOS Sequoia 15.0+)
+defaults write com.apple.WindowManager EnableTiledWindowMargins -bool true
+
+# Set application window grouping behavior (macOS Sonoma 14.0+)
+# 0 = Group by application, 1 = Group by most recently used
+defaults write com.apple.WindowManager AppWindowGroupingBehavior -int 0
+
+###############################################################################
 # Dock, Dashboard, & Mission Control                                          #
 ###############################################################################
 
@@ -400,9 +421,6 @@ defaults write com.apple.dock showhidden -bool true
 
 # Don't show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false
-
-# Disable "click wallpaper to show desktop" (macOS Sonoma 14.0+)
-defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
 
 # Hot corners
 # Possible values:
