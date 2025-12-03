@@ -72,6 +72,9 @@ export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 export BAT_CONFIG_PATH="$XDG_CONFIG_HOME/bat/config"
 export BAT_THEME="Catppuccin Mocha"
 
+# eza (ls replacement) - Uses XDG by default
+export EZA_CONFIG_DIR="$XDG_CONFIG_HOME/eza"
+
 # ripgrep - Uses XDG by default for config
 export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/config"
 
