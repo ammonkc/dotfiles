@@ -26,6 +26,10 @@ export XDG_BIN_DIR=${XDG_BIN_DIR:-$HOME/.local/bin}
 # Source exports to set tool-specific paths (GNUPGHOME, GEM_HOME, etc.)
 [[ -e $HOME/.dotfiles/packages/zsh/.config/zsh/exports.zsh ]] && source $HOME/.dotfiles/packages/zsh/.config/zsh/exports.zsh
 
+# Ensure gnupg directory exists with strict permissions (700)
+mkdir -p "$GNUPGHOME"
+chmod 700 "$GNUPGHOME"
+
 # Install go-task if not present
 if ! command -v task > /dev/null; then
   info "Installing go-task..."

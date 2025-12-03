@@ -42,7 +42,9 @@ mkdir -p "$XDG_CONFIG_HOME" \
          "$(dirname $ZSH_COMPDUMP)"
 
 # Ensure gnupg directory exists with strict permissions (700)
-mkdir -p -m 700 "$XDG_DATA_HOME/gnupg"
+# GPG requires this for security - directory must be readable/writable/executable only by owner
+mkdir -p "$XDG_DATA_HOME/gnupg"
+chmod 700 "$XDG_DATA_HOME/gnupg"
 
 # Increase file descriptor limit (fixes "too many open files" errors)
 # macOS default is 256, which is too low for modern development tools like Neovim
