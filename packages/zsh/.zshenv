@@ -24,6 +24,9 @@ export COMPOSER_BIN_DIR=${COMPOSER_BIN_DIR:-$XDG_BIN_DIR/composer}
 # source PATH
 [[ -e $ZDOTDIR/path.zsh ]] && source $ZDOTDIR/path.zsh
 
+# source exports
+[[ -e $ZDOTDIR/exports.zsh ]] && source $ZDOTDIR/exports.zsh
+
 export SHORT_HOST="${HOST/.*/}"
 export ZSH_COMPDUMP="$ZSH_CACHE_DIR/zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 

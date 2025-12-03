@@ -34,7 +34,6 @@ bindkey -v
 [[ -e $ZDOTDIR/history.zsh ]] && source $ZDOTDIR/history.zsh || true
 [[ -e $ZDOTDIR/setops.zsh ]] && source $ZDOTDIR/setops.zsh || true
 [[ -e $ZDOTDIR/zstyle.zsh ]] && source $ZDOTDIR/zstyle.zsh || true
-[[ -e $ZDOTDIR/exports.zsh ]] && source $ZDOTDIR/exports.zsh || true
 [[ -e $ZDOTDIR/aliases.zsh ]] && source $ZDOTDIR/aliases.zsh || true
 [[ -e $ZDOTDIR/fzf.zsh ]] && source $ZDOTDIR/fzf.zsh || true
 
