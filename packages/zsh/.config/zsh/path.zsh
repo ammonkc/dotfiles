@@ -11,7 +11,11 @@ function _path_add() {
 function _path_remove() {
   case ":$PATH:" in
     *:"$1":*)
-      PATH=$(echo ":$PATH:" | sd ":$1:" ":" | sd '^:' '' | sd ':$' '')
+      if command -v sd >/dev/null 2>&1; then
+        PATH=$(echo ":$PATH:" | sd ":$1:" ":" | sd '^:' '' | sd ':$' '')
+      else
+        PATH=$(echo ":$PATH:" | sed "s|:$1:|:|g" | sed 's/^://' | sed 's/:$//')
+      fi
       ;;
   esac
   export PATH

@@ -16,7 +16,15 @@ success() { echo -e "\033[0;32m✓ $1\033[0m"; }
 error() { echo -e "\033[0;31m❌ $1\033[0m"; }
 warning() { echo -e "\033[1;33m⚠️  $1\033[0m"; }
 
-XDG_BIN_DIR=${XDG_BIN_DIR:-$HOME/.local/bin}
+# Set XDG base paths and export them so Homebrew and other tools can use them
+export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
+export XDG_BIN_DIR=${XDG_BIN_DIR:-$HOME/.local/bin}
+
+# Source exports to set tool-specific paths (GNUPGHOME, GEM_HOME, etc.)
+[[ -e $HOME/.dotfiles/packages/zsh/.config/zsh/exports.zsh ]] && source $HOME/.dotfiles/packages/zsh/.config/zsh/exports.zsh
 
 # Install go-task if not present
 if ! command -v task > /dev/null; then

@@ -27,11 +27,20 @@ export COMPOSER_BIN_DIR=${COMPOSER_BIN_DIR:-$XDG_BIN_DIR/composer}
 export SHORT_HOST="${HOST/.*/}"
 export ZSH_COMPDUMP="$ZSH_CACHE_DIR/zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 
-# Make sure directories exist
-mkdir -p "$(dirname $ZSH_CACHE_DIR)"
-mkdir -p "$(dirname $ZSH_DATA_DIR)"
-mkdir -p "$(dirname $ZSH_STATE_DIR)"
-mkdir -p "$(dirname $ZSH_COMPDUMP)"
+# Ensure XDG and Zsh directories exist (single mkdir call for efficiency)
+mkdir -p "$XDG_CONFIG_HOME" \
+         "$XDG_CACHE_HOME" \
+         "$XDG_DATA_HOME" \
+         "$XDG_STATE_HOME" \
+         "$XDG_BIN_DIR" \
+         "$ZSH_CACHE_DIR" \
+         "$ZSH_DATA_DIR" \
+         "$ZSH_STATE_DIR" \
+         "$(dirname $ZSH_COMPDUMP)"
+
+# Increase file descriptor limit (fixes "too many open files" errors)
+# macOS default is 256, which is too low for modern development tools like Neovim
+ulimit -n 10240
 
 # Local config
 [[ -f $HOME/.zshenv.local ]] && source $HOME/.zshenv.local
