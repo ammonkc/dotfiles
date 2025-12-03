@@ -83,10 +83,10 @@ tasks:
     dir: "/{{.DOTFILES}}"
     deps:
       - install:homebrew
-    env:
-      PATH: "{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:{{.PATH}}"
     cmds:
-      - brew install stow
+      - |
+        export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
+        brew install stow
 
   install:tools:
     internal: true
@@ -96,10 +96,10 @@ tasks:
     dir: "/{{.DOTFILES}}"
     deps:
       - install:homebrew
-    env:
-      PATH: "{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:{{.PATH}}"
     cmds:
-      - brew bundle
+      - |
+        export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
+        brew bundle
 
   update_no_commit:
     internal: true
