@@ -1,0 +1,15 @@
+# Clear cached-eval caches
+# This removes all cached evaluation files, forcing them to regenerate
+# Useful when caches become corrupted or after updating tools like oh-my-posh
+
+local cache_dir="${ZSH_CACHE_DIR:-$HOME/.cache/zsh}/zsh-eval-cache"
+
+if [[ -d "$cache_dir" ]]; then
+    echo "🗑️  Clearing cached-eval caches..."
+    rm -rf "$cache_dir"/*
+    echo "✓ Cleared cached-eval caches from: $cache_dir"
+    echo "💡 Restart your shell or run 'exec \$SHELL' to regenerate caches"
+else
+    echo "ℹ️  No cached-eval directory found at: $cache_dir"
+fi
+

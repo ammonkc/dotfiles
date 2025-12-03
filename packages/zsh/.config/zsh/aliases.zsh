@@ -154,7 +154,8 @@ alias genailogin='export AWS_PROFILE=genai;aws sso login --profile genai'
 alias dot='dotfiles'
 
 # ---- Shortcuts -----
-alias clear-zsh-cache='rm -rf ~/.cache/zsh/zsh-eval-cache/* && echo "Cache cleared!"'
+# Alias to clear cached-eval caches (uses function defined in functions/clear-cached-eval)
+alias clear-zsh-cache='clear-cached-eval'
 alias reloadshell="source $ZDOTDIR/.zshrc"
 alias shrug="echo '¯\_(ツ)_/¯' | pbcopy"
 

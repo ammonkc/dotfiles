@@ -52,7 +52,7 @@ autoload -Uz $ZDOTDIR/functions/*(:tX)
 # Init oh-my-posh prompt with caching
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && (( $+commands[oh-my-posh] )); then
   #eval "$(oh-my-posh init zsh --config $XDG_CONFIG_HOME/oh-my-posh/themes/p10k-rainbow.omp.toml)"
-    cached-eval oh-my-posh "oh-my-posh init zsh --config $XDG_CONFIG_HOME/oh-my-posh/themes/p10k-rainbow.omp.toml"
+  cached-eval oh-my-posh "oh-my-posh init zsh --config $XDG_CONFIG_HOME/oh-my-posh/themes/p10k-rainbow.omp.toml"
 fi
 
 # Init mise with caching
