@@ -3,61 +3,64 @@ tap 'shivammathur/php'
 tap 'shivammathur/extensions'
 
 # cli tools
-brew 'ack'                  # Search tool like grep, but optimized for programmers
-brew 'atuin'                # Improved shell history for zsh, bash, fish and nushell
-brew 'awscli'               # Official Amazon AWS command-line interface
-brew 'bash'                 # Latest Bash version
-brew 'bat'                  # Clone of cat(1) with syntax highlighting and Git integration
-brew 'colima'               # Container runtimes on MacOS (and Linux) with minimal setup
-brew 'curl'                 # Get a file from an HTTP, HTTPS or FTP server
-brew 'curlie'               # Power of curl, ease of use of httpie
-brew 'eza'                  # Modern, maintained replacement for ls
-brew 'fastfetch'            # Like neofetch, but much faster because written mostly in C
-brew 'fd'                   # Simple, fast and user-friendly alternative to find
-brew 'fzf'                  # Command-line fuzzy finder written in Go
-brew 'gawk'                 # GNU awk utility
-brew 'gh'                   # GitHub command-line tool
-brew 'gifsicle'             # GIF image/animation creator/editor
-brew 'git'                  # Distributed revision control system
-brew 'git-delta'            # Syntax-highlighting pager for git and diff output
-brew 'git-flow'             # Extensions to follow Vincent Driessen's branching model
-brew 'git-lfs'              # Git extension for versioning large files
-brew 'github-keygen'        # Bootstrap GitHub SSH configuration
-brew 'glow'                 # markdown viewer
-brew 'gnupg'                # GNU Pretty Good Privacy (PGP) package
-brew 'go-task'              # Task is a task runner/build tool thats simpler and easier to use
-brew 'grex'                 # Command-line tool for generating regular expressions
-brew 'htop'                 # Improved top (interactive process viewer)
-brew 'httpie'               # User-friendly cURL replacement (command-line HTTP client)
-brew 'jpegoptim'            # Utility to optimize JPEG files
-brew 'jq'                   # Lightweight and flexible command-line JSON processor
-brew 'lazydocker'           # Lazier way to manage everything docker
-brew 'lazygit'              # Simple terminal UI for git commands
-brew 'midnight-commander'   # Terminal-based visual file manager
-brew 'mise'                 # Polyglot runtime manager (asdf rust clone)
-brew 'neovim'               # Ambitious Vim-fork focused on extensibility and agility
-brew 'oh-my-posh'           # Prompt theme engine for any shell
-brew 'optipng'              # PNG file optimizer
-brew 'pinentry-mac'         # Pinentry for GPG on Mac
-brew 'pkgconf'              # Package compiler and linker metadata toolkit
-brew 'pngquant'             # PNG image optimizing utility
-brew 'procs'                # Modern replacement for ps written in Rust
-brew 'stow'                 # Organize software neatly under a single directory tree (e.g. /usr/local)
-brew 'ripgrep'              # Search tool like grep and The Silver Searcher
-brew 'svgo'                 # Nodejs-based tool for optimizing SVG vector graphics files
-brew 'tlrc'                 # Very fast implementation of tldr in Rust
-brew 'thefuck'              # Programmatically correct mistyped console commands
-brew 'tmux'                 # Terminal multiplexer
-brew 'tree'                 # Display directories as trees (with optional color/HTML output)
-brew 'vim'                  # Vi 'workalike' with many additional features
-brew 'wget'                 # Internet file retriever
-brew 'yazi'                 # Blazing fast terminal file manager written in Rust, based on async I/O
-brew 'zlib'                 # Needed for Memcached
-brew 'zoxide'               # Shell extension to navigate your filesystem faster
-brew 'zimfw'                # Zsh plugin manager
-brew 'zsh'                  # UNIX shell (command interpreter)
-brew 'zsh-autosuggestions'  # Fish-like fast/unobtrusive autosuggestions for zsh
-brew 'zsh-completions'      # Additional completion definitions for zsh
+brew 'ack'                          # Search tool like grep, but optimized for programmers
+brew 'atuin'                        # Improved shell history for zsh, bash, fish and nushell
+brew 'awscli'                       # Official Amazon AWS command-line interface
+brew 'bash'                         # Latest Bash version
+brew 'bat'                          # Clone of cat(1) with syntax highlighting and Git integration
+brew 'colima'                       # Container runtimes on MacOS (and Linux) with minimal setup
+brew 'curl'                         # Get a file from an HTTP, HTTPS or FTP server
+brew 'curlie'                       # Power of curl, ease of use of httpie
+brew 'docker'                       # Docker CLI
+brew 'docker-compose'               # Docker Compose CLI
+brew 'docker-credential-helper'     # Docker Credential Helper
+brew 'eza'                          # Modern, maintained replacement for ls
+brew 'fastfetch'                    # Like neofetch, but much faster because written mostly in C
+brew 'fd'                           # Simple, fast and user-friendly alternative to find
+brew 'fzf'                          # Command-line fuzzy finder written in Go
+brew 'gawk'                         # GNU awk utility
+brew 'gh'                           # GitHub command-line tool
+brew 'gifsicle'                     # GIF image/animation creator/editor
+brew 'git'                          # Distributed revision control system
+brew 'git-delta'                    # Syntax-highlighting pager for git and diff output
+brew 'git-flow'                     # Extensions to follow Vincent Driessen's branching model
+brew 'git-lfs'                      # Git extension for versioning large files
+brew 'github-keygen'                # Bootstrap GitHub SSH configuration
+brew 'glow'                         # markdown viewer
+brew 'gnupg'                        # GNU Pretty Good Privacy (PGP) package
+brew 'go-task'                      # Task is a task runner/build tool thats simpler and easier to use
+brew 'grex'                         # Command-line tool for generating regular expressions
+brew 'htop'                         # Improved top (interactive process viewer)
+brew 'httpie'                       # User-friendly cURL replacement (command-line HTTP client)
+brew 'jpegoptim'                    # Utility to optimize JPEG files
+brew 'jq'                           # Lightweight and flexible command-line JSON processor
+brew 'lazydocker'                   # Lazier way to manage everything docker
+brew 'lazygit'                      # Simple terminal UI for git commands
+brew 'midnight-commander'           # Terminal-based visual file manager
+brew 'mise'                         # Polyglot runtime manager (asdf rust clone)
+brew 'neovim'                       # Ambitious Vim-fork focused on extensibility and agility
+brew 'oh-my-posh'                   # Prompt theme engine for any shell
+brew 'optipng'                      # PNG file optimizer
+brew 'pinentry-mac'                 # Pinentry for GPG on Mac
+brew 'pkgconf'                      # Package compiler and linker metadata toolkit
+brew 'pngquant'                     # PNG image optimizing utility
+brew 'procs'                        # Modern replacement for ps written in Rust
+brew 'stow'                         # Organize software neatly under a single directory tree (e.g. /usr/local)
+brew 'ripgrep'                      # Search tool like grep and The Silver Searcher
+brew 'svgo'                         # Nodejs-based tool for optimizing SVG vector graphics files
+brew 'tlrc'                         # Very fast implementation of tldr in Rust
+brew 'thefuck'                      # Programmatically correct mistyped console commands
+brew 'tmux'                         # Terminal multiplexer
+brew 'tree'                         # Display directories as trees (with optional color/HTML output)
+brew 'vim'                          # Vi 'workalike' with many additional features
+brew 'wget'                         # Internet file retriever
+brew 'yazi'                         # Blazing fast terminal file manager written in Rust, based on async I/O
+brew 'zlib'                         # Needed for Memcached
+brew 'zoxide'                       # Shell extension to navigate your filesystem faster
+brew 'zimfw'                        # Zsh plugin manager
+brew 'zsh'                          # UNIX shell (command interpreter)
+brew 'zsh-autosuggestions'          # Fish-like fast/unobtrusive autosuggestions for zsh
+brew 'zsh-completions'              # Additional completion definitions for zsh
 brew 'zsh-fast-syntax-highlighting' # Feature-rich syntax highlighting for Zsh
 brew 'zsh-history-substring-search' # Zsh port of Fish shell's history search
 
@@ -98,7 +101,7 @@ if OS.mac?
     brew 'coreutils'           # Those that come with macOS are outdated
     brew 'findutils'           # Collection of GNU find, xargs, and locate
     brew 'gnu-sed'             # GNU implementation of the famous stream editor
-    brew 'gnu-tar'              # GNU version of the tar archiving utility
+    brew 'gnu-tar'             # GNU version of the tar archiving utility
     brew 'grep'                # GNU grep, egrep and fgrep
 
     # Code Editors
@@ -115,13 +118,11 @@ if OS.mac?
     cask 'bartender'           # Menu bar icon organiser
     cask 'betterdisplay'       # Display management tool
     cask 'boop'                # Scriptable scratchpad for developers
-    cask 'docker'              # Pack, ship and run any application as a lightweight container
-    # cask 'espanso'             # Cross-platform Text Expander written in Rust
     cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
     cask 'github'              # GitHub Desktop
     cask 'google-chrome'       # Google Chrome browser
     cask 'hammerspoon'         # Desktop automation application
-    cask 'handbrake-app'           # Open-source video transcoder available for Linux, Mac, and Windows
+    cask 'handbrake-app'       # Open-source video transcoder available for Linux, Mac, and Windows
     cask 'iina'                # Free and open-source media player
     cask 'imagealpha'          # Utility to reduce the size of 24-bit PNG files
     cask 'imageoptim'          # Tool to optimise images to a smaller size
@@ -147,7 +148,7 @@ if OS.mac?
     cask 'subler'              # Mux and tag mp4 files
     cask 'superwhisper'        # Dictation tool including LLM reformatting
     cask 'tableplus'           # Native GUI tool for relational databases
-    cask 'tailscale-app'           # Mesh VPN based on WireGuard
+    cask 'tailscale-app'       # Mesh VPN based on WireGuard
     cask 'transmit'            # File transfer application
     cask 'utm'                 # Virtual machines UI using QEMU
     cask 'vlc'                 # Multimedia player
