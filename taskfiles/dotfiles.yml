@@ -98,7 +98,7 @@ tasks:
     vars:
       PACKAGE: '{{.PACKAGE}}'
     cmds:
-      - echo "  \033[0;32m→\033[0m Stowing {{.PACKAGE}}..."
+      - echo "  → Stowing {{.PACKAGE}}..."
       - task: backup:backup_conflicts
         vars:
           PACKAGE: '{{.PACKAGE}}'
@@ -124,7 +124,7 @@ tasks:
     vars:
       PACKAGE: '{{.PACKAGE}}'
     cmds:
-      - echo "  \033[0;32m→\033[0m Unstowing {{.PACKAGE}}..."
+      - echo "  → Unstowing {{.PACKAGE}}..."
       - stow --delete --dir={{.PACKAGES_DIR}} -t $HOME "{{.PACKAGE}}"
       - task: backup:restore_latest_package
         vars:
