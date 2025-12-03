@@ -68,17 +68,27 @@ fi
 success "Preflight checks passed"
 echo ""
 
+# Check for Xcode Command Line Tools on macOS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  if ! xcode-select -p >/dev/null 2>&1; then
+    error "Xcode Command Line Tools are not installed"
+    info "Installing Xcode Command Line Tools..."
+    xcode-select --install
+    echo ""
+    warning "Please run this script again after Xcode Command Line Tools installation completes"
+    warning "You may need to accept the license agreement in a popup window"
+    exit 1
+  fi
+fi
+
 # Check for git
 if ! command -v git >/dev/null 2>&1; then
   error "Git is not installed"
 
   # Detect OS and install git accordingly
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    info "Installing Xcode Command Line Tools..."
-    xcode-select --install
-    echo ""
-    warning "Please run this script again after Xcode Command Line Tools installation completes"
-    warning "You may need to accept the license agreement in a popup window"
+    error "Git should be available after installing Xcode Command Line Tools"
+    tip "Try running: xcode-select --install"
     exit 1
   elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     info "Installing git..."
