@@ -4,6 +4,18 @@ version: 3
 vars:
   LAZY_LOCK: '${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lazy-lock.json'
   LAZY_LOCK_REPO: 'packages/nvim/.config/nvim/lazy-lock.json'
+  # Determine Homebrew prefix based on architecture (for macOS)
+  BREW_PREFIX:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        if [[ $(uname -m) == "arm64" ]]; then
+          echo "/opt/homebrew"
+        else
+          echo "/usr/local"
+        fi
+      else
+        echo ""
+      fi
 
 tasks:
   # ============================================================================
@@ -24,7 +36,9 @@ tasks:
       LAST_RESTORE_HASH:
         sh: test -f "{{.NVIM_DATA}}/.lazy-restore-hash" && cat "{{.NVIM_DATA}}/.lazy-restore-hash" || echo ""
     preconditions:
-      - sh: command -v nvim >/dev/null 2>&1
+      - sh: |
+          {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
+          command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed. Run 'brew install neovim' first"
       - sh: test -f "{{.LAZY_LOCK}}"
         msg: "lazy-lock.json not found at {{.LAZY_LOCK}}"
@@ -42,6 +56,7 @@ tasks:
         fi
       # Now restore plugins (show output for progress)
       - |
+        {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
         nvim --headless \
           +'Lazy! restore' \
           +'Lazy! clean' \
@@ -58,11 +73,14 @@ tasks:
       Updates Neovim plugins, CLI utils, and TreeSitter plugins
       Automatically commits changes to lazy-lock.json if there are any
     preconditions:
-      - sh: command -v nvim >/dev/null 2>&1
+      - sh: |
+          {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
+          command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
     cmds:
       - echo "📦 Updating Neovim plugins..."
       - |
+        {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
         nvim --headless \
           +'Lazy! sync' \
           +'Lazy! clean' \
@@ -87,10 +105,14 @@ tasks:
     desc: Run Neovim health checks
     internal: true
     preconditions:
-      - sh: command -v nvim >/dev/null 2>&1
+      - sh: |
+          {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
+          command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
     cmds:
-      - nvim --headless +'checkhealth' +qa 2>/dev/null || true
+      - |
+        {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
+        nvim --headless +'checkhealth' +qa 2>/dev/null || true
 
   commit:
     desc: Commit lazy-lock.json if changed
