@@ -6,6 +6,18 @@ vars:
   BACKUP_BASE: '${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles/backups'
   BACKUP_DIR:
     sh: echo "{{.BACKUP_BASE}}/$(date +%Y%m%d-%H%M%S)"
+  # Determine Homebrew prefix based on architecture (for macOS)
+  BREW_PREFIX:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        if [[ $(uname -m) == "arm64" ]]; then
+          echo "/opt/homebrew"
+        else
+          echo "/usr/local"
+        fi
+      else
+        echo ""
+      fi
   # Get list of all backup timestamps (sorted newest first)
   BACKUP_TIMESTAMPS:
     sh: find "{{.BACKUP_BASE}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | xargs -n1 basename 2>/dev/null | sort -r || true
@@ -131,7 +143,9 @@ tasks:
       STOW_FLAGS: '{{.STOW_FLAGS}}'
       # Get list of conflicting files by simulating stow
       CONFLICTS:
-        sh: cd {{.PACKAGES_DIR}} && stow -n {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}" 2>&1 | grep "existing target is" | awk '{print $NF}' | tr -d "'" || true
+        sh: |
+          {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
+          cd {{.PACKAGES_DIR}} && stow -n {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}" 2>&1 | grep "existing target is" | awk '{print $NF}' | tr -d "'" || true
     dir: '{{.PACKAGES_DIR}}'
     status:
       # Skip entirely if no conflicts found
