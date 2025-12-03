@@ -3,6 +3,14 @@ version: 3
 
 vars:
   DOTFILES: "{{.ROOT_DIR}}"
+  # Determine Homebrew prefix based on architecture
+  BREW_PREFIX:
+    sh: |
+      if [[ $(uname -m) == "arm64" ]]; then
+        echo "/opt/homebrew"
+      else
+        echo "/usr/local"
+      fi
 
 tasks:
   # ============================================================================
@@ -65,11 +73,7 @@ tasks:
       - |
         # Add Homebrew to PATH for current session
         echo "Adding Homebrew to PATH..."
-        if [[ $(uname -m) == "arm64" ]]; then
-          eval "$(/opt/homebrew/bin/brew shellenv)"
-        else
-          eval "$(/usr/local/bin/brew shellenv)"
-        fi
+        eval "$({{.BREW_PREFIX}}/bin/brew shellenv)"
 
   install:gnu_stow:
     internal: true
@@ -79,6 +83,8 @@ tasks:
     dir: "/{{.DOTFILES}}"
     deps:
       - install:homebrew
+    env:
+      PATH: "{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:{{.PATH}}"
     cmds:
       - brew install stow
 
@@ -90,6 +96,8 @@ tasks:
     dir: "/{{.DOTFILES}}"
     deps:
       - install:homebrew
+    env:
+      PATH: "{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:{{.PATH}}"
     cmds:
       - brew bundle
 
