@@ -21,6 +21,16 @@ Personal dotfiles and automated setup scripts for macOS with secondary Linux sup
 
 ### **macOS**
 
+**Step 1: Install Xcode Command Line Tools**
+
+```bash
+xcode-select --install
+```
+
+Wait for the installation to complete (you may need to accept a license agreement).
+
+**Step 2: Run Bootstrap Script**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/bootstrap.sh | bash
 ```
@@ -29,11 +39,9 @@ curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/boots
 - macOS 11+
 - Administrator access (you'll be prompted for your password for Homebrew installation)
 
-**Note:** The script will request sudo access at the beginning for Homebrew installation.
-
 ### **Linux** (Debian/Ubuntu or Arch)
 
-Same command as above.
+Same command as **Step 2** above.
 
 **Prerequisites:**
 - Sudo access (you'll be prompted for your password during package installation)
