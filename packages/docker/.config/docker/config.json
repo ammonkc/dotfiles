@@ -11,7 +11,7 @@
     }
   },
   "features": {
-    "hooks": true
+    "hooks": "true"
   },
   "credHelpers": {},
   "cliPluginsExtraDirs": [
