@@ -40,15 +40,24 @@ tasks:
           echo "  → Bootstrapping lazy.nvim..."
           git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
         fi
-      # Now restore plugins (show output for progress)
-      # Timeout after 5 minutes in case Mason hangs or autocmd doesn't fire
+      # Step 1: Restore plugins from lock file (plugins not loaded yet)
       - |
+        echo "  → Restoring plugins from lazy-lock.json..."
+        nvim --headless +'Lazy! restore' +'qa' 2>&1 || true
+      # Step 2: Clean unused plugins
+      - |
+        echo "  → Cleaning unused plugins..."
+        nvim --headless +'Lazy! clean' +'qa' 2>&1 || true
+      # Step 3: Update TreeSitter parsers (plugins now loaded)
+      - |
+        echo "  → Installing TreeSitter parsers..."
+        timeout 120 nvim --headless +'TSUpdateSync' +'qa' 2>&1 || true
+      # Step 4: Install Mason packages via mason-tool-installer
+      - |
+        echo "  → Installing Mason packages (this may take a while)..."
         timeout 300 nvim --headless \
-          +'Lazy! restore' \
-          +'Lazy! clean' \
-          +'TSUpdateSync' \
-          +'autocmd User MasonUpdateAllCompleted qall!' \
-          +'MasonUpdateAll' || true
+          +'autocmd User MasonToolsUpdateCompleted qall!' \
+          +'MasonToolsInstall' 2>&1 || true
       - mkdir -p "{{.NVIM_DATA}}"
       - echo "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
       - echo "✓ Neovim plugins installed"
@@ -63,14 +72,24 @@ tasks:
         msg: "Neovim is not installed"
     cmds:
       - echo "📦 Updating Neovim plugins..."
-      # Timeout after 5 minutes in case Mason hangs or autocmd doesn't fire
+      # Step 1: Sync plugins (update to latest)
       - |
+        echo "  → Syncing plugins..."
+        nvim --headless +'Lazy! sync' +'qa' 2>&1 || true
+      # Step 2: Clean unused plugins
+      - |
+        echo "  → Cleaning unused plugins..."
+        nvim --headless +'Lazy! clean' +'qa' 2>&1 || true
+      # Step 3: Update TreeSitter parsers
+      - |
+        echo "  → Updating TreeSitter parsers..."
+        timeout 120 nvim --headless +'TSUpdateSync' +'qa' 2>&1 || true
+      # Step 4: Update Mason packages via mason-tool-installer
+      - |
+        echo "  → Updating Mason packages..."
         timeout 300 nvim --headless \
-          +'Lazy! sync' \
-          +'Lazy! clean' \
-          +'TSUpdateSync' \
-          +'autocmd User MasonUpdateAllCompleted qall!' \
-          +'MasonUpdateAll' || true
+          +'autocmd User MasonToolsUpdateCompleted qall!' \
+          +'MasonToolsUpdate' 2>&1 || true
       - task: commit
 
   check:
