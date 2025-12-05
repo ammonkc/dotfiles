@@ -53,11 +53,12 @@ tasks:
         echo "  → Installing TreeSitter parsers..."
         timeout 120 nvim --headless +'TSUpdateSync' +'qa' 2>&1 || true
       # Step 4: Install Mason packages via mason-tool-installer
+      # First run may not have the plugin yet, so we check and skip if needed
       - |
         echo "  → Installing Mason packages (this may take a while)..."
         timeout 300 nvim --headless \
-          +'autocmd User MasonToolsUpdateCompleted qall!' \
-          +'MasonToolsInstall' 2>&1 || true
+          +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsInstall") else print("mason-tool-installer not yet installed, skipping...") vim.cmd("qa") end' \
+          2>&1 || true
       - mkdir -p "{{.NVIM_DATA}}"
       - echo "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
       - echo "✓ Neovim plugins installed"
@@ -88,8 +89,8 @@ tasks:
       - |
         echo "  → Updating Mason packages..."
         timeout 300 nvim --headless \
-          +'autocmd User MasonToolsUpdateCompleted qall!' \
-          +'MasonToolsUpdate' 2>&1 || true
+          +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsUpdate") else print("mason-tool-installer not installed") vim.cmd("qa") end' \
+          2>&1 || true
       - task: commit
 
   check:

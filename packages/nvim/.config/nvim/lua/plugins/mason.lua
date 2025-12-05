@@ -40,6 +40,7 @@ return {
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     dependencies = { "mason.nvim" },
+    cmd = { "MasonToolsInstall", "MasonToolsUpdate", "MasonToolsClean" },
     event = "VeryLazy",
     opts = {
       ensure_installed = {
