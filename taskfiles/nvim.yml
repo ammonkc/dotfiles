@@ -41,8 +41,9 @@ tasks:
           git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
         fi
       # Now restore plugins (show output for progress)
+      # Timeout after 5 minutes in case Mason hangs or autocmd doesn't fire
       - |
-        nvim --headless \
+        timeout 300 nvim --headless \
           +'Lazy! restore' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
@@ -62,8 +63,9 @@ tasks:
         msg: "Neovim is not installed"
     cmds:
       - echo "📦 Updating Neovim plugins..."
+      # Timeout after 5 minutes in case Mason hangs or autocmd doesn't fire
       - |
-        nvim --headless \
+        timeout 300 nvim --headless \
           +'Lazy! sync' \
           +'Lazy! clean' \
           +'TSUpdateSync' \
@@ -90,7 +92,22 @@ tasks:
       - sh: command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
     cmds:
-      - nvim --headless +'checkhealth' +qa 2>/dev/null || true
+      - echo "🔍 Running Neovim health checks..."
+      - |
+        # Run checkhealth and filter for relevant output
+        output=$(nvim --headless +'checkhealth' +qa 2>&1 || true)
+        errors=$(echo "$output" | grep -c 'ERROR' || echo "0")
+        warnings=$(echo "$output" | grep -c 'WARN' || echo "0")
+
+        # Show errors and warnings if any
+        if [[ "$errors" -gt 0 ]] || [[ "$warnings" -gt 0 ]]; then
+          echo "$output" | grep -E '(ERROR|WARN|^==)' | head -50
+          echo ""
+          echo "📊 Summary: $errors error(s), $warnings warning(s)"
+          echo "   Run 'nvim +checkhealth' for full details"
+        else
+          echo "✓ No errors or warnings found"
+        fi
 
   commit:
     desc: Commit lazy-lock.json if changed
