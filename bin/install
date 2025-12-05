@@ -75,7 +75,7 @@ if task install; then
   if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "  2. $(tput bold)[Optional]$(tput sgr0) Apply macOS system preferences:"
     echo "     • Configures Finder, Dock, keyboard, and more"
-    echo "     • Preview changes first: $(tput bold)dotfiles mac:preview:defaults$(tput sgr0)"
+    echo "     • Preview changes first: $(tput bold)preview-macos-defaults$(tput sgr0)"
     echo "     • Apply settings: $(tput bold)dotfiles mac:set:defaults$(tput sgr0)"
     echo ""
     echo "  3. $(tput bold)[Optional]$(tput sgr0) Enable 1Password SSH agent:"
