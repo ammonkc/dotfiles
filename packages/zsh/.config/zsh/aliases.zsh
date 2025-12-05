@@ -4,7 +4,6 @@
 
 alias c='clear'
 alias q='exit'
-alias ..='cd ..'
 alias mkdir='mkdir -pv'
 alias cp='cp -iv'
 alias mv='mv -iv'
@@ -78,12 +77,6 @@ fi
 # Link: https://github.com/jesseduffield/lazygit
 if (( $+commands[lazygit] )); then
     alias lg='lazygit'
-fi
-
-# ---- TheFuck -----
-if (( $+commands[thefuck] )); then
-	eval $(thefuck --alias)           # thefuck alias
-	eval $(thefuck --alias fk)        # fk alias
 fi
 
 # ---- homebrew -----

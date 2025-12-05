@@ -8,31 +8,15 @@ purple="#B388FF"
 blue="#06BCE4"
 cyan="#2CF9ED"
 
-# -----------------------
-# --- fzf-tab zstyle ---
-# -----------------------
-# preview directory's content with eza when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
-zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git diff --color=always $word'
-# custom fzf flags
-# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
-# To make fzf-tab follow FZF_DEFAULT_OPTS.
-# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
-# switch group using `<` and `>`
-zstyle ':fzf-tab:*' switch-group '<' '>'
-
 # add support for Ansi for fd color
 export FZF_DEFAULT_OPTS="--ansi"
 
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
-  --margin 0,0
-  --color=fg:${fg},bg:${bg},hl:${purple}
-  --color=fg+:${fg},bg+:${bg_highlight},hl+:${purple}
-  --color=info:${blue},prompt:${cyan},pointer:${cyan}
-  --color=marker:${cyan},spinner:${cyan},header:${cyan}'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
+  --margin 0,0 \
+  --color=fg:${fg},bg:${bg},hl:${purple} \
+  --color=fg+:${fg},bg+:${bg_highlight},hl+:${purple} \
+  --color=info:${blue},prompt:${cyan},pointer:${cyan} \
+  --color=marker:${cyan},spinner:${cyan},header:${cyan}"
 
 # export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
 

@@ -32,7 +32,7 @@ bindkey -v
 # ---- Source config files ---
 # ----------------------------
 [[ -e $ZDOTDIR/history.zsh ]] && source $ZDOTDIR/history.zsh
-[[ -e $ZDOTDIR/setops.zsh ]] && source $ZDOTDIR/setops.zsh
+[[ -e $ZDOTDIR/setopt.zsh ]] && source $ZDOTDIR/setopt.zsh
 [[ -e $ZDOTDIR/zstyle.zsh ]] && source $ZDOTDIR/zstyle.zsh
 [[ -e $ZDOTDIR/aliases.zsh ]] && source $ZDOTDIR/aliases.zsh
 [[ -e $ZDOTDIR/fzf.zsh ]] && source $ZDOTDIR/fzf.zsh
@@ -72,6 +72,12 @@ fi
 # Init atuin with caching
 if (( $+commands[atuin] )); then
   cached-eval atuin 'atuin init zsh'
+fi
+
+# Init thefuck with caching
+if (( $+commands[thefuck] )); then
+  cached-eval thefuck 'thefuck --alias'
+  alias fk='fuck'  # shorter alias
 fi
 
 # -----------------------
