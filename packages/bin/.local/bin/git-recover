@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Recover a deleted branch using reflog
+# Usage: git recover <branch-name>
+#        git recover --list     - show recoverable refs
+
+set -e
+
+if [[ "$1" == "--list" ]] || [[ -z "$1" ]]; then
+    echo "Recently deleted branches (from reflog):"
+    echo "─────────────────────────────────────────"
+    git reflog | grep -E 'checkout: moving from .+ to' | \
+        sed 's/.*checkout: moving from \([^ ]*\) to.*/\1/' | \
+        sort -u | while read branch; do
+            if ! git show-ref --verify --quiet "refs/heads/$branch" 2>/dev/null; then
+                # Find the last commit for this branch
+                sha=$(git reflog | grep "checkout: moving from $branch to" | head -1 | awk '{print $1}')
+                if [[ -n "$sha" ]]; then
+                    echo "  $branch → $sha"
+                fi
+            fi
+        done
+    echo ""
+    echo "Usage: git recover <branch-name>"
+    exit 0
+fi
+
+branch="$1"
+
+# Find the commit where we left this branch
+sha=$(git reflog | grep "checkout: moving from $branch to" | head -1 | awk '{print $1}')
+
+if [[ -z "$sha" ]]; then
+    echo "❌ Could not find '$branch' in reflog"
+    echo "Run 'git recover --list' to see recoverable branches"
+    exit 1
+fi
+
+echo "🔄 Recovering '$branch' from $sha..."
+git checkout -b "$branch" "$sha"
+echo "✓ Branch '$branch' recovered"
+

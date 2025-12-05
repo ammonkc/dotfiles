@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Undo last WIP commit, keeping changes staged
+# Usage: git unwip
+
+set -e
+
+# Check if last commit is a WIP
+last_msg=$(git log -1 --pretty=%s)
+if [[ "$last_msg" != WIP:* ]]; then
+    echo "⚠️  Last commit is not a WIP commit: $last_msg"
+    read -p "Undo anyway? [y/N] " -n 1 -r
+    echo
+    [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
+fi
+
+git reset HEAD~1
+echo "✓ Undid WIP commit, changes are now unstaged"
+

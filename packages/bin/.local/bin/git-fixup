@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Create a fixup commit for a specific commit (works with autosquash)
+# Usage: git fixup <commit>     - fixup a specific commit
+#        git fixup              - use fzf to pick a commit
+# Then run: git rebase -i --autosquash <base>
+
+set -e
+
+if [[ -n "$1" ]]; then
+    target="$1"
+else
+    # Use fzf to select a commit if available
+    if command -v fzf >/dev/null 2>&1; then
+        target=$(git log --oneline -50 | fzf --height=20 --reverse | awk '{print $1}')
+        [[ -z "$target" ]] && exit 1
+    else
+        echo "Usage: git fixup <commit>"
+        echo "Or install fzf for interactive selection"
+        exit 1
+    fi
+fi
+
+git commit --fixup="$target"
+echo "✓ Created fixup commit for $target"
+echo "💡 Run 'git rebase -i --autosquash <base>' to apply"
+

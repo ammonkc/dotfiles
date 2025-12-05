@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Add patterns to .gitignore
+# Usage: git ignore <pattern> [pattern...]
+#        git ignore node_modules .env *.log
+
+set -e
+
+if [[ $# -eq 0 ]]; then
+    echo "Usage: git ignore <pattern> [pattern...]"
+    echo "Example: git ignore node_modules .env '*.log'"
+    exit 1
+fi
+
+# Find repo root
+root=$(git rev-parse --show-toplevel)
+gitignore="$root/.gitignore"
+
+for pattern in "$@"; do
+    # Check if pattern already exists
+    if grep -qxF "$pattern" "$gitignore" 2>/dev/null; then
+        echo "⚠️  '$pattern' already in .gitignore"
+    else
+        echo "$pattern" >> "$gitignore"
+        echo "✓ Added '$pattern' to .gitignore"
+    fi
+done
+

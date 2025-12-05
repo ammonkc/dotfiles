@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Show recently checked-out branches (based on reflog)
+# Usage: git recent [count]
+# Different from `git latest` which shows remote refs by committer date
+
+set -e
+
+count="${1:-10}"
+
+git reflog | \
+    grep -oE 'checkout: moving from [^ ]+ to [^ ]+' | \
+    sed 's/checkout: moving from [^ ]* to //' | \
+    grep -v '^[a-f0-9]\{7,\}$' | \
+    awk '!seen[$0]++' | \
+    head -n "$count"
+

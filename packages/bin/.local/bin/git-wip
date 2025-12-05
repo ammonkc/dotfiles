@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Quick WIP (work in progress) commit - saves everything without thinking
+# Usage: git wip [message]
+# Pairs with: git unwip
+
+set -e
+
+message="${1:-WIP}"
+
+git add -A
+git commit -m "WIP: $message" --no-verify
+echo "✓ Created WIP commit"
+

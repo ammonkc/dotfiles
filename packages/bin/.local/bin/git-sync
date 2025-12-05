@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Sync current branch with upstream (fetch + merge, not rebase)
+# Usage: git sync [remote] [branch]
+# Complements your `update` alias which does rebase
+
+set -e
+
+remote="${1:-upstream}"
+branch="${2:-$(git rev-parse --abbrev-ref HEAD)}"
+
+# Check if remote exists
+if ! git remote | grep -q "^${remote}$"; then
+    echo "❌ Remote '$remote' not found"
+    echo "Available remotes:"
+    git remote -v
+    exit 1
+fi
+
+echo "📥 Fetching from $remote..."
+git fetch "$remote"
+
+echo "🔀 Merging $remote/$branch..."
+git merge "$remote/$branch" --no-edit
+
+echo "✓ Synced with $remote/$branch"
+

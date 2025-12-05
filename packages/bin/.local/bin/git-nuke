@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Delete a branch both locally and on remote
+# Usage: git nuke <branch>
+
+set -e
+
+branch="$1"
+remote="${2:-origin}"
+
+if [[ -z "$branch" ]]; then
+    echo "Usage: git nuke <branch> [remote]"
+    echo "Deletes branch locally and on remote (default: origin)"
+    exit 1
+fi
+
+current=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$current" == "$branch" ]]; then
+    echo "❌ Cannot delete the currently checked out branch"
+    exit 1
+fi
+
+echo "🗑️  Deleting branch '$branch'..."
+
+# Delete local branch (force)
+if git show-ref --verify --quiet "refs/heads/$branch"; then
+    git branch -D "$branch"
+    echo "  ✓ Deleted local branch"
+else
+    echo "  ⚠️  Local branch doesn't exist"
+fi
+
+# Delete remote branch
+if git ls-remote --exit-code --heads "$remote" "$branch" >/dev/null 2>&1; then
+    git push "$remote" --delete "$branch"
+    echo "  ✓ Deleted remote branch on $remote"
+else
+    echo "  ⚠️  Remote branch doesn't exist on $remote"
+fi
+
+echo "✓ Done"
+

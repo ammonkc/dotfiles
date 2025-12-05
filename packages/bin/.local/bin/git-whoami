@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Show current git identity (useful when managing multiple accounts)
+# Usage: git whoami
+
+echo "User:   $(git config user.name)"
+echo "Email:  $(git config user.email)"
+
+if [[ -n "$(git config user.signingkey)" ]]; then
+    echo "Sign:   $(git config user.signingkey)"
+fi
+
+# Show if using local override
+if git config --local user.email >/dev/null 2>&1; then
+    echo ""
+    echo "📍 Using local config override for this repo"
+fi
+

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Print the root directory of the git repository
+# Usage: git root
+#        cd $(git root)
+
+git rev-parse --show-toplevel
+

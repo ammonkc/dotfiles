@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Show what you (or someone) worked on recently
+# Usage: git standup              - your commits from last working day
+#        git standup -a           - all authors
+#        git standup -d 3         - last 3 days
+#        git standup -u "John"    - specific author
+
+set -e
+
+days=1
+author=$(git config user.name)
+all_authors=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -d|--days)
+            days="$2"
+            shift 2
+            ;;
+        -u|--user)
+            author="$2"
+            shift 2
+            ;;
+        -a|--all)
+            all_authors=true
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: git standup [-d days] [-u user] [-a]"
+            echo "  -d, --days   Number of days to look back (default: 1)"
+            echo "  -u, --user   Filter by author name"
+            echo "  -a, --all    Show all authors"
+            exit 0
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+since="$days days ago"
+
+echo "📋 Commits since $since"
+echo "─────────────────────────────────────────"
+
+if [[ "$all_authors" == true ]]; then
+    git log --since="$since" --all --no-merges \
+        --pretty=format:'%C(yellow)%h%Creset %C(blue)<%an>%Creset %s %C(green)(%cr)%Creset' \
+        --date=short
+else
+    git log --since="$since" --all --no-merges \
+        --author="$author" \
+        --pretty=format:'%C(yellow)%h%Creset %s %C(green)(%cr)%Creset' \
+        --date=short
+fi
+
+echo ""
+
