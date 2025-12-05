@@ -92,9 +92,9 @@ else
 fi
 
 # ---- Network -----
-alias myip='curl ifconfig.me/ip'
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias localip="ipconfig getifaddr en1"
+alias myip='curl -s ifconfig.me/ip'
+alias pubip="dig +short myip.opendns.com @resolver1.opendns.com"  # renamed from 'ip' to avoid shadowing Linux ip command
+alias localip="ipconfig getifaddr en0"  # en0 is more common for WiFi on modern Macs
 alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
 alias whois="whois -h whois-servers.net"	# Enhanced WHOIS lookups
 alias flush="dscacheutil -flushcache"		# Flush Directory Service cache
@@ -102,25 +102,8 @@ alias flush="dscacheutil -flushcache"		# Flush Directory Service cache
 # ---- PHP -----
 alias cfresh="rm -rf vendor/ composer.lock && composer i"
 alias composer="php -d memory_limit=-1 /opt/homebrew/bin/composer"
-# determine versions of PHP installed with HomeBrew
-installedPhpVersions=($(brew ls --versions | ggrep -E 'php(@.*)?\s' | ggrep -oP '(?<=\s)\d\.\d' | uniq | sort))
-
-# create alias for every version of PHP installed with HomeBrew
-for phpVersion in ${installedPhpVersions[*]}; do
-    value="{"
-
-    for otherPhpVersion in ${installedPhpVersions[*]}; do
-        if [ "${otherPhpVersion}" = "${phpVersion}" ]; then
-            continue;
-        fi
-
-        value="${value} brew unlink php@${otherPhpVersion};"
-    done
-
-    value="${value} brew link php@${phpVersion} --force --overwrite; } &> /dev/null && php -v"
-
-    alias "php${phpVersion}"="${value}"
-done
+# PHP version switching: use `phpswitch <version>` function (autoloaded from $ZDOTDIR/functions)
+alias sphp='phpswitch'
 
 # ---- Laravel -----
 alias a="php artisan"
@@ -128,7 +111,7 @@ alias fresh="php artisan migrate:fresh --seed"
 alias tinker="php artisan tinker"
 alias seed="php artisan db:seed"
 alias serve="php artisan serve"
-alias artest="php -d xdebug.mode="off" -d memory_limit=-1 -d max_execution_time=0 artisan test --parallel -vvv"
+alias artest='php -d xdebug.mode=off -d memory_limit=-1 -d max_execution_time=0 artisan test --parallel -vvv'
 
 # ---- Docker -----
 alias docker-composer="docker compose"

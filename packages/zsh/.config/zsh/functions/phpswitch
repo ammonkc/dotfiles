@@ -1,0 +1,32 @@
+# Switch between PHP versions installed via Homebrew
+# Usage: phpswitch          - list installed versions
+#        phpswitch 8.3      - switch to PHP 8.3
+local target_version="$1"
+
+# Check if brew is available
+(( $+commands[brew] )) || { echo "Homebrew is required"; return 1; }
+
+# Get installed PHP versions
+local -a installed_versions
+installed_versions=($(brew ls --versions 2>/dev/null | grep -E '^php(@[0-9.]+)?\s' | sed -E 's/^php(@([0-9.]+))?.*/\2/' | grep -v '^$' | sort -u))
+
+if [[ -z "$target_version" ]]; then
+    echo "Installed PHP versions: ${installed_versions[*]}"
+    echo "Current: $(php -v 2>/dev/null | head -1 || echo 'none')"
+    return 0
+fi
+
+# Check if target version is installed
+if [[ ! " ${installed_versions[*]} " =~ " ${target_version} " ]]; then
+    echo "PHP $target_version is not installed"
+    echo "Available: ${installed_versions[*]}"
+    return 1
+fi
+
+# Unlink all PHP versions and link the target
+for v in "${installed_versions[@]}"; do
+    brew unlink "php@$v" 2>/dev/null
+done
+
+brew link "php@$target_version" --force --overwrite 2>/dev/null && php -v
+

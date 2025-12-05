@@ -5,7 +5,10 @@ export EDITOR="${EDITOR:-nvim}"
 export VISUAL="${VISUAL:-nvim}"
 export PAGER="${PAGER:-less}"
 
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+# Use bat for man pages if available (prettier output)
+if (( $+commands[bat] )); then
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+fi
 
 # Locale
 export LC_ALL=en_US.UTF-8
