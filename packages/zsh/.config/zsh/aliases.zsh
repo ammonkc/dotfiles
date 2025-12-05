@@ -133,6 +133,7 @@ alias dot='dotfiles'
 # Alias to clear cached-eval caches (uses function defined in functions/clear-cached-eval)
 alias clear-zsh-cache='clear-cached-eval'
 alias reloadshell="source $ZDOTDIR/.zshrc"
+alias reload-aliases='source $ZDOTDIR/aliases.zsh'
 alias shrug="echo '¯\_(ツ)_/¯' | pbcopy"
 
 # ---- Git -----

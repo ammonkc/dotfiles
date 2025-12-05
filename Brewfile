@@ -34,6 +34,7 @@ brew 'htop'                         # Improved top (interactive process viewer)
 brew 'httpie'                       # User-friendly cURL replacement (command-line HTTP client)
 brew 'jpegoptim'                    # Utility to optimize JPEG files
 brew 'jq'                           # Lightweight and flexible command-line JSON processor
+brew 'keychain'                     # User-friendly front-end to ssh-agent(1)
 brew 'lazydocker'                   # Lazier way to manage everything docker
 brew 'lazygit'                      # Simple terminal UI for git commands
 brew 'midnight-commander'           # Terminal-based visual file manager
