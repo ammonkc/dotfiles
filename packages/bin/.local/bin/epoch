@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Convert between epoch timestamps and human-readable dates
+# Usage: epoch              - show current epoch
+#        epoch 1701806400   - convert epoch to date
+#        epoch "2023-12-05" - convert date to epoch
+
+if [[ -z "$1" ]]; then
+    # Show current epoch
+    echo "Current epoch: $(date +%s)"
+    echo "Current time:  $(date)"
+elif [[ "$1" =~ ^[0-9]+$ ]]; then
+    # Convert epoch to date
+    if [[ "$OSTYPE" == darwin* ]]; then
+        date -r "$1"
+    else
+        date -d "@$1"
+    fi
+else
+    # Convert date string to epoch
+    if [[ "$OSTYPE" == darwin* ]]; then
+        date -j -f "%Y-%m-%d" "$1" "+%s" 2>/dev/null || \
+        date -j -f "%Y-%m-%d %H:%M:%S" "$1" "+%s" 2>/dev/null || \
+        echo "Could not parse date. Try: YYYY-MM-DD or 'YYYY-MM-DD HH:MM:SS'"
+    else
+        date -d "$1" +%s
+    fi
+fi
+

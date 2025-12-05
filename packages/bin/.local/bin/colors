@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Display terminal color palette
+# Useful for testing themes and terminal configurations
+# Usage: colors
+
+# Basic 16 colors
+echo "Basic 16 colors:"
+for i in {0..15}; do
+    printf "\e[48;5;${i}m  %3s  \e[0m" "$i"
+    [[ $((($i + 1) % 8)) -eq 0 ]] && echo
+done
+echo
+
+# 256 colors
+echo "256 colors:"
+for i in {0..255}; do
+    printf "\e[48;5;${i}m %3s \e[0m" "$i"
+    [[ $((($i + 1) % 16)) -eq 0 ]] && echo
+done
+echo
+
+# True color gradient (if supported)
+echo "True color gradient (24-bit):"
+awk 'BEGIN{
+    for (i = 0; i < 77; i++) {
+        r = 255 - (i * 255 / 76);
+        g = (i * 510 / 76);
+        b = (i * 255 / 76);
+        if (g > 255) g = 510 - g;
+        printf "\033[48;2;%d;%d;%dm \033[0m", r, g, b;
+    }
+    print "";
+}'
+

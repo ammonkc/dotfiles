@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Show PATH entries one per line, with optional duplicate detection
+# Usage: path-list
+#        path-list --check   (highlight duplicates and missing)
+
+check=false
+[[ "$1" == "--check" ]] && check=true
+
+if [[ "$check" == true ]]; then
+    declare -A seen
+    echo "$PATH" | tr ':' '\n' | while read -r dir; do
+        if [[ -z "$dir" ]]; then
+            continue
+        elif [[ ! -d "$dir" ]]; then
+            echo -e "\033[31m✗ $dir (missing)\033[0m"
+        elif [[ -n "${seen[$dir]}" ]]; then
+            echo -e "\033[33m⚠ $dir (duplicate)\033[0m"
+        else
+            echo -e "\033[32m✓ $dir\033[0m"
+        fi
+        seen[$dir]=1
+    done
+else
+    echo "$PATH" | tr ':' '\n' | nl
+fi
+

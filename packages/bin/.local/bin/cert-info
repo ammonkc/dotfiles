@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Show SSL certificate information for a domain
+# Usage: cert-info example.com
+#        cert-info example.com:8443
+
+set -e
+
+if [[ -z "$1" ]]; then
+    echo "Usage: cert-info <domain[:port]>"
+    exit 1
+fi
+
+domain="$1"
+port=443
+
+# Extract port if specified
+if [[ "$domain" == *:* ]]; then
+    port="${domain##*:}"
+    domain="${domain%:*}"
+fi
+
+echo "🔐 Certificate info for $domain:$port"
+echo "───────────────────────────────────────"
+
+echo | openssl s_client -servername "$domain" -connect "$domain:$port" 2>/dev/null | \
+    openssl x509 -noout -subject -issuer -dates -fingerprint -ext subjectAltName 2>/dev/null | \
+    sed 's/^/  /'
+
+echo ""
+echo "📅 Expiration check:"
+expiry=$(echo | openssl s_client -servername "$domain" -connect "$domain:$port" 2>/dev/null | \
+    openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
+
+if [[ -n "$expiry" ]]; then
+    expiry_epoch=$(date -j -f "%b %d %T %Y %Z" "$expiry" "+%s" 2>/dev/null || date -d "$expiry" +%s 2>/dev/null)
+    now_epoch=$(date +%s)
+    days_left=$(( (expiry_epoch - now_epoch) / 86400 ))
+
+    if [[ $days_left -lt 0 ]]; then
+        echo "  ❌ EXPIRED $((-days_left)) days ago"
+    elif [[ $days_left -lt 30 ]]; then
+        echo "  ⚠️  Expires in $days_left days"
+    else
+        echo "  ✅ Expires in $days_left days"
+    fi
+fi
+

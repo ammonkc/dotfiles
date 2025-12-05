@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Open a man page as a PDF in Preview (macOS)
+# Usage: manpdf git
+#        manpdf grep
+
+if [[ "$OSTYPE" != darwin* ]]; then
+    echo "This script only works on macOS"
+    exit 1
+fi
+
+if [[ -z "$1" ]]; then
+    echo "Usage: manpdf <command>"
+    exit 1
+fi
+
+cmd="$1"
+tmpfile="/tmp/man-$cmd.pdf"
+
+if ! man -w "$cmd" >/dev/null 2>&1; then
+    echo "No manual entry for $cmd"
+    exit 1
+fi
+
+man -t "$cmd" | pstopdf -i -o "$tmpfile"
+open "$tmpfile"
+

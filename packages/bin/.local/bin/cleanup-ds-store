@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Remove all .DS_Store files recursively
+# Usage: cleanup-ds-store [directory]
+
+set -e
+
+target="${1:-.}"
+
+echo "🔍 Finding .DS_Store files in $target..."
+
+count=$(find "$target" -name ".DS_Store" -type f 2>/dev/null | wc -l | tr -d ' ')
+
+if [[ "$count" -eq 0 ]]; then
+    echo "✓ No .DS_Store files found"
+    exit 0
+fi
+
+echo "Found $count .DS_Store file(s)"
+read -p "Delete them? [y/N] " -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    find "$target" -name ".DS_Store" -type f -delete
+    echo "✓ Deleted $count .DS_Store file(s)"
+else
+    echo "Cancelled"
+fi
+

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Copy SSH public key to clipboard
+# Usage: ssh-key-copy           - copy default key (id_ed25519 or id_rsa)
+#        ssh-key-copy id_work   - copy specific key
+
+set -e
+
+key_name="${1:-}"
+ssh_dir="$HOME/.ssh"
+
+# Find the key to copy
+if [[ -n "$key_name" ]]; then
+    key_file="$ssh_dir/${key_name}.pub"
+elif [[ -f "$ssh_dir/id_ed25519.pub" ]]; then
+    key_file="$ssh_dir/id_ed25519.pub"
+elif [[ -f "$ssh_dir/id_rsa.pub" ]]; then
+    key_file="$ssh_dir/id_rsa.pub"
+else
+    echo "No SSH public key found"
+    echo "Available keys:"
+    ls -1 "$ssh_dir"/*.pub 2>/dev/null | xargs -I{} basename {} .pub || echo "  (none)"
+    exit 1
+fi
+
+if [[ ! -f "$key_file" ]]; then
+    echo "Key not found: $key_file"
+    exit 1
+fi
+
+# Copy to clipboard
+if command -v pbcopy >/dev/null 2>&1; then
+    cat "$key_file" | pbcopy
+elif command -v xclip >/dev/null 2>&1; then
+    cat "$key_file" | xclip -selection clipboard
+elif command -v xsel >/dev/null 2>&1; then
+    cat "$key_file" | xsel --clipboard
+else
+    echo "No clipboard tool found. Here's the key:"
+    cat "$key_file"
+    exit 0
+fi
+
+echo "✓ Copied to clipboard: $key_file"
+echo ""
+echo "Key fingerprint:"
+ssh-keygen -lf "$key_file"
+

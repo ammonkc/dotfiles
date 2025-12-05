@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Send a macOS notification from the command line
+# Usage: notify "Title" "Message"
+#        notify "Build complete"
+#        long-command; notify "Done" "Command finished"
+
+if [[ "$OSTYPE" != darwin* ]]; then
+    echo "This script only works on macOS"
+    exit 1
+fi
+
+title="${1:-Notification}"
+message="${2:-}"
+sound="${3:-default}"
+
+if [[ -z "$message" ]]; then
+    message="$title"
+    title="Terminal"
+fi
+
+osascript -e "display notification \"$message\" with title \"$title\" sound name \"$sound\""
+

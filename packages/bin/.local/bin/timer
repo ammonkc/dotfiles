@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Simple countdown timer with optional notification
+# Usage: timer 5m          - 5 minutes
+#        timer 1h30m       - 1 hour 30 minutes
+#        timer 90s         - 90 seconds
+#        timer 25m "Break" - with custom message
+
+set -e
+
+parse_duration() {
+    local input="$1"
+    local total=0
+
+    # Extract hours, minutes, seconds
+    if [[ "$input" =~ ([0-9]+)h ]]; then
+        total=$((total + ${BASH_REMATCH[1]} * 3600))
+    fi
+    if [[ "$input" =~ ([0-9]+)m ]]; then
+        total=$((total + ${BASH_REMATCH[1]} * 60))
+    fi
+    if [[ "$input" =~ ([0-9]+)s ]]; then
+        total=$((total + ${BASH_REMATCH[1]}))
+    fi
+
+    # If just a number, assume minutes
+    if [[ "$input" =~ ^[0-9]+$ ]]; then
+        total=$((input * 60))
+    fi
+
+    echo "$total"
+}
+
+if [[ -z "$1" ]]; then
+    echo "Usage: timer <duration> [message]"
+    echo "Examples: timer 5m, timer 1h30m, timer 90s"
+    exit 1
+fi
+
+duration=$(parse_duration "$1")
+message="${2:-Timer complete!}"
+
+if [[ "$duration" -eq 0 ]]; then
+    echo "Could not parse duration: $1"
+    exit 1
+fi
+
+echo "⏱️  Timer set for $1 ($duration seconds)"
+echo "Press Ctrl+C to cancel"
+echo ""
+
+while [[ $duration -gt 0 ]]; do
+    mins=$((duration / 60))
+    secs=$((duration % 60))
+    printf "\r   %02d:%02d remaining " "$mins" "$secs"
+    sleep 1
+    ((duration--))
+done
+
+echo ""
+echo "🔔 $message"
+
+# Send notification on macOS
+if [[ "$OSTYPE" == darwin* ]]; then
+    osascript -e "display notification \"$message\" with title \"Timer\" sound name \"Glass\""
+fi
+

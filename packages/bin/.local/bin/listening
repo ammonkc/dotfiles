@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Show all listening ports with process info
+# Usage: listening
+#        listening | grep 3000
+
+if [[ "$OSTYPE" == darwin* ]]; then
+    echo "Proto  Local Address          PID/Program"
+    echo "─────────────────────────────────────────────────────"
+    lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | tail -n +2 | \
+        awk '{printf "%-6s %-22s %s/%s\n", "tcp", $9, $2, $1}'
+else
+    # Linux
+    ss -tlnp 2>/dev/null || netstat -tlnp 2>/dev/null
+fi
+

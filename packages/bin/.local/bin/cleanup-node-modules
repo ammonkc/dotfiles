@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# Find node_modules directories and their sizes, optionally delete old ones
+# Usage: cleanup-node-modules [directory]
+#        cleanup-node-modules ~/Developer
+
+set -e
+
+target="${1:-$HOME}"
+
+echo "🔍 Searching for node_modules in $target..."
+echo "   (this may take a while)"
+echo ""
+
+# Find all node_modules and calculate sizes
+found=$(find "$target" -name "node_modules" -type d -prune 2>/dev/null)
+
+if [[ -z "$found" ]]; then
+    echo "✓ No node_modules directories found"
+    exit 0
+fi
+
+total_size=0
+declare -a dirs
+
+echo "Found node_modules:"
+echo "───────────────────────────────────────"
+
+while IFS= read -r dir; do
+    size=$(du -sh "$dir" 2>/dev/null | cut -f1)
+    size_bytes=$(du -s "$dir" 2>/dev/null | cut -f1)
+    parent=$(dirname "$dir")
+
+    # Check last modified time of package.json
+    pkg_json="$parent/package.json"
+    if [[ -f "$pkg_json" ]]; then
+        if [[ "$OSTYPE" == darwin* ]]; then
+            modified=$(stat -f "%Sm" -t "%Y-%m-%d" "$pkg_json")
+        else
+            modified=$(stat -c "%y" "$pkg_json" | cut -d' ' -f1)
+        fi
+    else
+        modified="unknown"
+    fi
+
+    printf "%8s  %-12s  %s\n" "$size" "($modified)" "$dir"
+    dirs+=("$dir")
+    total_size=$((total_size + size_bytes))
+done <<< "$found"
+
+# Convert total to human readable
+if [[ "$OSTYPE" == darwin* ]]; then
+    total_human=$(echo "$total_size" | awk '{printf "%.1f GB", $1/1024/1024}')
+else
+    total_human=$(numfmt --to=iec $((total_size * 1024)) 2>/dev/null || echo "${total_size}K")
+fi
+
+echo "───────────────────────────────────────"
+echo "Total: $total_human in ${#dirs[@]} directories"
+echo ""
+
+read -p "Delete all? [y/N] " -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    for dir in "${dirs[@]}"; do
+        echo "Deleting $dir..."
+        rm -rf "$dir"
+    done
+    echo "✓ Freed $total_human"
+else
+    echo "Cancelled"
+fi
+

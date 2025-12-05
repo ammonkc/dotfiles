@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# URL decode a string
+# Usage: urldecode "hello%20world"
+#        echo "hello%20world" | urldecode
+
+if [[ -n "$1" ]]; then
+    input="$1"
+else
+    input=$(cat)
+fi
+
+python3 -c "import urllib.parse; print(urllib.parse.unquote('''$input'''))"
+
