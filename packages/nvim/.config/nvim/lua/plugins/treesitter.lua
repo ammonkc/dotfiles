@@ -1,50 +1,45 @@
 -- add more treesitter parsers
 return {
-  "nvim-treesitter/nvim-treesitter",
-  build = function()
-    require("nvim-treesitter.install").update({ with_sync = true })
-  end,
-  dependencies = {
-    {
-      "JoosepAlviste/nvim-ts-context-commentstring",
-      opts = {
-        custom_calculation = function(_, language_tree)
-          if vim.bo.filetype == "blade" and language_tree._lang ~= "javascript" and language_tree._lang ~= "php" then
-            return "{{-- %s --}}"
-          end
-        end,
-      },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter-textobjects",
     },
-    "nvim-treesitter/nvim-treesitter-textobjects",
-  },
-  opts = {
-    ensure_installed = "all",
-    auto_install = true,
-    highlight = {
-      enable = true,
-    },
-    -- Needed because treesitter highlight turns off autoindent for php files
-    indent = {
-      enable = true,
-    },
-  },
-  config = function(_, opts)
-    ---@class ParserInfo[]
-    local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-    parser_config.blade = {
-      install_info = {
-        url = "https://github.com/EmranMR/tree-sitter-blade",
-        files = {
-          "src/parser.c",
-          -- 'src/scanner.cc',
+    opts = function(_, opts)
+      -- Register blade filetype
+      vim.filetype.add({
+        pattern = {
+          [".*%.blade%.php"] = "blade",
         },
-        branch = "main",
-        generate_requires_npm = true,
-        requires_generate_from_grammar = true,
-      },
-      filetype = "blade",
-    }
+      })
 
-    require("nvim-treesitter.configs").setup(opts)
-  end,
+      -- Register blade parser (new API)
+      local parser_config = require("nvim-treesitter.parsers")
+      if parser_config.blade == nil then
+        vim.treesitter.language.register("blade", "blade")
+      end
+
+      -- Merge ensure_installed
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, {
+        "php",
+        "php_only",
+      })
+
+      opts.auto_install = true
+      opts.highlight = { enable = true }
+      opts.indent = { enable = true }
+    end,
+  },
+  -- ts-context-commentstring for blade support
+  {
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    opts = {
+      custom_calculation = function(_, language_tree)
+        if vim.bo.filetype == "blade" and language_tree._lang ~= "javascript" and language_tree._lang ~= "php" then
+          return "{{-- %s --}}"
+        end
+      end,
+    },
+  },
 }

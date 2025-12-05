@@ -1,25 +1,45 @@
 return {
+  -- Laravel.nvim for artisan commands, route list, etc.
   {
-    -- Add the Laravel.nvim plugin which gives the ability to run Artisan commands
-    -- from Neovim.
     "adalessa/laravel.nvim",
     dependencies = {
-      "nvim-telescope/telescope.nvim",
       "tpope/vim-dotenv",
+      "nvim-telescope/telescope.nvim",
       "MunifTanjim/nui.nvim",
-      "nvimtools/none-ls.nvim",
+      "kevinhwang91/promise-async",
     },
-    cmd = { "Sail", "Artisan", "Composer", "Npm", "Yarn", "Laravel" },
+    cmd = { "Laravel" },
     keys = {
-      { "<leader>la", ":Laravel artisan<cr>" },
-      { "<leader>lr", ":Laravel routes<cr>" },
-      { "<leader>lm", ":Laravel related<cr>" },
+      { "<leader>la", ":Laravel artisan<cr>", desc = "Laravel Artisan" },
+      { "<leader>lr", ":Laravel routes<cr>", desc = "Laravel Routes" },
+      { "<leader>lm", ":Laravel related<cr>", desc = "Laravel Related Files" },
     },
     event = { "VeryLazy" },
+    opts = {},
     config = true,
-    opts = {
-      lsp_server = "intelephense",
-      features = { null_ls = { enable = false } },
+  },
+  -- Neotest for running PHPUnit/Pest tests
+  {
+    "nvim-neotest/neotest",
+    optional = true,
+    dependencies = {
+      "V13Axel/neotest-pest",
+      "olimorris/neotest-phpunit",
     },
-  }
+    opts = {
+      adapters = {
+        ["neotest-pest"] = {
+          pest_cmd = function()
+            return "vendor/bin/pest"
+          end,
+        },
+        ["neotest-phpunit"] = {
+          phpunit_cmd = function()
+            return "vendor/bin/phpunit"
+          end,
+        },
+      },
+    },
+  },
 }
+

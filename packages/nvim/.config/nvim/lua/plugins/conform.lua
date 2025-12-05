@@ -13,40 +13,47 @@ return {
       formatters_by_ft = {
         lua = { "stylua" },
         fish = { "fish_indent" },
+        -- Shell scripting
         sh = { "shfmt" },
-        php = { { "pint", "php_cs_fixer" } },
+        bash = { "shfmt" },
+        zsh = { "shfmt" },
+        -- PHP/Laravel
+        php = { "pint" },
         blade = { "blade-formatter", "rustywind" },
+        -- Python
         python = { "black" },
+        -- JavaScript/TypeScript
         javascript = { "prettierd" },
-        -- rust = { "rustfmt" },
+        typescript = { "prettierd" },
+        javascriptreact = { "prettierd" },
+        typescriptreact = { "prettierd" },
+        vue = { "prettierd" },
+        -- Misc
+        json = { "prettierd" },
+        yaml = { "prettierd" },
+        markdown = { "prettierd" },
       },
       -- LazyVim will merge the options you set here with builtin formatters.
       -- You can also define any custom formatters here.
       ---@type table<string, conform.FormatterConfigOverride|fun(bufnr: integer): nil|conform.FormatterConfigOverride>
       formatters = {
         injected = { options = { ignore_errors = true } },
-        -- # Example of using dprint only when a dprint.json file is present
-        -- dprint = {
-        --   condition = function(ctx)
-        --     return vim.fs.find({ "dprint.json" }, { path = ctx.filename, upward = true })[1]
-        --   end,
-        -- },
-        --
-        -- # Example of using shfmt with extra args
-        -- shfmt = {
-        --   extra_args = { "-i", "2", "-ci" },
-        -- },
+        -- Laravel Pint - prefers local vendor version
         pint = {
           meta = {
             url = "https://github.com/laravel/pint",
-            description = "Laravel Pint is an opinionated PHP code style fixer for minimalists. Pint is built on top of PHP-CS-Fixer and makes it simple to ensure that your code style stays clean and consistent.",
+            description = "Laravel Pint is an opinionated PHP code style fixer for minimalists.",
           },
           command = util.find_executable({
-            vim.fn.stdpath("data") .. "/mason/bin/pint",
             "vendor/bin/pint",
+            vim.fn.stdpath("data") .. "/mason/bin/pint",
           }, "pint"),
           args = { "$FILENAME" },
           stdin = false,
+        },
+        -- shfmt with sensible defaults for shell scripts
+        shfmt = {
+          prepend_args = { "-i", "2", "-ci", "-bn" },
         },
       },
     }
