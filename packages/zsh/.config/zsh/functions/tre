@@ -1,0 +1,16 @@
+# Better tree with sensible defaults
+# Respects .gitignore and excludes common noise directories
+# Usage: tre [path] [depth]
+local target="${1:-.}"
+local depth="${2:-3}"
+
+if (( $+commands[eza] )); then
+    eza --tree --level="$depth" --icons --git-ignore \
+        --ignore-glob=".git|node_modules|vendor|.cache|__pycache__|.venv" "$target"
+elif (( $+commands[tree] )); then
+    tree -C -L "$depth" -I ".git|node_modules|vendor|.cache|__pycache__|.venv" "$target"
+else
+    echo "Neither eza nor tree is installed"
+    return 1
+fi
+

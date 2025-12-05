@@ -1,0 +1,19 @@
+# Kill process running on a specific port
+# Usage: killport <port>
+local port="$1"
+
+if [[ -z "$port" ]]; then
+    echo "Usage: killport <port>"
+    return 1
+fi
+
+local pid=$(lsof -ti :"$port" 2>/dev/null)
+
+if [[ -z "$pid" ]]; then
+    echo "No process found on port $port"
+    return 1
+fi
+
+echo "Killing process(es) on port $port: $pid"
+echo "$pid" | xargs kill -9
+

@@ -1,0 +1,10 @@
+# Show weather in terminal
+# Usage: weather [location]
+local location="${1:-}"
+
+if [[ -n "$location" ]]; then
+    curl -s "wttr.in/${location}?format=3"
+else
+    curl -s "wttr.in?format=3"
+fi
+

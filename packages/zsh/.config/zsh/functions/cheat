@@ -1,0 +1,14 @@
+# Query cheat.sh for quick command reference
+# Usage: cheat <topic> or cheat <language>/<topic>
+# Examples: cheat tar, cheat php/array, cheat git~log
+if [[ $# -eq 0 ]]; then
+    echo "Usage: cheat <topic>"
+    echo "Examples:"
+    echo "  cheat tar"
+    echo "  cheat php/array"
+    echo "  cheat git~log"
+    return 1
+fi
+
+curl -s "cheat.sh/$*"
+

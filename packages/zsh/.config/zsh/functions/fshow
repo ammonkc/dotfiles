@@ -1,0 +1,16 @@
+# Browse git commit history with fzf
+# Usage: fshow
+(( $+commands[fzf] )) || { echo "fzf is required"; return 1; }
+(( $+commands[git] )) || { echo "git is required"; return 1; }
+
+git rev-parse HEAD > /dev/null 2>&1 || { echo "Not a git repository"; return 1; }
+
+git log --graph --color=always \
+    --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+fzf --ansi --no-sort --reverse --tiebreak=index \
+    --bind "ctrl-m:execute:
+        (grep -o '[a-f0-9]\{7\}' | head -1 |
+        xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
+        {}
+FZF-EOF"
+

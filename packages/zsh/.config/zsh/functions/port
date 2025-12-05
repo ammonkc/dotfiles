@@ -1,0 +1,11 @@
+# Show what's running on a specific port
+# Usage: port <port> or port (lists all)
+local port="$1"
+
+if [[ -z "$port" ]]; then
+    # List all listening ports
+    lsof -iTCP -sTCP:LISTEN -P -n
+else
+    lsof -i :"$port" -P -n
+fi
+

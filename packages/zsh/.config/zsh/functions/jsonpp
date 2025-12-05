@@ -1,0 +1,19 @@
+# Pretty print JSON with syntax highlighting
+# Usage: jsonpp <file> or echo '{}' | jsonpp
+if (( $+commands[jq] )); then
+    if [[ -n "$1" ]]; then
+        jq '.' "$1"
+    else
+        jq '.'
+    fi
+elif (( $+commands[python3] )); then
+    if [[ -n "$1" ]]; then
+        python3 -m json.tool "$1"
+    else
+        python3 -m json.tool
+    fi
+else
+    echo "Neither jq nor python3 is installed"
+    return 1
+fi
+

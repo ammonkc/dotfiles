@@ -1,0 +1,20 @@
+# Create a timestamped backup of a file or directory
+# Usage: backup <file>
+local target="$1"
+
+if [[ -z "$target" ]]; then
+    echo "Usage: backup <file|directory>"
+    return 1
+fi
+
+if [[ ! -e "$target" ]]; then
+    echo "backup: '$target' does not exist"
+    return 1
+fi
+
+local timestamp=$(date +%Y%m%d_%H%M%S)
+local backup_name="${target}.backup_${timestamp}"
+
+cp -a "$target" "$backup_name"
+echo "Created backup: $backup_name"
+

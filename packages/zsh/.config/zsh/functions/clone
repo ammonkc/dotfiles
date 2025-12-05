@@ -1,0 +1,22 @@
+# Clone a git repo and cd into it
+# Usage: clone <url> [directory]
+# Supports: full URL, github shorthand (user/repo), or org/repo
+local url="$1"
+local dir="$2"
+
+if [[ -z "$url" ]]; then
+    echo "Usage: clone <url|user/repo> [directory]"
+    return 1
+fi
+
+# Handle GitHub shorthand (user/repo or org/repo)
+if [[ "$url" =~ ^[^/:]+/[^/:]+$ ]]; then
+    url="https://github.com/${url}.git"
+fi
+
+if [[ -n "$dir" ]]; then
+    git clone "$url" "$dir" && cd "$dir"
+else
+    git clone "$url" && cd "$(basename "$url" .git)"
+fi
+

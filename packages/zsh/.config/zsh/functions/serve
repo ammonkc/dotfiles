@@ -1,0 +1,18 @@
+# Start a simple HTTP server in the current directory
+# Usage: serve [port]
+local port="${1:-8000}"
+
+echo "Serving on http://localhost:$port"
+echo "Press Ctrl+C to stop"
+
+if (( $+commands[python3] )); then
+    python3 -m http.server "$port"
+elif (( $+commands[python] )); then
+    python -m SimpleHTTPServer "$port"
+elif (( $+commands[php] )); then
+    php -S "localhost:$port"
+else
+    echo "No suitable server found (python3, python, or php)"
+    return 1
+fi
+

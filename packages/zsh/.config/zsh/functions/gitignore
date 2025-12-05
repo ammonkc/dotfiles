@@ -1,0 +1,17 @@
+# Generate .gitignore from gitignore.io
+# Usage: gitignore python node macos >> .gitignore
+# Usage: gitignore list (shows all available templates)
+local api="https://www.toptal.com/developers/gitignore/api"
+
+if [[ $# -eq 0 ]]; then
+    echo "Usage: gitignore <template> [template...] or gitignore list"
+    echo "Example: gitignore python node macos >> .gitignore"
+    return 1
+fi
+
+if [[ "$1" == "list" ]]; then
+    curl -sL "${api}/list" | tr ',' '\n'
+else
+    curl -sL "${api}/$*"
+fi
+

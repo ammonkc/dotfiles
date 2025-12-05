@@ -1,0 +1,11 @@
+# Git diff with syntax highlighting
+# Usage: diff-so-fancy [git diff args]
+# Falls back to regular diff if delta/diff-so-fancy not installed
+if (( $+commands[delta] )); then
+    git diff "$@" | delta
+elif (( $+commands[diff-so-fancy] )); then
+    git diff "$@" | diff-so-fancy
+else
+    git diff --color "$@"
+fi
+

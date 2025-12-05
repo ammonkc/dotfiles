@@ -1,0 +1,34 @@
+# Decode a JWT token (header + payload, not signature)
+# Usage: jwt <token> or echo <token> | jwt
+local token
+
+if [[ -n "$1" ]]; then
+    token="$1"
+elif [[ ! -t 0 ]]; then
+    token=$(cat)
+else
+    echo "Usage: jwt <token> or echo <token> | jwt"
+    return 1
+fi
+
+# Remove 'Bearer ' prefix if present
+token="${token#Bearer }"
+
+# Split and decode
+local header=$(echo -n "$token" | cut -d. -f1 | base64 -d 2>/dev/null)
+local payload=$(echo -n "$token" | cut -d. -f2 | base64 -d 2>/dev/null)
+
+echo "=== Header ==="
+if (( $+commands[jq] )); then
+    echo "$header" | jq .
+else
+    echo "$header"
+fi
+
+echo "\n=== Payload ==="
+if (( $+commands[jq] )); then
+    echo "$payload" | jq .
+else
+    echo "$payload"
+fi
+

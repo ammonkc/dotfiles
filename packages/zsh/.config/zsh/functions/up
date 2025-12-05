@@ -1,0 +1,11 @@
+# Go up N directories
+# Usage: up [n]  (default: 1)
+local levels="${1:-1}"
+local path=""
+
+for ((i = 0; i < levels; i++)); do
+    path+="../"
+done
+
+cd "$path" || return 1
+
