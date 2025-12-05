@@ -62,6 +62,7 @@ tasks:
     cmds:
       - task: system:install
       - task: mise:install
+      - task: nvim:restore
 
   doctor:
     desc: Run comprehensive health checks on your dotfiles setup
