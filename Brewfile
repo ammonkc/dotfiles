@@ -8,6 +8,7 @@ brew 'atuin'                        # Improved shell history for zsh, bash, fish
 brew 'awscli'                       # Official Amazon AWS command-line interface
 brew 'bash'                         # Latest Bash version
 brew 'bat'                          # Clone of cat(1) with syntax highlighting and Git integration
+brew 'btop'                         # Resource monitor. C++ version and continuation of bashtop and bpytop
 brew 'colima'                       # Container runtimes on MacOS (and Linux) with minimal setup
 brew 'curl'                         # Get a file from an HTTP, HTTPS or FTP server
 brew 'curlie'                       # Power of curl, ease of use of httpie
