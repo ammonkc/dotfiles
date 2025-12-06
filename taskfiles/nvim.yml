@@ -4,6 +4,14 @@ version: 3
 vars:
   LAZY_LOCK: '${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lazy-lock.json'
   LAZY_LOCK_REPO: 'packages/nvim/.config/nvim/lazy-lock.json'
+  # Homebrew prefix (needed for fresh installs where PATH isn't updated yet)
+  BREW_PREFIX:
+    sh: |
+      if [[ $(uname -m) == "arm64" ]]; then
+        echo "/opt/homebrew"
+      else
+        echo "/usr/local"
+      fi
 
 tasks:
   # ============================================================================
@@ -24,7 +32,7 @@ tasks:
       LAST_RESTORE_HASH:
         sh: test -f "{{.NVIM_DATA}}/.lazy-restore-hash" && cat "{{.NVIM_DATA}}/.lazy-restore-hash" || echo ""
     preconditions:
-      - sh: command -v nvim >/dev/null 2>&1
+      - sh: command -v nvim >/dev/null 2>&1 || test -x "{{.BREW_PREFIX}}/bin/nvim"
         msg: "Neovim is not installed. Run 'brew install neovim' first"
       - sh: test -f "{{.LAZY_LOCK}}"
         msg: "lazy-lock.json not found at {{.LAZY_LOCK}}"
@@ -32,36 +40,24 @@ tasks:
       # Skip if lazy-lock.json hasn't changed since last restore
       - test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}"
     cmds:
-      - echo "📦 Installing Neovim plugins (this may take a few minutes)..."
-      # Ensure lazy.nvim is installed first
       - |
+        export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
         LAZY_PATH="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim"
-        if [[ ! -d "$LAZY_PATH" ]]; then
-          echo "  → Bootstrapping lazy.nvim..."
-          git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
-        fi
-      # Step 1: Restore plugins from lock file (plugins not loaded yet)
-      - |
-        echo "  → Restoring plugins from lazy-lock.json..."
+        [[ ! -d "$LAZY_PATH" ]] && git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
+
+        # Restore plugins, clean, install TreeSitter parsers
         nvim --headless +'Lazy! restore' +'qa' 2>&1 || true
-      # Step 2: Clean unused plugins
-      - |
-        echo "  → Cleaning unused plugins..."
         nvim --headless +'Lazy! clean' +'qa' 2>&1 || true
-      # Step 3: Update TreeSitter parsers (plugins now loaded)
-      - |
-        echo "  → Installing TreeSitter parsers..."
         timeout 120 nvim --headless +'TSUpdateSync' +'qa' 2>&1 || true
-      # Step 4: Install Mason packages via mason-tool-installer
-      # First run may not have the plugin yet, so we check and skip if needed
-      - |
-        echo "  → Installing Mason packages (this may take a while)..."
+
+        # Install Mason packages (first run may not have the plugin yet)
         timeout 300 nvim --headless \
-          +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsInstall") else print("mason-tool-installer not yet installed, skipping...") vim.cmd("qa") end' \
+          +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsInstall") else vim.cmd("qa") end' \
           2>&1 || true
-      - mkdir -p "{{.NVIM_DATA}}"
-      - echo "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
-      - echo "✓ Neovim plugins installed"
+
+        mkdir -p "{{.NVIM_DATA}}"
+        echo "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
+        echo "✓ Neovim plugins installed"
 
   update:
     desc: Update Neovim plugins, CLI utils, and TreeSitter
@@ -72,25 +68,15 @@ tasks:
       - sh: command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
     cmds:
-      - echo "📦 Updating Neovim plugins..."
-      # Step 1: Sync plugins (update to latest)
       - |
-        echo "  → Syncing plugins..."
+        echo "📦 Updating Neovim plugins..."
         nvim --headless +'Lazy! sync' +'qa' 2>&1 || true
-      # Step 2: Clean unused plugins
-      - |
-        echo "  → Cleaning unused plugins..."
         nvim --headless +'Lazy! clean' +'qa' 2>&1 || true
-      # Step 3: Update TreeSitter parsers
-      - |
-        echo "  → Updating TreeSitter parsers..."
         timeout 120 nvim --headless +'TSUpdateSync' +'qa' 2>&1 || true
-      # Step 4: Update Mason packages via mason-tool-installer
-      - |
-        echo "  → Updating Mason packages..."
         timeout 300 nvim --headless \
-          +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsUpdate") else print("mason-tool-installer not installed") vim.cmd("qa") end' \
+          +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsUpdate") else vim.cmd("qa") end' \
           2>&1 || true
+        echo "✓ Neovim plugins updated"
       - task: commit
 
   check:
@@ -112,21 +98,17 @@ tasks:
       - sh: command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
     cmds:
-      - echo "🔍 Running Neovim health checks..."
       - |
-        # Run checkhealth and filter for relevant output
         output=$(nvim --headless +'checkhealth' +qa 2>&1 || true)
         errors=$(echo "$output" | grep -c 'ERROR' || echo "0")
         warnings=$(echo "$output" | grep -c 'WARN' || echo "0")
 
-        # Show errors and warnings if any
         if [[ "$errors" -gt 0 ]] || [[ "$warnings" -gt 0 ]]; then
           echo "$output" | grep -E '(ERROR|WARN|^==)' | head -50
           echo ""
-          echo "📊 Summary: $errors error(s), $warnings warning(s)"
-          echo "   Run 'nvim +checkhealth' for full details"
+          echo "📊 $errors error(s), $warnings warning(s) - run 'nvim +checkhealth' for details"
         else
-          echo "✓ No errors or warnings found"
+          echo "✓ Neovim health check passed"
         fi
 
   commit:
