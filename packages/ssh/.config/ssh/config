@@ -1,7 +1,11 @@
 Include ~/.orbstack/ssh/config
 
+Include ~/.config/colima/ssh_config
+
 Host *
-  IdentityAgent ~/.1password/agent.sock
+  UseKeychain yes
+  AddKeysToAgent yes
   PreferredAuthentications publickey
+  IdentityAgent ~/.1password/agent.sock
   ServerAliveInterval 5
   ExitOnForwardFailure yes
