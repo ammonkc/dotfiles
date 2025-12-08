@@ -6,7 +6,7 @@
 # @raycast.mode fullOutput
 
 # Optional parameters:
-# @raycast.icon 📝
+# @raycast.icon ~/.config/raycast/script-commands/icons/nvim.svg
 # @raycast.packageName Dotfiles
 
 # Documentation:
