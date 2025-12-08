@@ -151,6 +151,7 @@ if OS.mac?
     cask 'tableplus'           # Native GUI tool for relational databases
     cask 'tailscale-app'       # Mesh VPN based on WireGuard
     cask 'transmit'            # File transfer application
+    cask 'tweakphp'            # Desktop application with a code editor to tweak your PHP code
     cask 'utm'                 # Virtual machines UI using QEMU
     cask 'vlc'                 # Multimedia player
     cask 'yaak'                # REST, GraphQL and gRPC client
