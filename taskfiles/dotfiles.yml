@@ -177,6 +177,20 @@ tasks:
       - cp "{{.PACKAGES_DIR}}/{{.LOCAL_FILE}}" "{{.DEST_FILE}}"
       - echo "✓ Created {{.DEST_FILE}} - please customize it"
 
+  copy_local_ssh_config:
+    internal: true
+    silent: true
+    vars:
+      SSH_CONFIG_LOCAL: '{{.PACKAGES_DIR}}/ssh/.config/ssh/ssh_config'
+      DEST_FILE: '$HOME/.ssh/config'
+    status:
+      - test -f "{{.DEST_FILE}}"
+    cmds:
+      - cp "{{.SSH_CONFIG_LOCAL}}" "{{.DEST_FILE}}"
+      - chmod 600 "{{.DEST_FILE}}"
+      - chmod 700 "$HOME/.ssh"
+      - echo "✓ Created {{.DEST_FILE}} - please customize it"
+
   # ============================================================================
   # Health Check / Doctor Tasks
   # ============================================================================
