@@ -6,7 +6,7 @@
 # @raycast.mode compact
 
 # Optional parameters:
-# @raycast.icon https://www.php.net/favicon.svg
+# @raycast.icon ~/.config/raycast/script-commands/icons/php.svg
 # @raycast.packageName php version
 # @raycast.argument1 { "type": "dropdown", "placeholder": "version", "optional": true, "data": [{"title": "8.0", "value": "8.0"}, {"title": "8.1", "value": "8.1"}, {"title": "8.2", "value": "8.2"}, {"title": "8.3", "value": "8.3"}, {"title": "8.4", "value": "8.4"}] }
 
