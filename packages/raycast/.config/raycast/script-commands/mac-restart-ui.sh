@@ -13,7 +13,7 @@
 # @raycast.description Restart Dock, Finder, and SystemUIServer
 # @raycast.author Ammon Casey
 
-cd "$HOME/Developer/src/ammonkc/dotfiles" || exit 1
+cd "$HOME/.dotfiles" || exit 1
 task mac:restart:all
 echo "✅ Dock, Finder, and SystemUIServer restarted"
 

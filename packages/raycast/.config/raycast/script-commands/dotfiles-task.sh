@@ -14,6 +14,6 @@
 # @raycast.description Run various dotfiles maintenance tasks
 # @raycast.author Ammon Casey
 
-cd "$HOME/Developer/src/ammonkc/dotfiles" || exit 1
+cd "$HOME/.dotfiles" || exit 1
 task "$1"
 
