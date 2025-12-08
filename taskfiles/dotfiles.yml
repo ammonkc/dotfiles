@@ -159,6 +159,7 @@ tasks:
         task: copy_local_file
         vars:
           LOCAL_FILE: '{{.LOCAL_FILE}}'
+      - task: copy_local_ssh_config
 
   copy_local_file:
     internal: true
