@@ -64,10 +64,6 @@ export GEMRC="$XDG_CONFIG_HOME/gem/config"
 export GEM_HOME="$XDG_DATA_HOME/gem"
 export GEM_PATH="$GEM_HOME"
 
-# AWS cli
-export AWS_CONFIG_FILE="${AWS_CONFIG_FILE:-$XDG_CONFIG_HOME/aws/config}"
-export AWS_SHARED_CREDENTIALS_FILE="${AWS_SHARED_CREDENTIALS_FILE:-$XDG_CONFIG_HOME/aws/credentials}"
-
 # Docker
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 
