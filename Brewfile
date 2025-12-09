@@ -38,7 +38,6 @@ brew 'jq'                           # Lightweight and flexible command-line JSON
 brew 'keychain'                     # User-friendly front-end to ssh-agent(1)
 brew 'lazydocker'                   # Lazier way to manage everything docker
 brew 'lazygit'                      # Simple terminal UI for git commands
-brew 'midnight-commander'           # Terminal-based visual file manager
 brew 'mise'                         # Polyglot runtime manager (asdf rust clone)
 brew 'neovim'                       # Ambitious Vim-fork focused on extensibility and agility
 brew 'oh-my-posh'                   # Prompt theme engine for any shell
@@ -169,5 +168,6 @@ if OS.mac?
     cask 'qlstephen'        #
     cask 'quicklook-json'   # depricated
     cask 'quicklook-csv'    # depricated
+    cask 'webpquicklook'    # Quick Look plugin for WebP images
     cask 'qlvideo'          # Thumbnails, static previews, and metadata for video files
 end
