@@ -113,6 +113,17 @@ tasks:
           echo "✓ Removed $COUNT broken symlink(s)"
         fi
 
+  bootstrap_install:
+    desc: Clean up files created by the bootstrap script
+    summary: |
+      Removes bootstrap files created by various tools
+      Safe to run frequently
+    cmds:
+      - echo "🧹 Cleaning bootstrap installation files..."
+      - rm -rf ~/.zsh_sessions 2>/dev/null || true
+      - rm -rf ~/.zsh_history 2>/dev/null || true
+      - echo "✓ Bootstrap installation files cleaned"
+
   temp:
     desc: Clean temporary files
     summary: |

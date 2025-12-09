@@ -1,6 +1,11 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
 
+includes:
+  clean:
+    taskfile: ./clean.yml
+    internal: true
+
 vars:
   MACOS_SCRIPT: '{{.ROOT_DIR}}/scripts/macos.sh'
 
@@ -27,6 +32,7 @@ tasks:
         msg: "macOS defaults script not found at {{.MACOS_SCRIPT}}"
     cmds:
       - bash "{{.MACOS_SCRIPT}}"
+      - task: clean:bootstrap_install
 
   preview:defaults:
     desc: Preview macOS defaults that will be applied
