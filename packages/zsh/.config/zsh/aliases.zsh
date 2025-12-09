@@ -115,6 +115,7 @@ alias artest='php -d xdebug.mode=off -d memory_limit=-1 -d max_execution_time=0 
 
 # ---- Docker -----
 alias docker-composer="docker compose"
+alias docker-killall="docker ps | tail -n +2 | awk '{ print \$1 }' | xargs docker kill"
 # ---- IDL Docker -----
 alias docker-up="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml --profile sftp --profile php8-work up --force-recreate --build --detach --remove-orphans"
 alias docker-down="USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f docker-compose.yaml --profile sftp --profile php8-work down"
