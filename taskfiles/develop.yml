@@ -199,6 +199,8 @@ tasks:
       GITCONFIG_LOCAL: '$HOME/.gitconfig.local'
     cmds:
       - |
+        set -e  # Exit on first error
+
         # Add includeIf directives for each work org's gitconfig
         for ORG in {{.WORK_ORGS}}; do
           GITCONFIG_ORG="$HOME/.gitconfig.${ORG}.local"
@@ -209,8 +211,8 @@ tasks:
             continue
           fi
 
-          # Skip if includeIf already exists
-          if grep -qF "gitdir:{{.REPOS_DIR}}/${ORG}/" "{{.GITCONFIG_LOCAL}}" 2>/dev/null; then
+          # Skip if includeIf already exists (check for both / and /** patterns)
+          if grep -qE "gitdir:{{.REPOS_DIR}}/${ORG}/(\*\*)?" "{{.GITCONFIG_LOCAL}}" 2>/dev/null; then
             echo "  → includeIf for ${ORG} already configured"
             continue
           fi
