@@ -1,0 +1,293 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+tasks:
+  # ============================================================================
+  # System-wide Docker Operations
+  # ============================================================================
+
+  status:
+    desc: Show Docker system status
+    summary: |
+      Displays Docker daemon status and resource usage
+    cmds:
+      - echo "🐳 Docker Status"
+      - echo ""
+      - docker version --format 'Docker {{.Server.Version}} ({{.Server.Os}}/{{.Server.Arch}})'
+      - echo ""
+      - docker system df
+
+  prune:
+    desc: Clean all unused Docker resources
+    summary: |
+      Removes:
+      - All stopped containers
+      - All unused networks
+      - All dangling images
+      - All build cache
+
+      Does NOT remove volumes by default (use prune:all for that)
+    cmds:
+      - echo "🧹 Pruning unused Docker resources..."
+      - docker system prune -af
+      - echo ""
+      - echo "✓ Cleanup complete"
+      - docker system df
+
+  prune:all:
+    desc: Clean ALL Docker resources including volumes
+    summary: |
+      ⚠️  WARNING: This removes EVERYTHING including volumes!
+
+      Use this for a complete Docker reset.
+      You will lose all container data.
+    prompt: This will delete ALL Docker data including volumes. Continue?
+    cmds:
+      - echo "🗑️  Removing ALL Docker resources..."
+      - docker system prune -af --volumes
+      - echo ""
+      - echo "✓ Complete cleanup done"
+      - docker system df
+
+  prune:images:
+    desc: Remove unused images
+    cmds:
+      - docker image prune -af
+      - echo "✓ Unused images removed"
+
+  prune:containers:
+    desc: Remove stopped containers
+    cmds:
+      - docker container prune -f
+      - echo "✓ Stopped containers removed"
+
+  prune:volumes:
+    desc: Remove unused volumes
+    prompt: This will delete unused volumes. Continue?
+    cmds:
+      - docker volume prune -f
+      - echo "✓ Unused volumes removed"
+
+  prune:builders:
+    desc: Remove build cache
+    cmds:
+      - docker builder prune -af
+      - echo "✓ Build cache cleared"
+
+  # ============================================================================
+  # Information Tasks
+  # ============================================================================
+
+  stats:
+    desc: Show live container resource usage
+    summary: |
+      Shows real-time CPU, memory, and network usage for all running containers
+      Press Ctrl+C to exit
+    cmds:
+      - docker stats
+
+  ps:
+    desc: List all containers (running and stopped)
+    cmds:
+      - docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+  images:
+    desc: List all images
+    cmds:
+      - docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.CreatedSince}}"
+
+  volumes:
+    desc: List all volumes
+    cmds:
+      - docker volume ls
+
+  networks:
+    desc: List all networks
+    cmds:
+      - docker network ls
+
+  # ============================================================================
+  # Kill/Stop Tasks
+  # ============================================================================
+
+  stop:all:
+    desc: Stop all running containers
+    cmds:
+      - |
+        RUNNING=$(docker ps -q)
+        if [ -n "$RUNNING" ]; then
+          echo "🛑 Stopping all containers..."
+          docker stop $RUNNING
+          echo "✓ All containers stopped"
+        else
+          echo "ℹ️  No running containers"
+        fi
+
+  kill:all:
+    desc: Force kill all running containers
+    cmds:
+      - |
+        RUNNING=$(docker ps -q)
+        if [ -n "$RUNNING" ]; then
+          echo "💀 Killing all containers..."
+          docker kill $RUNNING
+          echo "✓ All containers killed"
+        else
+          echo "ℹ️  No running containers"
+        fi
+
+  rm:all:
+    desc: Remove all stopped containers
+    cmds:
+      - |
+        STOPPED=$(docker ps -aq)
+        if [ -n "$STOPPED" ]; then
+          echo "🗑️  Removing all containers..."
+          docker rm $STOPPED
+          echo "✓ All containers removed"
+        else
+          echo "ℹ️  No containers to remove"
+        fi
+
+  # ============================================================================
+  # Docker Context Switching
+  # ============================================================================
+
+  context:
+    desc: Show current Docker context
+    cmds:
+      - 'echo "Current context: $(docker context show)"'
+      - echo ""
+      - docker context ls
+
+  context:list:
+    desc: List available Docker contexts
+    aliases: [contexts]
+    cmds:
+      - docker context ls
+
+  context:colima:
+    desc: Switch to Colima Docker context
+    platforms: [darwin]
+    cmds:
+      - docker context use colima
+      - echo "✓ Switched to Colima"
+
+  context:orbstack:
+    desc: Switch to OrbStack Docker context
+    platforms: [darwin]
+    cmds:
+      - docker context use orbstack
+      - echo "✓ Switched to OrbStack"
+
+  context:default:
+    desc: Switch to default Docker context
+    cmds:
+      - docker context use default
+      - echo "✓ Switched to default context"
+
+  # ============================================================================
+  # Colima Tasks (macOS Docker runtime)
+  # ============================================================================
+
+  colima:start:
+    desc: Start Colima (Docker runtime for macOS)
+    platforms: [darwin]
+    preconditions:
+      - sh: command -v colima >/dev/null 2>&1
+        msg: "Colima is not installed. Run: brew install colima"
+    status:
+      - colima status 2>/dev/null | grep -q "Running"
+    cmds:
+      - echo "🚀 Starting Colima..."
+      - colima start
+      - echo "✓ Colima started"
+
+  colima:stop:
+    desc: Stop Colima
+    platforms: [darwin]
+    preconditions:
+      - sh: command -v colima >/dev/null 2>&1
+        msg: "Colima is not installed"
+    cmds:
+      - echo "🛑 Stopping Colima..."
+      - colima stop
+      - echo "✓ Colima stopped"
+
+  colima:status:
+    desc: Show Colima status
+    platforms: [darwin]
+    preconditions:
+      - sh: command -v colima >/dev/null 2>&1
+        msg: "Colima is not installed"
+    cmds:
+      - colima status
+
+  colima:restart:
+    desc: Restart Colima
+    platforms: [darwin]
+    cmds:
+      - task: colima:stop
+      - task: colima:start
+
+  # ============================================================================
+  # OrbStack Tasks (macOS Docker runtime)
+  # ============================================================================
+
+  orbstack:start:
+    desc: Start OrbStack
+    platforms: [darwin]
+    preconditions:
+      - sh: test -d "/Applications/OrbStack.app"
+        msg: "OrbStack is not installed. Run: brew install --cask orbstack"
+    cmds:
+      - echo "🚀 Starting OrbStack..."
+      - open -a OrbStack
+      - echo "✓ OrbStack started"
+
+  orbstack:stop:
+    desc: Stop OrbStack
+    platforms: [darwin]
+    preconditions:
+      - sh: test -d "/Applications/OrbStack.app"
+        msg: "OrbStack is not installed"
+    cmds:
+      - echo "🛑 Stopping OrbStack..."
+      - osascript -e 'quit app "OrbStack"'
+      - echo "✓ OrbStack stopped"
+
+  orbstack:status:
+    desc: Show OrbStack status
+    platforms: [darwin]
+    preconditions:
+      - sh: command -v orb >/dev/null 2>&1
+        msg: "OrbStack CLI not found"
+    cmds:
+      - orb status
+
+  # ============================================================================
+  # Runtime Switching (Colima <-> OrbStack)
+  # ============================================================================
+
+  use:colima:
+    desc: Switch to Colima (stop OrbStack, start Colima)
+    platforms: [darwin]
+    cmds:
+      - echo "🔄 Switching to Colima..."
+      - osascript -e 'quit app "OrbStack"' 2>/dev/null || true
+      - task: colima:start
+      - task: context:colima
+      - echo ""
+      - echo "✓ Now using Colima"
+
+  use:orbstack:
+    desc: Switch to OrbStack (stop Colima, start OrbStack)
+    platforms: [darwin]
+    cmds:
+      - echo "🔄 Switching to OrbStack..."
+      - colima stop 2>/dev/null || true
+      - task: orbstack:start
+      - task: context:orbstack
+      - echo ""
+      - echo "✓ Now using OrbStack"
+
