@@ -71,6 +71,7 @@ tasks:
         echo 'export DEFAULT_ORGS="myname mycompany client1"' >> ~/.env.local
 
       Usage: task develop:setup
+    silent: true
     cmds:
       - task: create_dirs
       - task: setup:git_includes
@@ -88,6 +89,7 @@ tasks:
     desc: List development directories
     summary: |
       Shows the development directory structure and repository counts
+    silent: true
     cmds:
       - echo "📂 Development Directories:"
       - echo ""
@@ -114,6 +116,7 @@ tasks:
         # GitHub shorthand (requires gh CLI)
         task dev:clone REPO=username/repo
         → Uses gh to clone from GitHub
+    silent: true
     vars:
       REPO: '{{.REPO}}'
       ORG: '{{.ORG | default ""}}'
@@ -197,6 +200,7 @@ tasks:
   setup:git_includes:
     desc: Add includeIf directives to gitconfig.local for work orgs
     internal: true
+    silent: true
     vars:
       GITCONFIG_LOCAL: '$HOME/.gitconfig.local'
     cmds:

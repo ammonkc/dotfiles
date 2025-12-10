@@ -13,12 +13,13 @@
 # @raycast.description Test SSH connectivity to GitHub
 # @raycast.author Ammon Casey
 
-OUTPUT=$(ssh -T git@github.com 2>&1)
+# ssh -T returns exit code 1 even on success (GitHub denies shell access)
+OUTPUT=$(ssh -T git@github.com 2>&1) || true
 
 if echo "$OUTPUT" | grep -q "successfully authenticated"; then
   USER=$(echo "$OUTPUT" | sed -n 's/.*Hi \([^!]*\)!.*/\1/p')
   echo "✅ Connected as $USER"
 else
-  echo "❌ SSH connection failed"
+  echo "❌ $OUTPUT"
 fi
 
