@@ -5,12 +5,37 @@ vars:
   DEV_DIR: '{{.DEV_DIR | default "$HOME/Developer"}}'
   CODE_DIR: '{{.DEV_DIR}}/code'
   REPOS_DIR: '{{.DEV_DIR}}/repos'
-  # Get git username from config (fallback to "personal")
+  # Get git username from config (empty if not found - skips creating personal dir)
   GIT_USER:
-    sh: git config --get user.name 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr ' ' '-' || echo "personal"
-  # Default organizations - Priority: env var > ~/.env.local > git username + "work"
+    sh: git config --get github.user 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr ' ' '-' || true
+  # Get work orgs from .gitconfig.*.local files (created by secrets:install:work_gitconfigs)
+  WORK_ORGS:
+    sh: ls ~/.gitconfig.*.local 2>/dev/null | sed 's|.*/\.gitconfig\.\(.*\)\.local|\1|' | tr '\n' ' ' | xargs || true
   DEFAULT_ORGS:
-    sh: echo "${DEFAULT_ORGS:-$(grep '^export DEFAULT_ORGS=' ~/.env.local 2>/dev/null | cut -d'=' -f2- | tr -d '"' | tr -d "'" || echo "{{.GIT_USER}} work")}"
+    sh: |
+      if [ -n "${DEFAULT_ORGS:-}" ]; then
+        echo "$DEFAULT_ORGS"
+      elif grep -q '^export DEFAULT_ORGS=' ~/.env.local 2>/dev/null; then
+        grep '^export DEFAULT_ORGS=' ~/.env.local | cut -d'=' -f2- | tr -d '"' | tr -d "'"
+      else
+        # Build from gitconfig work files + GIT_USER (if set)
+        ORGS=""
+        GIT_USER="{{.GIT_USER}}"
+        WORK_ORGS="{{.WORK_ORGS}}"
+
+        # Add personal org if GIT_USER is set
+        if [ -n "$GIT_USER" ]; then
+          ORGS="$GIT_USER"
+        fi
+
+        # Add work orgs from .gitconfig.*.local files
+        if [ -n "$WORK_ORGS" ]; then
+          ORGS="$ORGS $WORK_ORGS"
+        fi
+
+        # Output orgs (may be empty)
+        echo "$ORGS" | xargs
+      fi
 
 tasks:
   # ============================================================================
@@ -30,9 +55,14 @@ tasks:
       Organization directories are determined by (in order of priority):
         1. Environment variable: DEFAULT_ORGS="org1 org2 org3" task dev:setup
         2. ~/.env.local file: export DEFAULT_ORGS="org1 org2 org3"
-        3. Git config username + "work" (default fallback)
+        3. Auto-detected from:
+           - Git config github.user (personal repos)
+           - ~/.gitconfig.*.local files (work orgs from 1Password)
+           - Skips if neither is found
 
-      To customize your default orgs, add to ~/.env.local:
+      Run 'task secrets:install' first to create work gitconfig files from 1Password.
+
+      To manually customize orgs, add to ~/.env.local:
         echo 'export DEFAULT_ORGS="myname mycompany client1"' >> ~/.env.local
 
       Usage: task develop:setup
@@ -42,22 +72,16 @@ tasks:
       - echo ""
       - echo "Directory structure:"
       - echo "  {{.CODE_DIR}}/"
-      - |
-        for org in {{.DEFAULT_ORGS}}; do
-          echo "  {{.REPOS_DIR}}/$org/"
-        done
+      - for:
+          var: DEFAULT_ORGS
+        cmd: echo "  {{.REPOS_DIR}}/{{.ITEM}}/"
       - echo ""
-      - echo "Current orgs:" "{{.DEFAULT_ORGS}}"
+      - 'echo "Current orgs: {{.DEFAULT_ORGS}}"'
 
   list:
     desc: List development directories
     summary: |
       Shows the development directory structure and repository counts
-    vars:
-      CODE_PROJECTS:
-        sh: find "{{.CODE_DIR}}" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | xargs
-      ORGS:
-        sh: find "{{.REPOS_DIR}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort
     cmds:
       - echo "📂 Development Directories:"
       - echo ""
@@ -156,14 +180,11 @@ tasks:
 
   create_dirs:
     internal: true
-    vars:
-      DEFAULT_ORGS: '{{.DEFAULT_ORGS}}'
     cmds:
       - mkdir -p "{{.CODE_DIR}}"
-      - |
-        for org in {{.DEFAULT_ORGS}}; do
-          mkdir -p "{{.REPOS_DIR}}/$org"
-        done
+      - for:
+          var: DEFAULT_ORGS
+        cmd: mkdir -p "{{.REPOS_DIR}}/{{.ITEM}}"
     status:
       - test -d "{{.CODE_DIR}}"
 

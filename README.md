@@ -135,6 +135,7 @@ dotfiles info:all           # Show detailed system info
     - **Run** `dotfiles mac:op:setup`
 6. **Setup Secrets:** Run `dotfiles secrets:install`
 7. **Customize local configs:** Edit files in `~/.*.local`
+8. **Setup Developer folders:** Run `dotfiles dev:setup`
 
 **Quick verification:**
 ```bash
