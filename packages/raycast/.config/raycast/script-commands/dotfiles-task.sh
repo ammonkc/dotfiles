@@ -8,7 +8,7 @@
 # Optional parameters:
 # @raycast.icon ⚙️
 # @raycast.packageName Dotfiles
-# @raycast.argument1 { "type": "dropdown", "placeholder": "task", "optional": false, "data": [{"title": "Clean Caches", "value": "clean"}, {"title": "Show Info", "value": "info"}, {"title": "Brew Cleanup", "value": "brew:cleanup"}, {"title": "Mise Update", "value": "mise:update"}, {"title": "Mise Outdated", "value": "mise:outdated"}, {"title": "Apply macOS Defaults", "value": "mac:set:defaults"}, {"title": "Install Secrets", "value": "secrets:install"}, {"title": "Dotfiles Install", "value": "dot:install"}, {"title": "Neovim Restore", "value": "nvim:restore"}, {"title": "Neovim Health", "value": "nvim:health"}] }
+# @raycast.argument1 { "type": "dropdown", "placeholder": "task", "optional": false, "data": [{"title": "Clean Caches", "value": "clean"}, {"title": "Show Info", "value": "info"}, {"title": "Secrets Status", "value": "secrets:status"}, {"title": "Install Secrets", "value": "secrets:install"}, {"title": "Brew Cleanup", "value": "brew:cleanup"}, {"title": "Mise Update", "value": "mise:update"}, {"title": "Mise Outdated", "value": "mise:outdated"}, {"title": "Apply macOS Defaults", "value": "mac:set:defaults"}, {"title": "Dotfiles Install", "value": "dot:install"}, {"title": "Dev Setup", "value": "develop:setup"}, {"title": "List Backups", "value": "backup:list"}, {"title": "Neovim Restore", "value": "nvim:restore"}, {"title": "Neovim Health", "value": "nvim:health"}] }
 
 # Documentation:
 # @raycast.description Run various dotfiles maintenance tasks
