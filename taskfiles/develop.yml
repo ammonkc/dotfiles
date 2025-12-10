@@ -189,6 +189,7 @@ tasks:
 
   create_dirs:
     internal: true
+    silent: true
     cmds:
       - mkdir -p "{{.CODE_DIR}}"
       - for:
