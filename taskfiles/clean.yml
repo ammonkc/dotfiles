@@ -1,6 +1,8 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
 
+silent: true
+
 vars:
   HOME: '{{env "HOME"}}'
   XDG_CACHE_HOME: '${XDG_CACHE_HOME:-$HOME/.cache}'

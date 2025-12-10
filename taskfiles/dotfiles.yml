@@ -83,6 +83,7 @@ tasks:
 
   ensure_dirs:
     internal: true
+    silent: true
     cmds:
       - mkdir -p ~/.config
       - mkdir -p ~/.ssh
@@ -215,6 +216,7 @@ tasks:
   doctor:symlinks:
     desc: Check stowed symlinks integrity
     internal: true
+    silent: true
     vars:
       STOWED_COUNT:
         sh: find ~ -maxdepth 3 -type l -lname "*/.dotfiles/*" 2>/dev/null | wc -l | tr -d ' '
@@ -230,6 +232,7 @@ tasks:
   doctor:broken_links:
     desc: Check for broken symlinks
     internal: true
+    silent: true
     cmds:
       - echo "🔍 Checking for broken symlinks..."
       - |
@@ -243,6 +246,7 @@ tasks:
   doctor:directories:
     desc: Check required directories exist
     internal: true
+    silent: true
     cmds:
       - echo "🔍 Checking required directories..."
       - |
@@ -262,6 +266,7 @@ tasks:
   doctor:templates:
     desc: Verify .local template files
     internal: true
+    silent: true
     cmds:
       - echo "🔍 Checking .local template files..."
       - |

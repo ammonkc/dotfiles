@@ -1,6 +1,8 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
 
+silent: true
+
 vars:
   DOTFILES_DIR: '{{.ROOT_DIR}}'
   PACKAGES_DIR: '{{.DOTFILES_DIR}}/packages'

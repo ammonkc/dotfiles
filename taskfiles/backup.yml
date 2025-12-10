@@ -1,6 +1,8 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: 3
 
+silent: true
+
 vars:
   # XDG Base Directory for backups
   BACKUP_BASE: '${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles/backups'
