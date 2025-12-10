@@ -60,6 +60,9 @@ tasks:
            - ~/.gitconfig.*.local files (work orgs from 1Password)
            - Skips if neither is found
 
+      Also adds [includeIf] directives to ~/.gitconfig.local for each work org,
+      so git automatically uses the correct user identity based on repo location.
+
       Run 'task secrets:install' first to create work gitconfig files from 1Password.
 
       To manually customize orgs, add to ~/.env.local:
@@ -68,6 +71,7 @@ tasks:
       Usage: task develop:setup
     cmds:
       - task: create_dirs
+      - task: setup:git_includes
       - echo "✓ Development directories created"
       - echo ""
       - echo "Directory structure:"
@@ -187,6 +191,39 @@ tasks:
         cmd: mkdir -p "{{.REPOS_DIR}}/{{.ITEM}}"
     status:
       - test -d "{{.CODE_DIR}}"
+
+  setup:git_includes:
+    desc: Add includeIf directives to gitconfig.local for work orgs
+    internal: true
+    vars:
+      GITCONFIG_LOCAL: '$HOME/.gitconfig.local'
+    cmds:
+      - |
+        # Add includeIf directives for each work org's gitconfig
+        for ORG in {{.WORK_ORGS}}; do
+          GITCONFIG_ORG="$HOME/.gitconfig.${ORG}.local"
+          INCLUDE_PATTERN="[includeIf \"gitdir:{{.REPOS_DIR}}/${ORG}/\"]"
+
+          # Skip if org gitconfig doesn't exist
+          if [ ! -f "$GITCONFIG_ORG" ]; then
+            continue
+          fi
+
+          # Skip if includeIf already exists
+          if grep -qF "gitdir:{{.REPOS_DIR}}/${ORG}/" "{{.GITCONFIG_LOCAL}}" 2>/dev/null; then
+            echo "  → includeIf for ${ORG} already configured"
+            continue
+          fi
+
+          # Append includeIf directive (** matches all subdirectories)
+          {
+            echo ""
+            echo "[includeIf \"gitdir:{{.REPOS_DIR}}/${ORG}/**\"]"
+            echo "  path = ~/.gitconfig.${ORG}.local"
+          } >> "{{.GITCONFIG_LOCAL}}"
+
+          echo "✓ Added includeIf for ${ORG} repos"
+        done
 
   list:code:
     internal: true
