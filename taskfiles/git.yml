@@ -113,3 +113,23 @@ tasks:
           echo "✓ No uncommitted changes"
         fi
 
+  ssh:test:
+    desc: Test SSH connectivity to GitHub
+    aliases: [ssh]
+    summary: |
+      Tests SSH authentication with GitHub.
+      Shows your authenticated username if successful.
+    silent: true
+    cmds:
+      - |
+        echo "🔑 Testing GitHub SSH connection..."
+        OUTPUT=$(ssh -T git@github.com 2>&1) || true
+        if echo "$OUTPUT" | grep -q "successfully authenticated"; then
+          USER=$(echo "$OUTPUT" | sed -n 's/.*Hi \([^!]*\)!.*/\1/p')
+          echo "✅ Connected as $USER"
+        else
+          echo "❌ SSH connection failed"
+          echo "$OUTPUT"
+          exit 1
+        fi
+
