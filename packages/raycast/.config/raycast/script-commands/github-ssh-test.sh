@@ -13,6 +13,13 @@
 # @raycast.description Test SSH connectivity to GitHub
 # @raycast.author Ammon Casey
 
+# Set up SSH agent for 1Password (if available)
+if [ -S "$HOME/.1password/agent.sock" ]; then
+  export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
+elif [ -S "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]; then
+  export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+fi
+
 # ssh -T returns exit code 1 even on success (GitHub denies shell access)
 OUTPUT=$(ssh -T git@github.com 2>&1) || true
 
