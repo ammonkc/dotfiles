@@ -53,6 +53,7 @@ tasks:
       Useful after network failures or interrupted installations
     platforms: [darwin]
     dir: "/{{.DOTFILES}}"
+    silent: true
     cmds:
       - brew bundle
 
@@ -62,6 +63,7 @@ tasks:
 
   install:homebrew:
     internal: true
+    silent: true
     platforms: [darwin]
     status:
       - which brew
@@ -74,6 +76,7 @@ tasks:
 
   install:gnu_stow:
     internal: true
+    silent: true
     platforms: [darwin]
     # NOTE: the leading slash here is a bit annoying, but required due to a bug
     # in go-task see https://github.com/go-task/task/issues/828
