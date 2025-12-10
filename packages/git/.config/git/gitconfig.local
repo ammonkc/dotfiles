@@ -5,3 +5,5 @@
 # that does not belong in the main ammonkc/dotfiles
 # repo, it is referenced from the main `~/.config/git/config`
 
+#[url "git@github.com:"]
+#  insteadOf = https://github.com/

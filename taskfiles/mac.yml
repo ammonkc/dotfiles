@@ -32,6 +32,7 @@ tasks:
         msg: "macOS defaults script not found at {{.MACOS_SCRIPT}}"
     cmds:
       - bash "{{.MACOS_SCRIPT}}"
+      - task: github:force_ssh
       - task: clean:bootstrap_install
 
   preview:defaults:
@@ -58,6 +59,24 @@ tasks:
       - bash "{{.ROOT_DIR}}/scripts/macos-preview.sh" "{{.MACOS_SCRIPT}}" "{{.PREVIEW_FILE}}"
       - defer: rm -f "{{.PREVIEW_FILE}}"
       - glow "{{.PREVIEW_FILE}}" | less -R
+
+  github:force_ssh:
+    desc: Force use of SSH for GitHub URLs
+    summary: |
+      Enables git URL rewriting to use SSH instead of HTTPS for GitHub.
+      This uncomments the [url] section in ~/.gitconfig.local
+    platforms: [darwin]
+    vars:
+      GITCONFIG_LOCAL: '{{.HOME}}/.gitconfig.local'
+    preconditions:
+      - sh: test -f "{{.GITCONFIG_LOCAL}}"
+        msg: "gitconfig not found at {{.GITCONFIG_LOCAL}}"
+    status:
+      - grep -q '^\[url "git@github.com:"\]' "{{.GITCONFIG_LOCAL}}"
+    cmds:
+      - sed -i '' 's/^#\[url "git@github.com:"\]/[url "git@github.com:"]/' "{{.GITCONFIG_LOCAL}}"
+      - sed -i '' 's/^#  insteadOf = https:\/\/github.com\//  insteadOf = https:\/\/github.com\//' "{{.GITCONFIG_LOCAL}}"
+      - echo "✓ GitHub URLs will now use SSH"
 
   sync:
     desc: Apply macOS defaults and restart UI components

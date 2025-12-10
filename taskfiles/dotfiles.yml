@@ -182,7 +182,7 @@ tasks:
     internal: true
     silent: true
     vars:
-      SSH_CONFIG_LOCAL: '{{.PACKAGES_DIR}}/ssh/.config/ssh/ssh_config'
+      SSH_CONFIG_LOCAL: '{{.PACKAGES_DIR}}/ssh/.config/ssh/ssh_config_local'
       DEST_FILE: '$HOME/.ssh/config'
     status:
       - test -f "{{.DEST_FILE}}"

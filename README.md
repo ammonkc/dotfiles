@@ -21,6 +21,10 @@ Personal dotfiles and automated setup scripts for macOS with secondary Linux sup
 
 ### **macOS**
 
+**Prerequisites:**
+- macOS 11+
+- Administrator access (you'll be prompted for your password several times during the installation process)
+
 **Step 1: Install Xcode Command Line Tools**
 
 ```bash
@@ -35,16 +39,9 @@ Wait for the installation to complete (you may need to accept a license agreemen
 curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/bootstrap.sh | bash
 ```
 
-**Prerequisites:**
-- macOS 11+
-- Administrator access (you'll be prompted for your password for Homebrew installation)
-
 ### **Linux** (Debian/Ubuntu or Arch)
 
-Same command as **Step 2** above.
-
-**Prerequisites:**
-- Sudo access (you'll be prompted for your password during package installation)
+Should work, but is not really tested at this time.
 
 **What gets installed:**
 - Homebrew (macOS) or native package managers (Linux)
@@ -54,7 +51,7 @@ Same command as **Step 2** above.
 
 **Duration:** 15-30 minutes
 
-## 📂 Structure
+## 📂 dotfiles Project Structure
 
 ```
 ~/.dotfiles/
@@ -65,7 +62,7 @@ Same command as **Step 2** above.
 └── taskfile.dist.yml # Main task orchestration
 ```
 
-**How it works:** GNU Stow creates symlinks from `packages/*/` to your home directory following XDG standards.
+GNU Stow creates symlinks from `packages/*/` to your home directory following XDG standards.
 
 **Result:** Only `.zshenv` in `~/` - everything else in `~/.config/`, `~/.local/`, `~/.cache/`
 
@@ -76,11 +73,11 @@ After installation, you can manage your dotfiles from anywhere using the `dotfil
 ### **Global Commands**
 
 ```bash
+update                      # Update dotfiles repo system packages and tools
 dotfiles --list             # List all available tasks (from anywhere)
 dotfiles doctor             # Run system health checks
 dotfiles clean              # Clean caches and old backups
 dotfiles info               # Show environment information
-update                      # Update system packages and tools
 ```
 
 ### **Common Tasks**
@@ -116,44 +113,28 @@ dotfiles clean:all          # Clean system caches
 dotfiles info:all           # Show detailed system info
 ```
 
-**How it works:**
-- `dotfiles` is a wrapper script in `~/.local/bin/` that runs `task -d ~/.dotfiles`
-- `dot` is a shell alias (shortcut for `dotfiles`)
-- `update` is a wrapper script that runs `task system:update`
-- All commands work from any directory without needing to `cd ~/.dotfiles`
-
 ## 🎨 Customization
 
 **Local config files** (not tracked in git):
-- `~/.config/git/config.local` - Git name, email, signing
-- `~/.config/zsh/.zshrc.local` - Personal Zsh config
-- `~/.config/mise/.mise.local.toml` - Local tool versions
-
-**After Bootstrap - Enable SSH for Git:**
-
-The bootstrap process uses HTTPS for git operations. Once your SSH keys are set up (via 1Password SSH agent or `ssh-keygen`), you can switch to SSH by removing these lines from `~/.config/git/config.local`:
-
-```ini
-[url "https://github.com/"]
-  insteadOf = git@github.com:
-```
-
-After removing those lines, git will use SSH (faster, more secure) for all GitHub operations.
-
-**Add new dotfiles:**
-```bash
-mkdir -p packages/myapp/.config/myapp
-echo "config" > packages/myapp/.config/myapp/config.yml
-cd packages && stow --target ~/ myapp
-```
+- `~/.env.local` - Private env exports, api keys, tokens
+- `~/.zshrc.local` - Personal Zsh config
+- `~/.zshenv.local` - Personal Zsh env config
+- `~/.gitconfig.local` - Git name, email, signing
+- `~/.tmux.local.conf` - Local tumx config
+- `~/.config/mise/conf.d/` - Local tool versions
 
 ## 📋 Post-Installation
 
 1. **Restart terminal:** `exec $SHELL`
 2. **Verify installation:** `dotfiles --list` (should show all tasks)
 3. **[Optional] Apply macOS preferences:** Review `scripts/macos.sh`, then `dotfiles mac:set:defaults`
-4. **[Optional] Enable 1Password SSH:** Settings → Developer → Enable SSH agent, then `dotfiles mac:op:setup`
-5. **Customize local configs:** Edit files in `~/.config/*/config.local`
+4. **Sign In to 1Password**
+    - **Enable Touch ID:** Settings > Security and turn on Touch ID
+    - **Enable CLI integration:** Developer > Settings and select “Integrate with 1Password CLI”
+    - **Enable 1Password SSH:** Settings → Developer → Enable SSH agent
+    - **Run** `dotfiles mac:op:setup`
+6. **Setup Secrets:** Run `dotfiles secrets:install`
+7. **Customize local configs:** Edit files in `~/.*.local`
 
 **Quick verification:**
 ```bash
@@ -168,13 +149,6 @@ dotfiles info               # Should show system information
 ```bash
 xcode-select --install  # macOS: Install Xcode CLI Tools
 ```
-
-**Homebrew not in PATH:**
-```bash
-eval "$(/opt/homebrew/bin/brew shellenv)"  # Apple Silicon
-eval "$(/usr/local/bin/brew shellenv)"     # Intel
-```
-
 **Neovim issues:**
 ```bash
 task nvim:check    # Check for issues
