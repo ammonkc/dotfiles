@@ -6,7 +6,7 @@
 # @raycast.mode compact
 
 # Optional parameters:
-# @raycast.icon 🔑
+# @raycast.icon ~/.config/raycast/script-commands/icons/github.svg
 # @raycast.packageName GitHub
 
 # Documentation:
