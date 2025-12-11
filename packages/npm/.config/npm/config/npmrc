@@ -1,2 +1,14 @@
+# XDG-compliant npm configuration
+# This file is managed by dotfiles - edit the source in ~/.dotfiles/packages/npm/
+
+# Cache directory (prevents ~/.npm/_cacache)
 cache=${XDG_CACHE_HOME}/npm
-userconfig=${NPM_CONFIG_USERCONFIG:-XDG_CONFIG_HOME/npm/config/npmrc}
+
+# Logs directory (prevents ~/.npm/_logs)
+logs-dir=${XDG_STATE_HOME}/npm/logs
+
+# Global packages prefix
+prefix=${XDG_DATA_HOME}/npm
+
+# Disable update notifier (prevents ~/.npm/_update-notifier-last-checked)
+update-notifier=false
