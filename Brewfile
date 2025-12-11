@@ -116,6 +116,8 @@ if OS.mac?
     # Apps casks
     cask '1password'           # 1Password app
     cask '1password-cli'       # Command-line interface for 1Password
+    cask 'alt-tab'             # Enable Windows-like alt-tab
+    cask 'appcleaner'          # Application uninstaller
     cask 'bartender'           # Menu bar icon organiser
     cask 'betterdisplay'       # Display management tool
     cask 'boop'                # Scriptable scratchpad for developers
