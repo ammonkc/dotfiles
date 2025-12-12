@@ -23,25 +23,12 @@ tasks:
   # ============================================================================
 
   setup:
-    desc: Install mise tools and post-install dependencies (Playwright browsers)
+    desc: Install mise tools
     summary: |
-      Full setup for mise-managed tools:
-      1. Installs all tools from config
-      2. Installs Playwright browsers for automation scripts
+      Full setup for mise-managed tools.
+      Installs all tools from config.
     cmds:
       - task: install
-      - task: setup:playwright
-
-  setup:playwright:
-    desc: Install Playwright browsers (chromium)
-    silent: true
-    preconditions:
-      - sh: command -v npx >/dev/null 2>&1
-        msg: "npx not found. Run 'task mise:install' first"
-    cmds:
-      - echo "📦 Installing Playwright browsers..."
-      - npx playwright install chromium
-      - echo "✓ Playwright browsers installed"
 
   install:
     desc: Install all mise-managed tools from config

@@ -30,7 +30,6 @@ brew 'github-keygen'                # Bootstrap GitHub SSH configuration
 brew 'glow'                         # markdown viewer
 brew 'gnupg'                        # GNU Pretty Good Privacy (PGP) package
 brew 'go-task'                      # Task is a task runner/build tool thats simpler and easier to use
-brew 'granted'                      # CLI tool for managing AWS IAM credentials using SAML
 brew 'grex'                         # Command-line tool for generating regular expressions
 brew 'htop'                         # Improved top (interactive process viewer)
 brew 'httpie'                       # User-friendly cURL replacement (command-line HTTP client)

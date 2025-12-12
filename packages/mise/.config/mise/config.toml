@@ -19,7 +19,6 @@ usage = "latest"
 "npm:@zed-industries/claude-code-acp" = "latest"
 "npm:sort-package-json" = "latest"
 "npm:ccstatusline" = "latest"
-"npm:playwright" = "latest"          # browser automation for genai-auto-login
 
 [settings]
 # experimental = true

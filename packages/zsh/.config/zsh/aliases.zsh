@@ -123,12 +123,8 @@ alias dup=docker-up
 alias ddown=docker-down
 alias dart=docker-artisan
 
-# ---- AWS / Granted -----
-# Granted: https://docs.commonfate.io/granted/getting-started
-# The `. assume` syntax sources the script to export AWS credentials to the current shell
-alias genailogin='export AWS_PROFILE=genai;aws sso login --profile genai'
-alias assume='. assume'
-alias genai-assume='assume genai'
+# ---- AWS SSO -----
+alias genailogin='aws sso login --profile genai'
 
 # ---- Taskfile (dotfiles) -----
 # Short alias for the dotfiles wrapper script
