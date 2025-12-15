@@ -130,9 +130,10 @@ dotfiles info:all           # Show detailed system info
 3. **[Optional] Apply macOS preferences:** Review `scripts/macos.sh`, then `dotfiles mac:set:defaults`
 4. **Sign In to 1Password**
     - **Enable Touch ID:** Settings > Security and turn on Touch ID
-    - **Enable CLI integration:** Developer > Settings and select “Integrate with 1Password CLI”
+    - **Enable CLI integration:** Developer > Settings and select "Integrate with 1Password CLI"
     - **Enable 1Password SSH:** Settings → Developer → Enable SSH agent
     - **Run** `dotfiles mac:op:setup`
+5. **Setup 1Password Items:** Ensure items follow the naming conventions below
 6. **Setup Secrets:** Run `dotfiles secrets:install`
 7. **Customize local configs:** Edit files in `~/.*.local`
 8. **Setup Developer folders:** Run `dotfiles dev:setup`
@@ -143,6 +144,66 @@ dotfiles --list             # Should show all available tasks
 update                      # Should update all packages
 dotfiles info               # Should show system information
 ```
+
+## 🔐 1Password Item Naming Conventions
+
+The `secrets:install` and `dev:setup` tasks read from 1Password using specific item names. Ensure these items exist for full automation.
+
+### Personal Account (Required)
+
+| Item Name | Type | Fields | Purpose |
+|-----------|------|--------|---------|
+| `id_ed25519` | SSH Key | `public key` | Git commit signing, GitHub SSH auth |
+| `github` | Login | `username`, `token` | Git config, GitHub API access |
+
+### Personal Account (Optional Documents)
+
+| Document Name | Purpose |
+|---------------|---------|
+| `.gitconfig.local` | Additional git config (appended to `~/.gitconfig.local`) |
+| `.env.local` | Environment variables (appended to `~/.env.local`) |
+| `ssh_config.local` | SSH host configs (appended to `~/.ssh/config`) |
+
+### Work/Business Accounts
+
+For each business 1Password account, the following items enable work-specific configs:
+
+| Item Name | Type | Fields | Purpose |
+|-----------|------|--------|---------|
+| `id_ed25519` | SSH Key | `public key` | Git commit signing for work repos |
+
+**What gets created:**
+- `~/.gitconfig.<company>.local` — Work-specific git user/email (company name extracted from your email domain)
+- `~/Developer/repos/<company>/` — Work project directory
+- `[includeIf]` directive in `~/.gitconfig.local` for automatic identity switching
+
+### Creating Items in 1Password
+
+**SSH Key (`id_ed25519`):**
+1. Create new SSH Key item named `id_ed25519`
+2. The `public key` field is auto-generated
+
+**GitHub Login (`github`):**
+1. Create new Login item named `github`
+2. Add `username` field with your GitHub username
+3. Add `token` field with a GitHub Personal Access Token
+
+**Documents (`.gitconfig.local`, etc.):**
+1. Create a new Document
+2. Name it exactly as shown (including the leading dot)
+3. Upload a text file with your config content
+
+### Syncing Keys to GitHub
+
+After creating 1Password items, sync your SSH keys to GitHub:
+
+```bash
+dotfiles secrets:gh-keys      # Sync personal SSH keys
+dotfiles secrets:work-keys    # Sync work SSH keys
+dotfiles secrets:all-keys     # Sync all keys
+```
+
+This adds your keys for both authentication and commit signing.
 
 ## 🐛 Troubleshooting
 
