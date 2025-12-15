@@ -18,8 +18,17 @@ includes:
     aliases: [dot]
     taskfile: ./dotfiles.yml
 
+  secrets:
+    taskfile: ./secrets.yml
+    internal: true
+
+  develop:
+    taskfile: ./develop.yml
+    internal: true
+
 vars:
   HOME: '{{env "HOME"}}'
+  OP_ACCOUNT: '{{.OP_ACCOUNT | default "my.1password.com"}}'
 
 tasks:
   install:
@@ -29,8 +38,44 @@ tasks:
 
       This task will install all required system tools and dependencies
       for both macOS and Linux platforms.
+
+      After this completes:
+        1. Sign into 1Password: op signin
+        2. Run: task system:post-install
     cmds:
       - task: install:requirements
+
+  post-install:
+    desc: Post-installation setup (requires 1Password)
+    summary: |
+      Run this after signing into 1Password
+
+      This task configures:
+        - Git credentials and signing keys from 1Password
+        - SSH config with GitHub username
+        - Work-specific git configs
+        - Development directory structure
+
+      Prerequisites:
+        - 1Password CLI installed (via system:install)
+        - Signed into 1Password (op signin)
+    silent: true
+    preconditions:
+      - sh: op account get --account {{.OP_ACCOUNT}} >/dev/null 2>&1
+        msg: |
+          ❌ Not signed into 1Password
+
+          Please sign in first:
+            op signin
+
+          Then run this task again.
+    cmds:
+      - task: secrets:install
+      - task: develop:setup
+      - echo ""
+      - echo "✅ Post-installation complete!"
+      - echo ""
+      - echo "Your development environment is ready."
 
   install:requirements:
     internal: true
