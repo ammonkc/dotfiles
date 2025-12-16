@@ -1,0 +1,650 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: 3
+
+silent: true
+
+vars:
+  HOME: '{{env "HOME"}}'
+  SSH_DIR: '{{.HOME}}/.ssh'
+  # Default key to use (can be overridden with KEY=path)
+  DEFAULT_KEY: '{{.SSH_DIR}}/id_ed25519'
+  # Default 1Password account
+  DEFAULT_OP_ACCOUNT: 'my.1password.com'
+  # Default 1Password item name for SSH key
+  DEFAULT_OP_ITEM: 'id_ed25519'
+  # Get hostname for key titles
+  HOSTNAME:
+    sh: hostname -s 2>/dev/null || echo "unknown"
+
+tasks:
+  # ============================================================================
+  # Primary Tasks
+  # ============================================================================
+
+  setup:
+    desc: Setup GitHub with SSH and signing keys
+    summary: |
+      Complete GitHub setup:
+        1. Authenticate gh CLI (if not already)
+        2. Add SSH authentication key
+        3. Add SSH signing key
+
+      Key sources (in order of priority):
+        - KEY: Local file path (e.g., ~/.ssh/id_ed25519)
+        - OP_ITEM: 1Password item name (e.g., id_ed25519)
+        - op:// reference in KEY (e.g., op://Personal/id_ed25519/public key)
+
+      Usage:
+        task github:setup                                    # Use default local key
+        task github:setup KEY=~/.ssh/id_work                 # Specific local key
+        task github:setup OP_ITEM=id_ed25519                 # From 1Password
+        task github:setup OP_ITEM=id_ed25519 OP_ACCOUNT=work.1password.com
+    cmds:
+      - task: auth
+      - task: keys:add
+        vars:
+          KEY: '{{.KEY | default ""}}'
+          OP_ITEM: '{{.OP_ITEM | default ""}}'
+          OP_ACCOUNT: '{{.OP_ACCOUNT | default ""}}'
+          TITLE: '{{.TITLE | default ""}}'
+      - echo ""
+      - echo "✅ GitHub setup complete!"
+
+  auth:
+    desc: Authenticate with GitHub CLI
+    summary: |
+      Authenticate gh CLI with GitHub.
+
+      If already authenticated, shows current status.
+      If not authenticated, starts interactive login.
+
+      Supports:
+        - Web-based authentication (default)
+        - SSH authentication
+    cmds:
+      - |
+        if gh auth status >/dev/null 2>&1; then
+          echo "✓ Already authenticated with GitHub"
+          gh auth status
+        else
+          echo "🔐 Starting GitHub authentication..."
+          gh auth login --web --git-protocol ssh
+        fi
+
+  status:
+    desc: Show GitHub CLI and key status
+    summary: |
+      Shows:
+        - gh CLI authentication status
+        - SSH keys registered in GitHub
+        - Connection test results
+    cmds:
+      - echo "🐙 GitHub Status"
+      - echo ""
+      - task: auth:status
+      - echo ""
+      - task: keys:list
+      - echo ""
+      - task: ssh:test
+
+  # ============================================================================
+  # Authentication Tasks
+  # ============================================================================
+
+  auth:status:
+    desc: Show gh CLI authentication status
+    cmds:
+      - echo "Authentication:"
+      - |
+        if gh auth status >/dev/null 2>&1; then
+          gh auth status 2>&1 | sed 's/^/  /'
+        else
+          echo "  ✗ Not authenticated"
+          echo "  Run: task github:auth"
+        fi
+
+  auth:logout:
+    desc: Logout from GitHub CLI
+    cmds:
+      - gh auth logout
+      - echo "✓ Logged out from GitHub"
+
+  auth:refresh:
+    desc: Refresh GitHub authentication token
+    summary: |
+      Refreshes the gh CLI authentication token.
+      Useful if your token has expired or you need new scopes.
+    cmds:
+      - gh auth refresh
+      - echo "✓ Authentication refreshed"
+
+  # ============================================================================
+  # SSH Key Management
+  # ============================================================================
+
+  keys:add:
+    desc: Add SSH key to GitHub (authentication + signing)
+    summary: |
+      Adds an SSH key to GitHub for both authentication and signing.
+
+      Sources (use one):
+        KEY       - Local file path (e.g., ~/.ssh/id_ed25519 or ~/.ssh/id_ed25519.pub)
+        OP_ITEM   - 1Password item name (e.g., id_ed25519)
+        KEY with op:// - 1Password secret reference
+
+      Usage:
+        # From local file (default)
+        task github:keys:add
+        task github:keys:add KEY=~/.ssh/id_work
+
+        # From 1Password
+        task github:keys:add OP_ITEM=id_ed25519
+        task github:keys:add OP_ITEM=id_ed25519 OP_ACCOUNT=work.1password.com
+
+        # Using 1Password secret reference
+        task github:keys:add KEY="op://Personal/id_ed25519/public key"
+
+        # Custom title
+        task github:keys:add TITLE="MacBook Pro"
+    vars:
+      KEY: '{{.KEY | default ""}}'
+      OP_ITEM: '{{.OP_ITEM | default ""}}'
+      OP_ACCOUNT: '{{.OP_ACCOUNT | default .DEFAULT_OP_ACCOUNT}}'
+      TITLE: '{{.TITLE | default ""}}'
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
+      - sh: gh auth status >/dev/null 2>&1
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: task github:auth
+    cmds:
+      - echo "🔑 Adding SSH key to GitHub (authentication + signing)..."
+      - task: _fetch_and_add_key
+        vars:
+          KEY: '{{.KEY}}'
+          OP_ITEM: '{{.OP_ITEM}}'
+          OP_ACCOUNT: '{{.OP_ACCOUNT}}'
+          TITLE: '{{.TITLE}}'
+          KEY_TYPE: authentication
+      - task: _fetch_and_add_key
+        vars:
+          KEY: '{{.KEY}}'
+          OP_ITEM: '{{.OP_ITEM}}'
+          OP_ACCOUNT: '{{.OP_ACCOUNT}}'
+          TITLE: '{{.TITLE}}'
+          KEY_TYPE: signing
+
+  keys:add:auth:
+    desc: Add only SSH authentication key to GitHub
+    summary: |
+      Adds an SSH key to GitHub for authentication only (not signing).
+      Supports same parameters as keys:add.
+    vars:
+      KEY: '{{.KEY | default ""}}'
+      OP_ITEM: '{{.OP_ITEM | default ""}}'
+      OP_ACCOUNT: '{{.OP_ACCOUNT | default .DEFAULT_OP_ACCOUNT}}'
+      TITLE: '{{.TITLE | default ""}}'
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: "GitHub CLI is not installed"
+      - sh: gh auth status >/dev/null 2>&1
+        msg: "GitHub CLI is not authenticated"
+    cmds:
+      - task: _fetch_and_add_key
+        vars:
+          KEY: '{{.KEY}}'
+          OP_ITEM: '{{.OP_ITEM}}'
+          OP_ACCOUNT: '{{.OP_ACCOUNT}}'
+          TITLE: '{{.TITLE}}'
+          KEY_TYPE: authentication
+
+  keys:add:signing:
+    desc: Add only SSH signing key to GitHub
+    summary: |
+      Adds an SSH key to GitHub for commit/tag signing only (not authentication).
+      Supports same parameters as keys:add.
+    vars:
+      KEY: '{{.KEY | default ""}}'
+      OP_ITEM: '{{.OP_ITEM | default ""}}'
+      OP_ACCOUNT: '{{.OP_ACCOUNT | default .DEFAULT_OP_ACCOUNT}}'
+      TITLE: '{{.TITLE | default ""}}'
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: "GitHub CLI is not installed"
+      - sh: gh auth status >/dev/null 2>&1
+        msg: "GitHub CLI is not authenticated"
+    cmds:
+      - task: _fetch_and_add_key
+        vars:
+          KEY: '{{.KEY}}'
+          OP_ITEM: '{{.OP_ITEM}}'
+          OP_ACCOUNT: '{{.OP_ACCOUNT}}'
+          TITLE: '{{.TITLE}}'
+          KEY_TYPE: signing
+
+  # Internal helper task to avoid code duplication
+  _fetch_and_add_key:
+    internal: true
+    silent: true
+    vars:
+      KEY: '{{.KEY | default ""}}'
+      OP_ITEM: '{{.OP_ITEM | default ""}}'
+      OP_ACCOUNT: '{{.OP_ACCOUNT | default .DEFAULT_OP_ACCOUNT}}'
+      TITLE: '{{.TITLE | default ""}}'
+      KEY_TYPE: '{{.KEY_TYPE}}' # "authentication" or "signing"
+    cmds:
+      - |
+        # Determine key source and fetch public key
+        PUBLIC_KEY=""
+        KEY_NAME=""
+
+        # Priority 1: OP_ITEM parameter (1Password item name)
+        if [ -n "{{.OP_ITEM}}" ]; then
+          if ! command -v op >/dev/null 2>&1; then
+            echo "❌ 1Password CLI not installed (required for OP_ITEM)"
+            echo "   Run: brew install --cask 1password-cli"
+            exit 1
+          fi
+          PUBLIC_KEY=$(op item get "{{.OP_ITEM}}" --account "{{.OP_ACCOUNT}}" --fields label="public key" 2>/dev/null) || {
+            echo "❌ Failed to get '{{.OP_ITEM}}' from 1Password account '{{.OP_ACCOUNT}}'"
+            exit 1
+          }
+          KEY_NAME="1Password {{.OP_ITEM}}"
+
+        # Priority 2: KEY parameter with op:// reference
+        elif [ -n "{{.KEY}}" ] && echo "{{.KEY}}" | grep -q "^op://"; then
+          if ! command -v op >/dev/null 2>&1; then
+            echo "❌ 1Password CLI not installed (required for op:// references)"
+            exit 1
+          fi
+          PUBLIC_KEY=$(op read "{{.KEY}}" 2>/dev/null) || {
+            echo "❌ Failed to read 1Password reference: {{.KEY}}"
+            exit 1
+          }
+          KEY_NAME="1Password"
+
+        # Priority 3: KEY parameter as local file path
+        elif [ -n "{{.KEY}}" ]; then
+          # Handle if user passed the .pub file directly
+          KEY_PATH="{{.KEY}}"
+          if echo "$KEY_PATH" | grep -q '\.pub$'; then
+            PUB_KEY_PATH="$KEY_PATH"
+          else
+            PUB_KEY_PATH="${KEY_PATH}.pub"
+          fi
+          if [ ! -f "$PUB_KEY_PATH" ]; then
+            echo "❌ Public key not found: $PUB_KEY_PATH"
+            exit 1
+          fi
+          PUBLIC_KEY=$(cat "$PUB_KEY_PATH")
+          KEY_NAME=$(basename "$KEY_PATH" .pub)
+
+        # Default: Use default local key
+        else
+          PUB_KEY_PATH="{{.DEFAULT_KEY}}.pub"
+          if [ ! -f "$PUB_KEY_PATH" ]; then
+            echo "❌ Default public key not found: $PUB_KEY_PATH"
+            echo "   Generate a key: ssh-keygen -t ed25519"
+            echo "   Or use OP_ITEM to fetch from 1Password"
+            exit 1
+          fi
+          PUBLIC_KEY=$(cat "$PUB_KEY_PATH")
+          KEY_NAME=$(basename "{{.DEFAULT_KEY}}")
+        fi
+
+        # Validate we got a key
+        if [ -z "$PUBLIC_KEY" ]; then
+          echo "❌ No public key found"
+          exit 1
+        fi
+
+        # Basic validation that it looks like an SSH public key
+        if ! echo "$PUBLIC_KEY" | grep -qE '^(ssh-|ecdsa-)'; then
+          echo "❌ Invalid SSH public key format"
+          echo "   Key should start with ssh-ed25519, ssh-rsa, ecdsa-sha2-*, etc."
+          exit 1
+        fi
+
+        # Determine title
+        if [ -n "{{.TITLE}}" ]; then
+          TITLE="{{.TITLE}}"
+        else
+          TITLE="{{.HOSTNAME}} ($KEY_NAME)"
+        fi
+
+        # Add suffix for signing keys
+        if [ "{{.KEY_TYPE}}" = "signing" ]; then
+          DISPLAY_TITLE="$TITLE (signing)"
+        else
+          DISPLAY_TITLE="$TITLE"
+        fi
+
+        KEY_FINGERPRINT=$(echo "$PUBLIC_KEY" | awk '{print $2}' | tail -c 20)
+
+        # Get existing SSH keys from GitHub
+        EXISTING=$(gh ssh-key list 2>/dev/null || true)
+
+        # Check if key already exists
+        if [ "{{.KEY_TYPE}}" = "signing" ]; then
+          if echo "$EXISTING" | grep signing | grep -qF "$KEY_FINGERPRINT" 2>/dev/null; then
+            echo "  → Signing key already in GitHub"
+            exit 0
+          fi
+        else
+          if echo "$EXISTING" | grep -v signing | grep -qF "$KEY_FINGERPRINT" 2>/dev/null; then
+            echo "  → Authentication key already in GitHub"
+            exit 0
+          fi
+        fi
+
+        # Add the key
+        echo "$PUBLIC_KEY" | gh ssh-key add - --title "$DISPLAY_TITLE" --type "{{.KEY_TYPE}}"
+        echo "  ✓ Added {{.KEY_TYPE}} key: $DISPLAY_TITLE"
+
+  keys:list:
+    desc: List SSH keys registered in GitHub
+    summary: |
+      Shows all SSH keys registered in your GitHub account,
+      including both authentication and signing keys.
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: "GitHub CLI is not installed"
+      - sh: gh auth status >/dev/null 2>&1
+        msg: "GitHub CLI is not authenticated"
+    cmds:
+      - echo "SSH Keys in GitHub:"
+      - |
+        KEYS=$(gh ssh-key list 2>/dev/null)
+        if [ -z "$KEYS" ]; then
+          echo "  (no keys registered)"
+        else
+          echo "$KEYS" | while read -r line; do
+            echo "  $line"
+          done
+        fi
+
+  keys:remove:
+    desc: Remove an SSH key from GitHub
+    summary: |
+      Removes an SSH key from GitHub by its ID.
+
+      First run 'task github:keys:list' to see key IDs,
+      then: task github:keys:remove ID=12345678
+    requires:
+      vars: [ID]
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: "GitHub CLI is not installed"
+      - sh: gh auth status >/dev/null 2>&1
+        msg: "GitHub CLI is not authenticated"
+    cmds:
+      - gh ssh-key delete {{.ID}} --yes
+      - echo "✓ Removed key {{.ID}} from GitHub"
+
+  # ============================================================================
+  # SSH Connection Testing
+  # ============================================================================
+
+  ssh:test:
+    desc: Test SSH connection to GitHub
+    aliases: [test]
+    summary: |
+      Tests SSH authentication with GitHub.
+      Shows your authenticated username if successful.
+    cmds:
+      - echo "SSH Connection:"
+      - |
+        OUTPUT=$(ssh -T git@github.com 2>&1) || true
+        if echo "$OUTPUT" | grep -q "successfully authenticated"; then
+          USER=$(echo "$OUTPUT" | sed -n 's/.*Hi \([^!]*\)!.*/\1/p')
+          echo "  ✓ Connected as $USER"
+        else
+          echo "  ✗ Connection failed"
+          echo "$OUTPUT" | sed 's/^/    /'
+        fi
+
+  # ============================================================================
+  # GPG Key Management (for users who prefer GPG over SSH signing)
+  # ============================================================================
+
+  gpg:list:
+    desc: List GPG keys registered in GitHub
+    summary: |
+      Shows all GPG keys registered in your GitHub account.
+      GPG keys are used for commit signing (alternative to SSH signing).
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: "GitHub CLI is not installed"
+      - sh: gh auth status >/dev/null 2>&1
+        msg: "GitHub CLI is not authenticated"
+    cmds:
+      - echo "GPG Keys in GitHub:"
+      - |
+        KEYS=$(gh gpg-key list 2>/dev/null)
+        if [ -z "$KEYS" ]; then
+          echo "  (no GPG keys registered)"
+        else
+          echo "$KEYS" | while read -r line; do
+            echo "  $line"
+          done
+        fi
+
+  gpg:add:
+    desc: Add a GPG key to GitHub
+    summary: |
+      Adds a GPG public key to GitHub for commit signing.
+
+      Usage:
+        task github:gpg:add                     # Uses default GPG key
+        task github:gpg:add KEY_ID=ABCD1234    # Uses specific key ID
+
+      Requires gpg to be installed and configured.
+    vars:
+      KEY_ID: '{{.KEY_ID | default ""}}'
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: "GitHub CLI is not installed"
+      - sh: gh auth status >/dev/null 2>&1
+        msg: "GitHub CLI is not authenticated"
+      - sh: command -v gpg >/dev/null 2>&1
+        msg: "GPG is not installed"
+    cmds:
+      - |
+        if [ -n "{{.KEY_ID}}" ]; then
+          GPG_KEY="{{.KEY_ID}}"
+        else
+          # Get default signing key
+          GPG_KEY=$(gpg --list-secret-keys --keyid-format LONG 2>/dev/null | grep sec | head -1 | awk -F'/' '{print $2}' | awk '{print $1}')
+        fi
+
+        if [ -z "$GPG_KEY" ]; then
+          echo "❌ No GPG key found"
+          echo "   Generate one: gpg --full-generate-key"
+          exit 1
+        fi
+
+        echo "Adding GPG key: $GPG_KEY"
+        gpg --armor --export "$GPG_KEY" | gh gpg-key add -
+        echo "✓ Added GPG key to GitHub"
+
+  # ============================================================================
+  # 1Password Integration
+  # ============================================================================
+
+  keys:add:1password:
+    desc: Add SSH key from 1Password to GitHub
+    aliases: [keys:op]
+    summary: |
+      Shorthand for adding keys from 1Password.
+
+      Usage:
+        task github:keys:add:1password                           # Default item & account
+        task github:keys:add:1password ITEM=id_ed25519_work      # Specific item
+        task github:keys:add:1password ACCOUNT=work.1password.com # Specific account
+    vars:
+      ITEM: '{{.ITEM | default .DEFAULT_OP_ITEM}}'
+      ACCOUNT: '{{.ACCOUNT | default .DEFAULT_OP_ACCOUNT}}'
+      TITLE: '{{.TITLE | default ""}}'
+    cmds:
+      - task: keys:add
+        vars:
+          OP_ITEM: '{{.ITEM}}'
+          OP_ACCOUNT: '{{.ACCOUNT}}'
+          TITLE: '{{.TITLE}}'
+
+  sync:1password:
+    desc: Sync all SSH keys from 1Password accounts to GitHub
+    aliases: [sync:op]
+    summary: |
+      Syncs SSH keys from all 1Password accounts to GitHub.
+
+      This iterates through your 1Password accounts and adds any
+      id_ed25519 keys found to GitHub (both auth and signing).
+
+      Requires:
+        - 1Password CLI (op) installed and authenticated
+        - GitHub CLI (gh) installed and authenticated
+    preconditions:
+      - sh: command -v op >/dev/null 2>&1
+        msg: "1Password CLI is not installed. Run: brew install --cask 1password-cli"
+      - sh: command -v jq >/dev/null 2>&1
+        msg: "jq is not installed. Run: brew install jq"
+      - sh: op account list >/dev/null 2>&1
+        msg: "Not signed in to 1Password CLI. Run: op signin"
+      - sh: command -v gh >/dev/null 2>&1
+        msg: "GitHub CLI is not installed. Run: brew install gh"
+      - sh: gh auth status >/dev/null 2>&1
+        msg: "GitHub CLI is not authenticated. Run: gh auth login"
+    cmds:
+      - echo "🔄 Syncing SSH keys from all 1Password accounts to GitHub..."
+      # Sync personal account
+      - task: keys:add
+        vars:
+          OP_ITEM: '{{.DEFAULT_OP_ITEM}}'
+          OP_ACCOUNT: '{{.DEFAULT_OP_ACCOUNT}}'
+          TITLE: '1Password {{.DEFAULT_OP_ITEM}}'
+      # Sync work accounts
+      - |
+        # Get work accounts (non-personal)
+        WORK_ACCOUNTS=$(op account list --format=json 2>/dev/null | jq -r '.[] | select(.url != "{{.DEFAULT_OP_ACCOUNT}}") | .url' || true)
+
+        if [ -z "$WORK_ACCOUNTS" ]; then
+          echo ""
+          echo "  (no work 1Password accounts found)"
+          exit 0
+        fi
+
+        for ACCOUNT in $WORK_ACCOUNTS; do
+          # Get user info to determine work name for title
+          USER_INFO=$(op user get --me --account "$ACCOUNT" --format=json 2>/dev/null) || {
+            echo ""
+            echo "⚠ Skipping $ACCOUNT (not signed in)"
+            continue
+          }
+          USER_EMAIL=$(echo "$USER_INFO" | jq -r '.email')
+          WORK_NAME=$(echo "$USER_EMAIL" | sed 's/.*@//' | sed 's/\..*//')
+
+          echo ""
+          echo "📦 Syncing ${WORK_NAME} (${ACCOUNT})..."
+
+          # Use task command to call keys:add with work account params
+          task github:keys:add OP_ITEM="{{.DEFAULT_OP_ITEM}}" OP_ACCOUNT="$ACCOUNT" TITLE="1Password ${WORK_NAME} {{.DEFAULT_OP_ITEM}}" 2>/dev/null || {
+            echo "  → No {{.DEFAULT_OP_ITEM}} in ${WORK_NAME} 1Password, skipping"
+          }
+        done
+      - echo ""
+      - echo "✅ All 1Password SSH keys synced to GitHub"
+
+  op:accounts:
+    desc: List available 1Password accounts
+    summary: |
+      Shows 1Password accounts that can be used with OP_ACCOUNT parameter.
+    preconditions:
+      - sh: command -v op >/dev/null 2>&1
+        msg: "1Password CLI is not installed. Run: brew install --cask 1password-cli"
+      - sh: command -v jq >/dev/null 2>&1
+        msg: "jq is not installed. Run: brew install jq"
+    cmds:
+      - echo "1Password Accounts:"
+      - |
+        ACCOUNTS=$(op account list --format=json 2>/dev/null | jq -r '.[].url' 2>/dev/null) || {
+          echo "  (not signed in to 1Password)"
+          exit 0
+        }
+        if [ -z "$ACCOUNTS" ]; then
+          echo "  (no accounts found)"
+        else
+          echo "$ACCOUNTS" | while read -r acc; do
+            echo "  - $acc"
+          done
+        fi
+
+  op:items:
+    desc: List SSH key items in 1Password
+    summary: |
+      Lists items in 1Password that might contain SSH keys.
+      Useful for finding the correct ITEM name to use.
+
+      Usage:
+        task github:op:items
+        task github:op:items ACCOUNT=work.1password.com
+    vars:
+      ACCOUNT: '{{.ACCOUNT | default .DEFAULT_OP_ACCOUNT}}'
+    preconditions:
+      - sh: command -v op >/dev/null 2>&1
+        msg: "1Password CLI is not installed. Run: brew install --cask 1password-cli"
+      - sh: command -v jq >/dev/null 2>&1
+        msg: "jq is not installed. Run: brew install jq"
+    cmds:
+      - echo "SSH Key items in 1Password ({{.ACCOUNT}}):"
+      - |
+        # Search for items with "ssh" or "ed25519" or "rsa" in the title
+        ITEMS=$(op item list --account "{{.ACCOUNT}}" --format=json 2>/dev/null | \
+          jq -r '.[] | select(.title | test("ssh|ed25519|rsa|key"; "i")) | "  - \(.title) (\(.category))"' 2>/dev/null) || {
+          echo "  (could not list items - check authentication)"
+          exit 0
+        }
+        if [ -z "$ITEMS" ]; then
+          echo "  (no SSH key items found)"
+          echo ""
+          echo "  Tip: Create an item named 'id_ed25519' with a 'public key' field"
+        else
+          echo "$ITEMS"
+        fi
+
+  # ============================================================================
+  # Utility Tasks
+  # ============================================================================
+
+  whoami:
+    desc: Show current GitHub user
+    cmds:
+      - |
+        if gh auth status >/dev/null 2>&1; then
+          USER=$(gh api user --jq '.login')
+          NAME=$(gh api user --jq '.name // "N/A"')
+          echo "GitHub User: $USER ($NAME)"
+        else
+          echo "Not authenticated with GitHub"
+          exit 1
+        fi
+
+  repos:
+    desc: List your GitHub repositories
+    summary: |
+      Lists repositories owned by you.
+
+      Usage:
+        task github:repos                    # List your repos
+        task github:repos LIMIT=50          # Show more repos
+    vars:
+      LIMIT: '{{.LIMIT | default "20"}}'
+    preconditions:
+      - sh: gh auth status >/dev/null 2>&1
+        msg: "GitHub CLI is not authenticated"
+    cmds:
+      - gh repo list --limit {{.LIMIT}}
+

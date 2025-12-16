@@ -21,6 +21,10 @@ includes:
   git:
     taskfile: ./taskfiles/git.yml
 
+  github:
+    aliases: [gh]
+    taskfile: ./taskfiles/github.yml
+
   info:
     taskfile: ./taskfiles/info.yml
 
