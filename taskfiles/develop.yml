@@ -236,17 +236,18 @@ tasks:
     internal: true
     silent: true
     vars:
+      CODE_EXISTS:
+        sh: test -d "{{.CODE_DIR}}" && echo "true" || echo "false"
       CODE_PROJECTS:
         sh: find "{{.CODE_DIR}}" -mindepth 1 -maxdepth 1 -exec basename {} \; 2>/dev/null | sort || true
       PROJECT_COUNT:
         sh: find "{{.CODE_DIR}}" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | xargs || echo "0"
-    preconditions:
-      - sh: test -d "{{.CODE_DIR}}"
-        msg: ""
     cmds:
       - echo "Code projects ({{.CODE_DIR}}):"
       - |
-        if [ "{{.PROJECT_COUNT}}" -eq 0 ]; then
+        if [ "{{.CODE_EXISTS}}" = "false" ]; then
+          echo "  (directory not created - run 'task develop:setup')"
+        elif [ "{{.PROJECT_COUNT}}" -eq 0 ]; then
           echo "  (empty)"
         fi
       - for:
@@ -259,17 +260,18 @@ tasks:
     internal: true
     silent: true
     vars:
+      REPOS_EXISTS:
+        sh: test -d "{{.REPOS_DIR}}" && echo "true" || echo "false"
       ORGS:
         sh: find "{{.REPOS_DIR}}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort || true
       ORG_COUNT:
         sh: find "{{.REPOS_DIR}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | xargs || echo "0"
-    preconditions:
-      - sh: test -d "{{.REPOS_DIR}}"
-        msg: ""
     cmds:
       - echo "Repositories:"
       - |
-        if [ "{{.ORG_COUNT}}" -eq 0 ]; then
+        if [ "{{.REPOS_EXISTS}}" = "false" ]; then
+          echo "  (directory not created - run 'task develop:setup')"
+        elif [ "{{.ORG_COUNT}}" -eq 0 ]; then
           echo "  (no organizations)"
         fi
       - for:
