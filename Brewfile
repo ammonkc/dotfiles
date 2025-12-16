@@ -56,6 +56,7 @@ brew 'tree'                         # Display directories as trees (with optiona
 brew 'vim'                          # Vi 'workalike' with many additional features
 brew 'wget'                         # Internet file retriever
 brew 'yazi'                         # Blazing fast terminal file manager written in Rust, based on async I/O
+brew 'yq'                           # Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew 'zlib'                         # Needed for Memcached
 brew 'zoxide'                       # Shell extension to navigate your filesystem faster
 brew 'zimfw'                        # Zsh plugin manager
