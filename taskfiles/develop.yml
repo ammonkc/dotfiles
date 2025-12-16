@@ -195,8 +195,6 @@ tasks:
       - for:
           var: DEFAULT_ORGS
         cmd: mkdir -p "{{.REPOS_DIR}}/{{.ITEM}}"
-    status:
-      - test -d "{{.CODE_DIR}}"
 
   setup:git_includes:
     desc: Add includeIf directives to gitconfig.local for work orgs
