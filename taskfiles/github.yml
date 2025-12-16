@@ -8,8 +8,8 @@ vars:
   SSH_DIR: '{{.HOME}}/.ssh'
   # Default key to use (can be overridden with KEY=path)
   DEFAULT_KEY: '{{.SSH_DIR}}/id_ed25519'
-  # Default 1Password account
-  DEFAULT_OP_ACCOUNT: 'my.1password.com'
+  # Default 1Password account (shared with secrets.yml via env var)
+  DEFAULT_OP_ACCOUNT: '{{env "OP_ACCOUNT" | default "my.1password.com"}}'
   # Default 1Password item name for SSH key
   DEFAULT_OP_ITEM: 'id_ed25519'
   # Get hostname for key titles
@@ -189,9 +189,13 @@ tasks:
       TITLE: '{{.TITLE | default ""}}'
     preconditions:
       - sh: command -v gh >/dev/null 2>&1
-        msg: "GitHub CLI is not installed"
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
       - sh: gh auth status >/dev/null 2>&1
-        msg: "GitHub CLI is not authenticated"
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: gh auth login
     cmds:
       - task: _fetch_and_add_key
         vars:
@@ -213,9 +217,13 @@ tasks:
       TITLE: '{{.TITLE | default ""}}'
     preconditions:
       - sh: command -v gh >/dev/null 2>&1
-        msg: "GitHub CLI is not installed"
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
       - sh: gh auth status >/dev/null 2>&1
-        msg: "GitHub CLI is not authenticated"
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: gh auth login
     cmds:
       - task: _fetch_and_add_key
         vars:
@@ -351,9 +359,13 @@ tasks:
       including both authentication and signing keys.
     preconditions:
       - sh: command -v gh >/dev/null 2>&1
-        msg: "GitHub CLI is not installed"
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
       - sh: gh auth status >/dev/null 2>&1
-        msg: "GitHub CLI is not authenticated"
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: gh auth login
     cmds:
       - echo "SSH Keys in GitHub:"
       - |
@@ -377,9 +389,13 @@ tasks:
       vars: [ID]
     preconditions:
       - sh: command -v gh >/dev/null 2>&1
-        msg: "GitHub CLI is not installed"
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
       - sh: gh auth status >/dev/null 2>&1
-        msg: "GitHub CLI is not authenticated"
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: gh auth login
     cmds:
       - gh ssh-key delete {{.ID}} --yes
       - echo "✓ Removed key {{.ID}} from GitHub"
@@ -417,9 +433,13 @@ tasks:
       GPG keys are used for commit signing (alternative to SSH signing).
     preconditions:
       - sh: command -v gh >/dev/null 2>&1
-        msg: "GitHub CLI is not installed"
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
       - sh: gh auth status >/dev/null 2>&1
-        msg: "GitHub CLI is not authenticated"
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: gh auth login
     cmds:
       - echo "GPG Keys in GitHub:"
       - |
@@ -446,11 +466,17 @@ tasks:
       KEY_ID: '{{.KEY_ID | default ""}}'
     preconditions:
       - sh: command -v gh >/dev/null 2>&1
-        msg: "GitHub CLI is not installed"
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
       - sh: gh auth status >/dev/null 2>&1
-        msg: "GitHub CLI is not authenticated"
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: gh auth login
       - sh: command -v gpg >/dev/null 2>&1
-        msg: "GPG is not installed"
+        msg: |
+          GPG is not installed.
+          Run: brew install gnupg
     cmds:
       - |
         if [ -n "{{.KEY_ID}}" ]; then
@@ -509,15 +535,25 @@ tasks:
         - GitHub CLI (gh) installed and authenticated
     preconditions:
       - sh: command -v op >/dev/null 2>&1
-        msg: "1Password CLI is not installed. Run: brew install --cask 1password-cli"
+        msg: |
+          1Password CLI is not installed.
+          Run: brew install --cask 1password-cli
       - sh: command -v jq >/dev/null 2>&1
-        msg: "jq is not installed. Run: brew install jq"
+        msg: |
+          jq is not installed.
+          Run: brew install jq
       - sh: op account list >/dev/null 2>&1
-        msg: "Not signed in to 1Password CLI. Run: op signin"
+        msg: |
+          Not signed in to 1Password CLI.
+          Run: op signin
       - sh: command -v gh >/dev/null 2>&1
-        msg: "GitHub CLI is not installed. Run: brew install gh"
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
       - sh: gh auth status >/dev/null 2>&1
-        msg: "GitHub CLI is not authenticated. Run: gh auth login"
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: gh auth login
     cmds:
       - echo "🔄 Syncing SSH keys from all 1Password accounts to GitHub..."
       # Sync personal account
@@ -537,11 +573,16 @@ tasks:
           exit 0
         fi
 
+        SUCCESS=0
+        SKIPPED=0
+        FAILED=0
+
         for ACCOUNT in $WORK_ACCOUNTS; do
           # Get user info to determine work name for title
           USER_INFO=$(op user get --me --account "$ACCOUNT" --format=json 2>/dev/null) || {
             echo ""
             echo "⚠ Skipping $ACCOUNT (not signed in)"
+            SKIPPED=$((SKIPPED + 1))
             continue
           }
           USER_EMAIL=$(echo "$USER_INFO" | jq -r '.email')
@@ -551,10 +592,19 @@ tasks:
           echo "📦 Syncing ${WORK_NAME} (${ACCOUNT})..."
 
           # Use task command to call keys:add with work account params
-          task github:keys:add OP_ITEM="{{.DEFAULT_OP_ITEM}}" OP_ACCOUNT="$ACCOUNT" TITLE="1Password ${WORK_NAME} {{.DEFAULT_OP_ITEM}}" 2>/dev/null || {
-            echo "  → No {{.DEFAULT_OP_ITEM}} in ${WORK_NAME} 1Password, skipping"
-          }
+          if task github:keys:add OP_ITEM="{{.DEFAULT_OP_ITEM}}" OP_ACCOUNT="$ACCOUNT" TITLE="1Password ${WORK_NAME} {{.DEFAULT_OP_ITEM}}" 2>/dev/null; then
+            SUCCESS=$((SUCCESS + 1))
+          else
+            echo "  → No {{.DEFAULT_OP_ITEM}} in ${WORK_NAME} 1Password"
+            SKIPPED=$((SKIPPED + 1))
+          fi
         done
+
+        echo ""
+        TOTAL=$((SUCCESS + SKIPPED + FAILED))
+        if [ $TOTAL -gt 0 ]; then
+          echo "Work accounts: $SUCCESS synced, $SKIPPED skipped"
+        fi
       - echo ""
       - echo "✅ All 1Password SSH keys synced to GitHub"
 
@@ -644,7 +694,9 @@ tasks:
       LIMIT: '{{.LIMIT | default "20"}}'
     preconditions:
       - sh: gh auth status >/dev/null 2>&1
-        msg: "GitHub CLI is not authenticated"
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: gh auth login
     cmds:
       - gh repo list --limit {{.LIMIT}}
 
