@@ -71,7 +71,7 @@ tasks:
           Then run this task again.
     cmds:
       - task: secrets:install
-      - task: develop:setup
+      - task develop:setup
       - echo ""
       - echo "✅ Post-installation complete!"
       - echo ""
