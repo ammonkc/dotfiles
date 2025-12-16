@@ -56,11 +56,16 @@ tasks:
       Authenticate gh CLI with GitHub.
 
       If already authenticated, shows current status.
-      If not authenticated, starts interactive login.
+      If not authenticated, starts interactive login (requires browser).
 
       Supports:
         - Web-based authentication (default)
         - SSH authentication
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
     cmds:
       - |
         if gh auth status >/dev/null 2>&1; then
@@ -105,8 +110,13 @@ tasks:
 
   auth:logout:
     desc: Logout from GitHub CLI
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
     cmds:
-      - gh auth logout
+      - gh auth logout --hostname github.com
       - echo "✓ Logged out from GitHub"
 
   auth:refresh:
@@ -114,6 +124,17 @@ tasks:
     summary: |
       Refreshes the gh CLI authentication token.
       Useful if your token has expired or you need new scopes.
+
+      Note: This task is interactive and will open a browser.
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
+      - sh: gh auth status >/dev/null 2>&1
+        msg: |
+          GitHub CLI is not authenticated.
+          Run: task github:auth
     cmds:
       - gh auth refresh
       - echo "✓ Authentication refreshed"
@@ -514,6 +535,15 @@ tasks:
       ITEM: '{{.ITEM | default .DEFAULT_OP_ITEM}}'
       ACCOUNT: '{{.ACCOUNT | default .DEFAULT_OP_ACCOUNT}}'
       TITLE: '{{.TITLE | default ""}}'
+    preconditions:
+      - sh: command -v gh >/dev/null 2>&1
+        msg: |
+          GitHub CLI is not installed.
+          Run: brew install gh
+      - sh: command -v op >/dev/null 2>&1
+        msg: |
+          1Password CLI is not installed.
+          Run: brew install --cask 1password-cli
     cmds:
       - task: keys:add
         vars:
@@ -614,9 +644,13 @@ tasks:
       Shows 1Password accounts that can be used with OP_ACCOUNT parameter.
     preconditions:
       - sh: command -v op >/dev/null 2>&1
-        msg: "1Password CLI is not installed. Run: brew install --cask 1password-cli"
+        msg: |
+          1Password CLI is not installed.
+          Run: brew install --cask 1password-cli
       - sh: command -v jq >/dev/null 2>&1
-        msg: "jq is not installed. Run: brew install jq"
+        msg: |
+          jq is not installed.
+          Run: brew install jq
     cmds:
       - echo "1Password Accounts:"
       - |
@@ -645,9 +679,13 @@ tasks:
       ACCOUNT: '{{.ACCOUNT | default .DEFAULT_OP_ACCOUNT}}'
     preconditions:
       - sh: command -v op >/dev/null 2>&1
-        msg: "1Password CLI is not installed. Run: brew install --cask 1password-cli"
+        msg: |
+          1Password CLI is not installed.
+          Run: brew install --cask 1password-cli
       - sh: command -v jq >/dev/null 2>&1
-        msg: "jq is not installed. Run: brew install jq"
+        msg: |
+          jq is not installed.
+          Run: brew install jq
     cmds:
       - echo "SSH Key items in 1Password ({{.ACCOUNT}}):"
       - |
