@@ -55,6 +55,8 @@ brew 'tmux'                         # Terminal multiplexer
 brew 'tree'                         # Display directories as trees (with optional color/HTML output)
 brew 'vim'                          # Vi 'workalike' with many additional features
 brew 'wget'                         # Internet file retriever
+brew 'xh'                           # Friendly and fast tool for sending HTTP requests
+brew 'xz'                           # General-purpose data compression with high compression ratio
 brew 'yazi'                         # Blazing fast terminal file manager written in Rust, based on async I/O
 brew 'yq'                           # Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew 'zlib'                         # Needed for Memcached
