@@ -1,0 +1,41 @@
+[mgr]
+ratio          = [ 1, 3, 4 ]
+sort_by        = "alphabetical"
+sort_sensitive = true
+sort_dir_first = true
+show_hidden    = true
+show_symlink   = true
+title_format   = "Yazi: {cwd}"
+
+[[plugin.prepend_fetchers]]
+id   = "mime"
+name = "*"
+run  = "mime-ext"
+prio = "high"
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*"
+run  = "git"
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*/"
+run  = "git"
+
+[plugin]
+  append_previewers = [
+    { name = "*", run = "file-extra-metadata" },
+  ]
+
+  # Setup keybind for spotter: https://github.com/sxyazi/yazi/pull/1802
+  append_spotters = [
+    { name = "*", run = "file-extra-metadata" },
+  ]
+# Setup keybind for spotter: https://github.com/sxyazi/yazi/pull/1802
+  spotters = [
+    # ... the rest
+    # Fallback
+    # { name = "*", run = "file" },
+    { name = "*", run = "file-extra-metadata" },
+  ]
