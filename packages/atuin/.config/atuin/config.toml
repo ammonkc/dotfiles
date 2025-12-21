@@ -161,8 +161,6 @@ enter_accept = true
 # prefers_reduced_motion = false
 
 [theme]
-# Override via ATUIN_THEME env var in ~/.env.local
-# Run `atuin theme list` to see available themes
 name = "catppuccin-mocha-mauve"
 
 [stats]
