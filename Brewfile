@@ -66,7 +66,6 @@ brew 'zsh'                          # UNIX shell (command interpreter)
 brew 'zsh-autosuggestions'          # Fish-like fast/unobtrusive autosuggestions for zsh
 brew 'zsh-completions'              # Additional completion definitions for zsh
 brew 'zsh-fast-syntax-highlighting' # Feature-rich syntax highlighting for Zsh
-brew 'zsh-history-substring-search' # Zsh port of Fish shell's history search
 
 # Development
 brew 'php'                      # php language

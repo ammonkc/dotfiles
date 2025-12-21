@@ -70,9 +70,9 @@ if (( $+commands[zoxide] )); then
   cached-eval zoxide "zoxide init --cmd ${ZOXIDE_CMD:-cd} zsh"
 fi
 
-# Init atuin (direct eval - cached-eval causes widget registration issues)
+# Init atuin (disable default up-arrow binding, we'll set it manually after all plugins load)
 if (( $+commands[atuin] )); then
-  eval "$(atuin init zsh)"
+  eval "$(atuin init zsh --disable-up-arrow)"
 fi
 
 # Init thefuck with caching

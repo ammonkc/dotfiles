@@ -101,8 +101,6 @@ zmodule completion                              # Enables and configures smart a
 # syntax-highlighting must be sourced AFTER completion but BEFORE autosuggestions
 zmodule $BREW_DATA_HOME/zsh-fast-syntax-highlighting --name fast-syntax-highlighting
 zmodule $BREW_DATA_HOME/zsh-autosuggestions           # Fish-like autosuggestions for Zsh.
-# zsh-users/zsh-history-substring-search must be sourced after syntax-highlighting
-zmodule $BREW_DATA_HOME/zsh-history-substring-search  # Fish-like history search (up arrow) for Zsh.
 
 # zmodule kiesman99/zim-zoxide      # initialized in .zshrc
 zmodule z-shell/zsh-eza
