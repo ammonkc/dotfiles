@@ -7,6 +7,13 @@ show_hidden    = true
 show_symlink   = true
 title_format   = "Yazi: {cwd}"
 
+[opener]
+edit = [
+	{ run = "${EDITOR:-nvim} %s", desc = "$EDITOR",      for = "unix", block = true },
+	{ run = "code %s",          desc = "code",         for = "windows", orphan = true },
+	{ run = "code -w %s",       desc = "code (block)", for = "windows", block = true },
+]
+
 [[plugin.prepend_fetchers]]
 id   = "mime"
 name = "*"
