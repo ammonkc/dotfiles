@@ -23,10 +23,6 @@ export ZOXIDE_CMD="${ZOXIDE_CMD:-cd}"
 # FZF theme (catppuccin-mocha, night-owl, tokyonight, dracula, nord)
 export FZF_THEME="${FZF_THEME:-catppuccin-mocha}"
 
-# Atuin theme - overrides config.toml setting
-# Run `atuin theme list` to see available themes
-export ATUIN_THEME="${ATUIN_THEME:-catppuccin-mocha-mauve}"
-
 # EZA theme - set in eza.zsh (tokyonight, catppuccin, dracula, etc.)
 # See packages/eza/.config/eza/themes/ for available themes
 # export EZA_THEME="${EZA_THEME:-tokyonight}"
