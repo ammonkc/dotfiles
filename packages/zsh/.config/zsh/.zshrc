@@ -75,9 +75,9 @@ if (( $+commands[zoxide] )); then
   cached-eval zoxide "zoxide init --cmd ${ZOXIDE_CMD:-cd} zsh"
 fi
 
-# Init atuin with caching
+# Init atuin (direct eval - cached-eval causes widget registration issues)
 if (( $+commands[atuin] )); then
-  cached-eval atuin 'atuin init zsh'
+  eval "$(atuin init zsh)"
 fi
 
 # Init thefuck with caching
