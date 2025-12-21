@@ -26,7 +26,12 @@ source ${ZIM_HOME}/init.zsh
 # ----------------------------
 # ---- Setup vi Mode ---------
 # ----------------------------
-bindkey -v
+# Override via ZSH_VI_MODE env var (true/false)
+if [[ "${ZSH_VI_MODE:-true}" == "true" ]]; then
+  bindkey -v
+else
+  bindkey -e
+fi
 
 # ----------------------------
 # ---- Source config files ---
@@ -65,8 +70,9 @@ if (( $+commands[mise] )); then
 fi
 
 # Init zoxide with caching
+# Override the command alias via ZOXIDE_CMD env var (default: cd)
 if (( $+commands[zoxide] )); then
-  cached-eval zoxide 'zoxide init --cmd cd zsh'
+  cached-eval zoxide "zoxide init --cmd ${ZOXIDE_CMD:-cd} zsh"
 fi
 
 # Init atuin with caching

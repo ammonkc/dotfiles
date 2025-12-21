@@ -1,12 +1,61 @@
 # -----------------------
 # --- setup fzf theme ---
 # -----------------------
-fg="#CBE0F0"
-bg="#011628"
-bg_highlight="#143652"
-purple="#B388FF"
-blue="#06BCE4"
-cyan="#2CF9ED"
+# Override via FZF_THEME env var in exports.zsh or ~/.env.local
+# Available: catppuccin-mocha (default), night-owl, tokyonight, dracula, nord
+
+# Define theme color palettes
+case "${FZF_THEME:-catppuccin-mocha}" in
+  catppuccin-mocha)
+    fg="#cdd6f4"
+    bg="#1e1e2e"
+    bg_highlight="#313244"
+    purple="#cba6f7"
+    blue="#89b4fa"
+    cyan="#94e2d5"
+    ;;
+  tokyonight)
+    fg="#c0caf5"
+    bg="#1a1b26"
+    bg_highlight="#292e42"
+    purple="#bb9af7"
+    blue="#7aa2f7"
+    cyan="#7dcfff"
+    ;;
+  dracula)
+    fg="#f8f8f2"
+    bg="#282a36"
+    bg_highlight="#44475a"
+    purple="#bd93f9"
+    blue="#8be9fd"
+    cyan="#50fa7b"
+    ;;
+  nord)
+    fg="#eceff4"
+    bg="#2e3440"
+    bg_highlight="#3b4252"
+    purple="#b48ead"
+    blue="#81a1c1"
+    cyan="#88c0d0"
+    ;;
+  night-owl)
+    fg="#CBE0F0"
+    bg="#011628"
+    bg_highlight="#143652"
+    purple="#B388FF"
+    blue="#06BCE4"
+    cyan="#2CF9ED"
+    ;;
+  *)
+    # Default: catppuccin-mocha
+    fg="#cdd6f4"
+    bg="#1e1e2e"
+    bg_highlight="#313244"
+    purple="#cba6f7"
+    blue="#89b4fa"
+    cyan="#94e2d5"
+    ;;
+esac
 
 # add support for Ansi for fd color
 export FZF_DEFAULT_OPTS="--ansi"
@@ -17,8 +66,6 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
   --color=fg+:${fg},bg+:${bg_highlight},hl+:${purple} \
   --color=info:${blue},prompt:${cyan},pointer:${cyan} \
   --color=marker:${cyan},spinner:${cyan},header:${cyan}"
-
-# export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
 
 # -- Use fd instead of fzf --
 

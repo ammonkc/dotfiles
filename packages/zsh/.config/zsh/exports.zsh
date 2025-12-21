@@ -6,9 +6,35 @@ export VISUAL="${VISUAL:-nvim}"
 export PAGER="${PAGER:-less}"
 
 # Use bat for man pages if available (prettier output)
-if (( $+commands[bat] )); then
+# Set MANPAGER_ENHANCED=false to disable
+if [[ "${MANPAGER_ENHANCED:-true}" == "true" ]] && (( $+commands[bat] )); then
   export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
+
+# -------
+# Shell Behavior
+# -------
+# Vi mode in zsh (true/false) - set to false for emacs mode
+export ZSH_VI_MODE="${ZSH_VI_MODE:-true}"
+
+# Zoxide command alias (cd, z, j, etc.)
+export ZOXIDE_CMD="${ZOXIDE_CMD:-cd}"
+
+# FZF theme (catppuccin-mocha, night-owl, tokyonight, dracula, nord)
+export FZF_THEME="${FZF_THEME:-catppuccin-mocha}"
+
+# Atuin theme - overrides config.toml setting
+# Run `atuin theme list` to see available themes
+export ATUIN_THEME="${ATUIN_THEME:-catppuccin-mocha-mauve}"
+
+# EZA theme - set in eza.zsh (tokyonight, catppuccin, dracula, etc.)
+# See packages/eza/.config/eza/themes/ for available themes
+# export EZA_THEME="${EZA_THEME:-tokyonight}"
+
+# Neovim/LazyVim colorscheme (catppuccin-mocha, tokyonight, etc.)
+export NVIM_COLORSCHEME="${NVIM_COLORSCHEME:-catppuccin-mocha}"
+# Catppuccin flavor when using catppuccin theme (latte, frappe, macchiato, mocha)
+export NVIM_CATPPUCCIN_FLAVOR="${NVIM_CATPPUCCIN_FLAVOR:-mocha}"
 
 # Locale
 export LC_ALL=en_US.UTF-8
@@ -69,7 +95,7 @@ export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 
 # bat (cat replacement) - Uses XDG by default, but can override
 export BAT_CONFIG_PATH="$XDG_CONFIG_HOME/bat/config"
-export BAT_THEME="Catppuccin Mocha"
+export BAT_THEME="${BAT_THEME:-Catppuccin Mocha}"
 
 # eza (ls replacement) - Uses XDG by default
 export EZA_CONFIG_DIR="$XDG_CONFIG_HOME/eza"

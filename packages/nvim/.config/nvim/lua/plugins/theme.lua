@@ -1,3 +1,8 @@
+-- Override via NVIM_COLORSCHEME env var (e.g., "catppuccin-mocha", "tokyonight")
+-- Override catppuccin flavor via NVIM_CATPPUCCIN_FLAVOR env var (latte, frappe, macchiato, mocha)
+local colorscheme = os.getenv("NVIM_COLORSCHEME") or "catppuccin-mocha"
+local catppuccin_flavor = os.getenv("NVIM_CATPPUCCIN_FLAVOR") or "mocha"
+
 return {
   -- Add catppuccin theme plugin
   {
@@ -5,7 +10,7 @@ return {
     name = "catppuccin",
     priority = 1000,
     opts = {
-      flavour = "mocha", -- latte, frappe, macchiato, mocha
+      flavour = catppuccin_flavor, -- latte, frappe, macchiato, mocha
       integrations = {
         cmp = true,
         gitsigns = true,
@@ -19,11 +24,11 @@ return {
       },
     },
   },
-  -- Configure LazyVim to use catppuccin
+  -- Configure LazyVim to use the colorscheme
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin-mocha",
+      colorscheme = colorscheme,
     },
   },
 }
