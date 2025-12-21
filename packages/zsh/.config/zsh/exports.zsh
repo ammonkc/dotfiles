@@ -14,9 +14,6 @@ fi
 # -------
 # Shell Behavior
 # -------
-# Vi mode in zsh (true/false) - set to false for emacs mode
-export ZSH_VI_MODE="${ZSH_VI_MODE:-true}"
-
 # Zoxide command alias (cd, z, j, etc.)
 export ZOXIDE_CMD="${ZOXIDE_CMD:-cd}"
 

@@ -26,12 +26,7 @@ source ${ZIM_HOME}/init.zsh
 # ----------------------------
 # ---- Setup vi Mode ---------
 # ----------------------------
-# Override via ZSH_VI_MODE env var (true/false)
-if [[ "${ZSH_VI_MODE:-true}" == "true" ]]; then
-  bindkey -v
-else
-  bindkey -e
-fi
+bindkey -v
 
 # ----------------------------
 # ---- Source config files ---
