@@ -66,6 +66,7 @@ tasks:
       2. Installing and configuring all dotfiles (stow packages)
       3. Installing mise-managed tools (after mise config is stowed)
       4. Restoring Neovim plugins to the state specified in lazy-lock.json
+      5. Installing yazi plugins and flavors from package.toml
 
       Note: This does NOT apply macOS system preferences.
       Run 'task mac:set:defaults' separately if you want to apply them.
@@ -73,6 +74,7 @@ tasks:
       - task: system:install
       - task: mise:install
       - task: nvim:restore
+      - task: shell:yazi:install
 
   doctor:
     desc: Run comprehensive health checks on your dotfiles setup
