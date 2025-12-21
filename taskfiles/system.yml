@@ -26,6 +26,10 @@ includes:
     taskfile: ./develop.yml
     internal: true
 
+  mac:
+    taskfile: ./mac.yml
+    internal: true
+
 vars:
   HOME: '{{env "HOME"}}'
   OP_ACCOUNT: '{{.OP_ACCOUNT | default "my.1password.com"}}'
@@ -70,6 +74,8 @@ tasks:
 
           Then run this task again.
     cmds:
+      - task: mac:github:force_ssh
+      - task: mac:op:setup
       - task: secrets:install
       - task develop:setup
       - echo ""
