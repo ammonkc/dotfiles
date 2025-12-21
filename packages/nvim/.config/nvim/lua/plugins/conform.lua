@@ -13,10 +13,10 @@ return {
       formatters_by_ft = {
         lua = { "stylua" },
         fish = { "fish_indent" },
-        -- Shell scripting
+        -- Shell scripting (shfmt doesn't support zsh-specific syntax like $+commands)
         sh = { "shfmt" },
         bash = { "shfmt" },
-        zsh = { "shfmt" },
+        -- zsh = { "shfmt" },  -- disabled: shfmt breaks zsh syntax
         -- PHP/Laravel
         php = { "pint" },
         blade = { "blade-formatter", "rustywind" },
