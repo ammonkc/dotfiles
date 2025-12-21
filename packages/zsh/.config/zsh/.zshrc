@@ -92,6 +92,26 @@ fi
 [[ -e $ZDOTDIR/fastfetch.zsh ]] && source $ZDOTDIR/fastfetch.zsh || true
 
 # -----------------------
+# ---- Keybinding fixes -----
+# -----------------------
+# Re-bind atuin keys (zimfw history-substring-search overrides them)
+if (( $+commands[atuin] )); then
+  # Emacs mode
+  bindkey -M emacs '^[[A' atuin-up-search
+  bindkey -M emacs '^[OA' atuin-up-search
+  bindkey -M emacs '^r' atuin-search
+  # Vi insert mode
+  bindkey -M viins '^[[A' atuin-up-search-viins
+  bindkey -M viins '^[OA' atuin-up-search-viins
+  bindkey -M viins '^r' atuin-search-viins
+  # Vi command mode
+  bindkey -M vicmd '^[[A' atuin-up-search-vicmd
+  bindkey -M vicmd '^[OA' atuin-up-search-vicmd
+  bindkey -M vicmd '/' atuin-search-vicmd
+  bindkey -M vicmd 'k' atuin-up-search-vicmd
+fi
+
+# -----------------------
 # ---- Local config -----
 # -----------------------
 [[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local || true

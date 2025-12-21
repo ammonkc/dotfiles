@@ -4,9 +4,12 @@ HISTSIZE=10000
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
 
-# completion using arrow keys (based on history)
-bindkey '^[[A' history-search-backward
-bindkey '^[[B' history-search-forward
+# Arrow key history navigation is handled by atuin (if installed)
+# Fallback bindings for systems without atuin:
+if (( ! $+commands[atuin] )); then
+  bindkey '^[[A' history-search-backward
+  bindkey '^[[B' history-search-forward
+fi
 
 # Allow multiple terminal sessions to all append to one zsh command history
 setopt APPEND_HISTORY
