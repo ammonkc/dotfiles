@@ -88,9 +88,10 @@ if task install; then
     echo "  2. Customize local configs if needed:"
   fi
 
-  echo "     • ~/.config/git/config.local"
-  echo "     • ~/.config/zsh/.zshrc.local"
-  echo "     • ~/.config/mise/.mise.local.toml"
+  echo "     • ~/.gitconfig.local"
+  echo "     • ~/.env.local"
+  echo "     • ~/.zshrc.local"
+  echo "     • ~/.config/mise/conf.d/local.toml"
   echo ""
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
