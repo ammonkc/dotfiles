@@ -45,9 +45,12 @@ brew 'optipng'                      # PNG file optimizer
 brew 'pinentry-mac'                 # Pinentry for GPG on Mac
 brew 'pkgconf'                      # Package compiler and linker metadata toolkit
 brew 'pngquant'                     # PNG image optimizing utility
+brew 'poppler'                      # PDF rendering library (based on the xpdf-3.0 code base)
 brew 'procs'                        # Modern replacement for ps written in Rust
-brew 'stow'                         # Organize software neatly under a single directory tree (e.g. /usr/local)
+brew 'resvg'                        # SVG rendering tool and library
 brew 'ripgrep'                      # Search tool like grep and The Silver Searcher
+brew 'sevenzip'                     # 7-Zip is a file archiver with a high compression ratio
+brew 'stow'                         # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew 'svgo'                         # Nodejs-based tool for optimizing SVG vector graphics files
 brew 'tlrc'                         # Very fast implementation of tldr in Rust
 brew 'thefuck'                      # Programmatically correct mistyped console commands
