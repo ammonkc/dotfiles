@@ -168,6 +168,7 @@ if OS.mac?
     cask 'font-meslo-lg-nerd-font'
     cask 'font-jetbrains-mono-nerd-font'
     cask 'font-hack-nerd-font'
+    cask 'font-symbols-only-nerd-font'
 
     # Quicklook
     cask 'qlcolorcode'      #
