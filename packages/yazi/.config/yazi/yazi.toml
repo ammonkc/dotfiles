@@ -7,6 +7,10 @@ show_hidden    = true
 show_symlink   = true
 title_format   = "Yazi: {cwd}"
 
+[preview]
+max_width      = 1200
+max_height     = 1000
+
 [opener]
 edit = [
 	{ run = "${EDITOR:-nvim} %s", desc = "$EDITOR",      for = "unix", block = true },
