@@ -162,6 +162,7 @@ if OS.mac?
     cask 'utm'                 # Virtual machines UI using QEMU
     cask 'vlc'                 # Multimedia player
     cask 'yaak'                # REST, GraphQL and gRPC client
+    cask 'zen'                 # Gecko based privacy focused web browser
     cask 'zoom'                # Video communication and virtual meeting platform
 
     # Fonts
