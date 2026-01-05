@@ -21,6 +21,7 @@ tasks:
     summary: |
       Installs yazi plugins and flavors defined in package.toml
       Requires 'ya' (yazi package manager) to be installed
+      Uses 'ya pkg install' (v25+) or falls back to 'ya pack -i' (v0.3-v24)
     preconditions:
       - sh: command -v ya >/dev/null 2>&1
         msg: "'ya' command not found. Install yazi first."
@@ -28,7 +29,7 @@ tasks:
         msg: "package.toml not found. Run 'task dot:install' first."
     cmds:
       - echo "📦 Installing yazi plugins and flavors..."
-      - ya pack -i
+      - ya pkg install 2>/dev/null || ya pack -i
       - echo "✓ Yazi plugins installed"
 
   reload:
