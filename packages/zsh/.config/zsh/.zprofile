@@ -9,3 +9,6 @@
 
 # XDG variables and directories are set up in ~/.zshenv
 # This file is for login-shell-specific configuration only
+
+# Include local .zprofile.local if it exists
+[[ -f ~/.zprofile.local ]] && source ~/.zprofile.local
