@@ -35,7 +35,7 @@
   "mini.icons": { "branch": "main", "commit": "efc85e42262cd0c9e1fdbf806c25cb0be6de115c" },
   "mini.move": { "branch": "main", "commit": "4d214202d71e0a4066b6288176bbe88f268f9777" },
   "mini.pairs": { "branch": "main", "commit": "d5a29b6254dad07757832db505ea5aeab9aad43a" },
-  "neo-tree.nvim": { "branch": "main", "commit": "38c8e49bf6731a27eb612834ec88c606532b7fea" },
+  "neo-tree.nvim": { "branch": "main", "commit": "6ba0ef540a8dc92f9533433a3f10d414014676aa" },
   "neotest": { "branch": "master", "commit": "deadfb1af5ce458742671ad3a013acb9a6b41178" },
   "neotest-pest": { "branch": "main", "commit": "1429445746f28a4ce887289ea6e442430629e306" },
   "neotest-phpunit": { "branch": "main", "commit": "2761ae9e9a385e491a9731f8c52824e1be64a68f" },
