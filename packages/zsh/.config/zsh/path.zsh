@@ -64,10 +64,10 @@ path=(
 # NOTE: LinkedIn machine image puts `/opt/homebrew/bin/` on path via
 # `/etc/paths.d/`, but it is in the wrong location (it ends up having it's
 # binaries like `delta` shadowed), so we remove and prepend it
-# _ensure_first_path "$HOMEBREW_PREFIX/bin"
-# _ensure_first_path "$HOMEBREW_PREFIX/sbin"
-# _ensure_first_path "/opt/homebrew/opt/fzf/bin"
-# _ensure_first_path "$XDG_BIN_DIR"
+_ensure_first_path "$HOMEBREW_PREFIX/bin"
+_ensure_first_path "$HOMEBREW_PREFIX/sbin"
+_ensure_first_path "/opt/homebrew/opt/fzf/bin"
+_ensure_first_path "$XDG_BIN_DIR"
 
 
 # This is handled by the zimfw module
