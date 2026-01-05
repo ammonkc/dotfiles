@@ -33,8 +33,8 @@ zmodule $BREW_DATA_HOME/zsh-fast-syntax-highlighting --name fast-syntax-highligh
 zmodule $BREW_DATA_HOME/zsh-autosuggestions           # Fish-like autosuggestions for Zsh.
 
 # zmodule kiesman99/zim-zoxide      # initialized in .zshrc
-zmodule z-shell/zsh-eza
-zmodule MohamedElashri/fd-zsh
+zmodule z-shell/zsh-eza --if '(( ${+commands[eza]} ))'
+zmodule MohamedElashri/fd-zsh --if '(( ${+commands[fd]} ))'
 zmodule mdumitru/git-aliases
 zmodule marvinroman/oh-my-zsh-gpg-plugin
 zmodule Czocher/gpg-crypt
