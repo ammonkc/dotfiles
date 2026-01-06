@@ -38,8 +38,6 @@
 	fsckobjects = true
 [receive]
 	fsckObjects = true
-[blame]
-	ignoreRevsFile = .git-blame-ignore-revs
 [branch]
   autosetupmerge = true
   sort = -committerdate
@@ -101,7 +99,7 @@
     hunk-header-decoration-style = yellow box
 
 [help]
-  autocorrect = 1
+  autocorrect = prompt
 [advice]
   pushNonFastForward = false
   statusHints = false
@@ -188,14 +186,14 @@
     continue = "!GIT_EDITOR=true git rebase --continue"
     conf = "!git s | grep ^U"
     # rebase the current branch with changes from upstream remote
-    update = !git fetch upstream && git rebase upstream/`git rev-parse --abbrev-ref HEAD`
+    update = "!git fetch upstream && git rebase upstream/$(git rev-parse --abbrev-ref HEAD)"
 
     #Undo
-    undo = 'reset HEAD~ && clean -df'
+    undo = "!git reset HEAD~ && git clean -df"
     undosoft = reset --soft HEAD~1
 
     # Undo a `git push`
-    undopush = 'push -f origin HEAD^:master'
+    undopush = "!git push -f origin HEAD^:$(git symbolic-ref --short HEAD)"
 
     # show all deleted files in the repo
     deleted = "!git log --diff-filter=D --summary | grep delete"
@@ -214,9 +212,6 @@
     si = submodule init
     su = submodule update
     sub = "!git submodule sync && git submodule update"
-
-    # show number of commits per contributer, sorted
-    count = shortlog -sn
 
     # list all aliases
     la = "!git config -l | grep alias | cut -c 7-"
@@ -240,7 +235,7 @@
     # add grep
     ag = "!sh -c 'git ls-files -m -o --exclude-standard | grep $1 | xargs git add --all' -"
     # add all
-    aa = !git ls-files -d | xargs git rm && git ls-files -m -o --exclude-standard | xargs git add
+    aa = "!git ls-files -d | xargs git rm && git ls-files -m -o --exclude-standard | xargs git add"
     # remove grep - Remove found files that are NOT under version control
     rg = "!sh -c 'git ls-files --others --exclude-standard | grep $1 | xargs rm' -"
 
