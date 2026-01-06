@@ -62,7 +62,7 @@ export PNPM_HOME="$XDG_DATA_HOME/pnpm"
 export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_repl_history"
 
 # Subversion (svn)
-export SUBVERSION_HOME="$XDG_CONFIG_HOME/subversion"
+export SVN_CONFIG_DIR="$XDG_CONFIG_HOME/subversion"
 
 # Python
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/pythonrc"
