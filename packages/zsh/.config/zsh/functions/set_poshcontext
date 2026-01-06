@@ -1,0 +1,27 @@
+# Oh My Posh context function - called before each prompt render
+# Sets environment variables for use in Oh My Posh segments
+
+# Cache Laravel version per directory to avoid repeated parsing
+typeset -gA _laravel_version_cache
+
+if [[ -f composer.lock ]]; then
+  # Check cache first
+  if [[ -z "${_laravel_version_cache[$PWD]}" ]]; then
+    if (( $+commands[jq] )); then
+      # Fast path: use jq for JSON parsing
+      _laravel_version_cache[$PWD]=$(jq -r '.packages[] | select(.name == "laravel/framework") | .version' composer.lock 2>/dev/null | sed 's/^v//')
+    else
+      # Fallback: use grep/sed (slower but portable)
+      _laravel_version_cache[$PWD]=$(grep -A1 '"name": "laravel/framework"' composer.lock 2>/dev/null | grep '"version"' | head -1 | sed 's/.*"v\?\([^"]*\)".*/\1/')
+    fi
+  fi
+
+  if [[ -n "${_laravel_version_cache[$PWD]}" ]]; then
+    export LARAVEL_VERSION="${_laravel_version_cache[$PWD]}"
+  else
+    unset LARAVEL_VERSION
+  fi
+else
+  unset LARAVEL_VERSION
+fi
+

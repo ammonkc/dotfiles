@@ -111,18 +111,13 @@ final_space = true
     invert_powerline = true
 
   [[blocks.segments]]
-    type = "command"
-    style = "powerline"
+    type = 'text'
+    style = 'powerline'
     powerline_symbol = ''
-    foreground = "p:laravel-red"
-    background = "p:haiti"
-    template = "{{ if .Output }} {{ .Output }} {{ end }}"
-    # Configuration to only show the segment in a Laravel project
-    [blocks.segments.properties]
-      # This property targets specific files to be present for the segment to render
-      shell = "bash"
-      command = "if [ -f artisan ]; then echo $(php artisan -V | awk '{print $3}'); fi"
-      # files = ["artisan"]
+    invert_powerline = true
+    foreground = 'p:laravel-red'
+    background = 'p:haiti'
+    template = '{{ if .Env.LARAVEL_VERSION }} {{ .Env.LARAVEL_VERSION }} {{ end }}'
 
   [[blocks.segments]]
     type = "php"
@@ -208,13 +203,17 @@ final_space = true
       fetch_version = false
 
   [[blocks.segments]]
-    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
-    foreground = "lightWhite"
-    powerline_symbol = ''
     type = 'aws'
     style = 'powerline'
-    background_templates = ['{{if contains "default" .Profile}}#FFA400{{end}}', '{{if contains "jan" .Profile}}#f1184c{{end}}']
+    powerline_symbol = ''
     invert_powerline = true
+    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
+    foreground = '#FF9900'
+    background = '#252F3E'
+    background_templates = [
+      '{{if contains "default" .Profile}}#252F3E{{end}}',
+      '{{if contains "jan" .Profile}}#f1184c{{end}}'
+    ]
 
     [blocks.segments.properties]
       display_default = false
@@ -232,6 +231,8 @@ final_space = true
     template = ' {{ .CurrentDate | date .Format }}  '
     foreground = "black" #'#000000'
     background = "white" #'#d3d7cf'
+    powerline_symbol = ''
     type = 'time'
-    style = 'powerline'
-    invert_powerline = true
+    style = 'diamond'
+    leading_diamond = ''
+    trailing_diamond = ''
