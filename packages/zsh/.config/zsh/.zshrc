@@ -60,7 +60,8 @@ if [ "$TERM_PROGRAM" != "Apple_Terminal" ] && (( $+commands[oh-my-posh] )); then
 
   # Override oh-my-posh's empty set_poshcontext stub with our custom function
   # This must happen AFTER oh-my-posh init (the cached init defines an empty stub)
-  autoload +X set_poshcontext
+  # We source directly because autoload can't override an existing function
+  [[ -f $ZDOTDIR/functions/set_poshcontext ]] && source $ZDOTDIR/functions/set_poshcontext
 fi
 
 # Init mise with caching
