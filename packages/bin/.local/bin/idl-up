@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Start IDL Docker containers (allegro.test)
+#
+
+PROJECT_DIR="$HOME/Developer/code/allegro.test"
+
+cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
+
+USER_ID=502 GROUP_ID=20 docker compose -f docker-compose.yaml \
+    --profile sftp \
+    --profile php8-work \
+    up --force-recreate --build --detach --remove-orphans
+
+echo "✅ IDL containers started"
+
