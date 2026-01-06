@@ -1,7 +1,7 @@
-qprSections:
-  - title: Open Pull Requests
+prSections:
+  - title: Open PRs
     filters: is:open
-  - title: My Pull Requests
+  - title: My PRs
     filters: is:open author:@me
   - title: Needs My Review
     filters: is:open review-requested:@me
