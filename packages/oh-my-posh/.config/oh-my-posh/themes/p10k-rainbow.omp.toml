@@ -190,7 +190,7 @@ final_space = true
     template = "  {{ .Context }} "
 
   [[blocks.segments]]
-    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} '
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
     foreground = "lightWhite"
     powerline_symbol = ''
     background = "p:az-yellow" #'#FEAC19'
@@ -207,7 +207,7 @@ final_space = true
     style = 'powerline'
     powerline_symbol = ''
     invert_powerline = true
-    template = '  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}'
+    template = '  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} '
     foreground = '#FF9900'
     background = '#252F3E'
     background_templates = [
