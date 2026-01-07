@@ -7,6 +7,7 @@
 typeset -gA _laravel_version_cache
 
 function set_poshcontext() {
+  # === Laravel Version ===
   if [[ -f composer.lock ]]; then
     # Check cache first
     if [[ -z "${_laravel_version_cache[$PWD]}" ]]; then
@@ -26,5 +27,46 @@ function set_poshcontext() {
     fi
   else
     unset LARAVEL_VERSION
+  fi
+
+  # === Docker Compose Status ===
+  # Check for docker-compose.yml or compose.yml (Docker Compose v2)
+  if [[ -f docker-compose.yml || -f docker-compose.yaml || -f compose.yml || -f compose.yaml ]]; then
+    if (( $+commands[docker] )); then
+      # Get container status: running/total
+      local running total
+      if (( $+commands[jq] )); then
+        # Fast path with jq
+        local ps_json=$(docker compose ps --format json 2>/dev/null)
+        if [[ -n "$ps_json" ]]; then
+          total=$(echo "$ps_json" | jq -s 'length')
+          running=$(echo "$ps_json" | jq -s '[.[] | select(.State == "running")] | length')
+        fi
+      else
+        # Fallback: parse docker compose ps output
+        total=$(docker compose ps -a --format '{{.State}}' 2>/dev/null | wc -l | tr -d ' ')
+        running=$(docker compose ps --format '{{.State}}' 2>/dev/null | grep -c running || echo 0)
+      fi
+
+      if [[ -n "$total" && "$total" -gt 0 ]]; then
+        export DOCKER_COMPOSE_STATUS="${running}/${total}"
+        # Also set a simple up/down indicator
+        if [[ "$running" -eq "$total" ]]; then
+          export DOCKER_COMPOSE_STATE="up"
+        elif [[ "$running" -gt 0 ]]; then
+          export DOCKER_COMPOSE_STATE="partial"
+        else
+          export DOCKER_COMPOSE_STATE="down"
+        fi
+      else
+        # Compose file exists but no containers defined/running
+        export DOCKER_COMPOSE_STATUS=""
+        export DOCKER_COMPOSE_STATE="none"
+      fi
+    else
+      unset DOCKER_COMPOSE_STATUS DOCKER_COMPOSE_STATE
+    fi
+  else
+    unset DOCKER_COMPOSE_STATUS DOCKER_COMPOSE_STATE
   fi
 }

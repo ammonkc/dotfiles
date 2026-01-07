@@ -190,6 +190,24 @@ final_space = true
     template = "  {{ .Context }} "
 
   [[blocks.segments]]
+    type = 'text'
+    style = 'powerline'
+    powerline_symbol = ''
+    invert_powerline = true
+    foreground = 'lightWhite'
+    background = 'p:docker-blue'
+    background_templates = [
+      '{{ if eq .Env.DOCKER_COMPOSE_STATE "up" }}p:docker-blue{{ end }}',
+      '{{ if eq .Env.DOCKER_COMPOSE_STATE "partial" }}yellow{{ end }}',
+      '{{ if eq .Env.DOCKER_COMPOSE_STATE "down" }}red{{ end }}'
+    ]
+    foreground_templates = [
+      '{{ if eq .Env.DOCKER_COMPOSE_STATE "partial" }}black{{ end }}',
+      '{{ if eq .Env.DOCKER_COMPOSE_STATE "down" }}lightWhite{{ end }}'
+    ]
+    template = '{{ if .Env.DOCKER_COMPOSE_STATUS }} 󰡨 {{ .Env.DOCKER_COMPOSE_STATUS }} {{ end }}'
+
+  [[blocks.segments]]
     template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
     foreground = "lightWhite"
     powerline_symbol = ''
