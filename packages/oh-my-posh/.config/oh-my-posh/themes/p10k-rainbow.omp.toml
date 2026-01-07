@@ -117,7 +117,7 @@ final_space = true
     invert_powerline = true
     foreground = 'p:laravel-red'
     background = 'p:haiti'
-    template = '{{ if .Env.LARAVEL_VERSION }} {{ .Env.LARAVEL_VERSION }} {{ end }}'
+    template = '{{ if .Env.LARAVEL_VERSION }}  {{ .Env.LARAVEL_VERSION }} {{ end }}'
 
   [[blocks.segments]]
     type = "php"
@@ -207,7 +207,7 @@ final_space = true
     style = 'powerline'
     powerline_symbol = ''
     invert_powerline = true
-    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
+    template = '  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}'
     foreground = '#FF9900'
     background = '#252F3E'
     background_templates = [
