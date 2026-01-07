@@ -88,7 +88,7 @@ final_space = true
   alignment = 'right'
 
   [[blocks.segments]]
-    template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
+    template = ' {{ if gt .Code 0 }} {{ reason .Code }}{{ else }}{{ end }} '
     foreground = "p:fine-pine" #'#d3d7cf'
     powerline_symbol = ''
     background = "p:haiti" #'#292D3E'
