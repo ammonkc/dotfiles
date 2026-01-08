@@ -202,17 +202,18 @@ tasks:
     summary: |
       Installs npm dependencies and registers the IDL Docker extension with Raycast.
       Run this after stowing dotfiles on a new machine.
-    dir: '{{.PACKAGES_DIR}}/raycast/extensions/idl-docker'
+    vars:
+      EXTENSION_DIR: '{{.ROOT_DIR}}/packages/raycast/extensions/idl-docker'
     preconditions:
       - sh: command -v npm >/dev/null 2>&1
         msg: "npm is not installed. Install Node.js first."
-      - sh: test -d "{{.PACKAGES_DIR}}/raycast/extensions/idl-docker"
-        msg: "Raycast extension not found at {{.PACKAGES_DIR}}/raycast/extensions/idl-docker"
+      - sh: test -d "{{.EXTENSION_DIR}}"
+        msg: "Raycast extension not found at {{.EXTENSION_DIR}}"
     cmds:
       - echo "📦 Installing Raycast IDL Docker extension..."
-      - npm install
+      - cd "{{.EXTENSION_DIR}}" && npm install
       - echo "🚀 Registering extension with Raycast..."
-      - npm run dev &
+      - cd "{{.EXTENSION_DIR}}" && npm run dev &
       - sleep 3
       - echo "✓ Extension registered! You can now use 'IDL Docker' commands in Raycast"
 
