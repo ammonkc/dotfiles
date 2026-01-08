@@ -62,12 +62,13 @@ ${output.join("\n")}
       metadata={
         <Detail.Metadata>
           <Detail.Metadata.Label title="Worktree" text={worktree} />
+          <Detail.Metadata.Label title="Domain" text={domain} />
+          <Detail.Metadata.Separator />
           <Detail.Metadata.Label
             title="Status"
             text={statusText}
             icon={isRunning ? Icon.Clock : success ? Icon.Check : Icon.XMarkCircle}
           />
-          <Detail.Metadata.Separator />
           <Detail.Metadata.Label title="Lines" text={String(output.length)} />
         </Detail.Metadata>
       }
