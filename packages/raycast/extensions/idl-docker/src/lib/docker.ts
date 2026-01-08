@@ -1,5 +1,7 @@
 import { exec, ExecException } from "child_process";
 import { promisify } from "util";
+import { homedir } from "os";
+import { join } from "path";
 import { getWorktreePath } from "./worktrees";
 
 const execAsync = promisify(exec);
@@ -10,9 +12,13 @@ export interface DockerResult {
   output?: string;
 }
 
+// Path to the bash scripts
+const SCRIPTS_DIR = join(homedir(), ".local", "bin");
+
 // Ensure common paths are available (Homebrew, etc.)
 function getEnvWithPath(): NodeJS.ProcessEnv {
   const additionalPaths = [
+    join(homedir(), ".local", "bin"),
     "/opt/homebrew/bin",
     "/opt/homebrew/sbin",
     "/usr/local/bin",
@@ -46,12 +52,11 @@ function getErrorDetails(error: unknown): string {
 }
 
 /**
- * Start Docker containers for a worktree
+ * Start Docker containers for a worktree using idl-up script
  */
 export async function startContainers(worktree: string): Promise<DockerResult> {
-  const projectDir = getWorktreePath(worktree);
-
-  const command = `cd "${projectDir}" && ALLEGRO_DOMAIN=indirect.test docker compose -f docker-compose.yaml --profile sftp up --force-recreate --build --detach --remove-orphans`;
+  const script = join(SCRIPTS_DIR, "idl-up");
+  const command = `"${script}" "${worktree}"`;
 
   try {
     const { stdout, stderr } = await execAsync(command, {
@@ -73,12 +78,11 @@ export async function startContainers(worktree: string): Promise<DockerResult> {
 }
 
 /**
- * Stop Docker containers for a worktree
+ * Stop Docker containers for a worktree using idl-down script
  */
 export async function stopContainers(worktree: string): Promise<DockerResult> {
-  const projectDir = getWorktreePath(worktree);
-
-  const command = `cd "${projectDir}" && ALLEGRO_DOMAIN=indirect.test docker compose -f docker-compose.yaml --profile sftp --profile php8-work down`;
+  const script = join(SCRIPTS_DIR, "idl-down");
+  const command = `"${script}" "${worktree}"`;
 
   try {
     const { stdout, stderr } = await execAsync(command, {
