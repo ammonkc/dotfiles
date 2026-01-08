@@ -17,7 +17,7 @@
 
 BASE_DIR="$HOME/Developer/code/indirect"
 WORKTREE="${1:-main}"
-ALLEGRO_DOMAIN="${2:-indirect.test}"
+ALLEGRO_DOMAIN="${2:-allegro.test}"
 
 # Get list of available worktrees (directories in BASE_DIR)
 # Uses fd if available, otherwise falls back to find
