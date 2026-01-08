@@ -6,9 +6,26 @@ local target_version="$1"
 # Check if brew is available
 (( $+commands[brew] )) || { echo "Homebrew is required"; return 1; }
 
-# Get installed PHP versions
+# Get installed PHP versions and map version -> package name
+# Handles both "php@X.Y" (older versions) and "php" (latest version)
 local -a installed_versions
-installed_versions=($(brew ls --versions 2>/dev/null | grep -E '^php(@[0-9.]+)?\s' | sed -E 's/^php(@([0-9.]+))?.*/\2/' | grep -v '^$' | sort -u))
+local -A version_to_pkg
+local line
+
+while IFS= read -r line; do
+    if [[ "$line" =~ ^php@([0-9]+\.[0-9]+) ]]; then
+        # Versioned package like php@8.4
+        installed_versions+=("${match[1]}")
+        version_to_pkg[${match[1]}]="php@${match[1]}"
+    elif [[ "$line" =~ ^php\ ([0-9]+\.[0-9]+) ]]; then
+        # Main php package (latest version)
+        installed_versions+=("${match[1]}")
+        version_to_pkg[${match[1]}]="php"
+    fi
+done < <(brew ls --versions 2>/dev/null)
+
+# Sort versions
+installed_versions=($(printf '%s\n' "${installed_versions[@]}" | sort -V | uniq))
 
 if [[ -z "$target_version" ]]; then
     echo "Installed PHP versions: ${installed_versions[*]}"
@@ -17,16 +34,17 @@ if [[ -z "$target_version" ]]; then
 fi
 
 # Check if target version is installed
-if [[ ! " ${installed_versions[*]} " =~ " ${target_version} " ]]; then
+if [[ -z "${version_to_pkg[$target_version]}" ]]; then
     echo "PHP $target_version is not installed"
     echo "Available: ${installed_versions[*]}"
     return 1
 fi
 
-# Unlink all PHP versions and link the target
+# Unlink all PHP versions
 for v in "${installed_versions[@]}"; do
-    brew unlink "php@$v" 2>/dev/null
+    brew unlink "${version_to_pkg[$v]}" 2>/dev/null
 done
 
-brew link "php@$target_version" --force --overwrite 2>/dev/null && php -v
+# Link the target version
+brew link "${version_to_pkg[$target_version]}" --force --overwrite 2>/dev/null && php -v
 
