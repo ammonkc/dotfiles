@@ -28,13 +28,19 @@ export interface StreamCallbacks {
   onComplete: (success: boolean, message: string) => void;
 }
 
+export interface ContainerOptions {
+  worktree: string;
+  domain: string;
+}
+
 /**
  * Start Docker containers for a worktree using idl-up script (streaming)
  */
-export function startContainersStream(worktree: string, callbacks: StreamCallbacks): void {
+export function startContainersStream(options: ContainerOptions, callbacks: StreamCallbacks): void {
+  const { worktree, domain } = options;
   const script = join(SCRIPTS_DIR, "idl-up");
 
-  const proc = spawn(script, [worktree], {
+  const proc = spawn(script, [worktree, domain], {
     env: getEnvWithPath(),
     shell: true,
   });
@@ -51,7 +57,7 @@ export function startContainersStream(worktree: string, callbacks: StreamCallbac
 
   proc.on("close", (code) => {
     if (code === 0) {
-      callbacks.onComplete(true, `Containers started for ${worktree}`);
+      callbacks.onComplete(true, `Containers started for ${worktree} @ ${domain}`);
     } else {
       callbacks.onComplete(false, `Failed with exit code ${code}`);
     }
@@ -65,10 +71,11 @@ export function startContainersStream(worktree: string, callbacks: StreamCallbac
 /**
  * Stop Docker containers for a worktree using idl-down script (streaming)
  */
-export function stopContainersStream(worktree: string, callbacks: StreamCallbacks): void {
+export function stopContainersStream(options: ContainerOptions, callbacks: StreamCallbacks): void {
+  const { worktree, domain } = options;
   const script = join(SCRIPTS_DIR, "idl-down");
 
-  const proc = spawn(script, [worktree], {
+  const proc = spawn(script, [worktree, domain], {
     env: getEnvWithPath(),
     shell: true,
   });
@@ -85,7 +92,7 @@ export function stopContainersStream(worktree: string, callbacks: StreamCallback
 
   proc.on("close", (code) => {
     if (code === 0) {
-      callbacks.onComplete(true, `Containers stopped for ${worktree}`);
+      callbacks.onComplete(true, `Containers stopped for ${worktree} @ ${domain}`);
     } else {
       callbacks.onComplete(false, `Failed with exit code ${code}`);
     }

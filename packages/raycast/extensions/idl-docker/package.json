@@ -37,6 +37,14 @@
       "type": "textfield",
       "required": false,
       "default": "main"
+    },
+    {
+      "name": "allegroDomain",
+      "title": "Allegro Domain",
+      "description": "Domain for the ALLEGRO_DOMAIN environment variable",
+      "type": "textfield",
+      "required": false,
+      "default": "indirect.test"
     }
   ],
   "dependencies": {

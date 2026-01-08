@@ -1,11 +1,14 @@
 #!/bin/bash
 #
-# Stop IDL Docker containers (indirect.test)
-# Usage: idl-down [worktree]  (defaults to main)
+# Stop IDL Docker containers
+# Usage: idl-down [worktree] [domain]
+#        worktree - defaults to 'main'
+#        domain   - defaults to 'indirect.test'
 #
 
 BASE_DIR="$HOME/Developer/code/indirect"
 WORKTREE="${1:-main}"
+ALLEGRO_DOMAIN="${2:-indirect.test}"
 
 # Get list of available worktrees (directories in BASE_DIR)
 # Uses fd if available, otherwise falls back to find
@@ -28,10 +31,10 @@ fi
 
 cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
 
-ALLEGRO_DOMAIN=indirect.test docker compose -f docker-compose.yaml \
+ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" docker compose -f docker-compose.yaml \
     --profile sftp \
     --profile php8-work \
     down
 
-echo "✅ IDL containers stopped ($WORKTREE)"
+echo "✅ IDL containers stopped ($WORKTREE) @ $ALLEGRO_DOMAIN"
 

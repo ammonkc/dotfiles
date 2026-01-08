@@ -10,7 +10,7 @@ import {
 } from "@raycast/api";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { startContainersStream } from "./lib/docker";
-import { listWorktrees, getDefaultWorktree, worktreeExists } from "./lib/worktrees";
+import { listWorktrees, getDefaultWorktree, worktreeExists, getAllegroDomain } from "./lib/worktrees";
 
 function OutputView({ worktree }: { worktree: string }) {
   const [output, setOutput] = useState<string[]>([]);
@@ -18,15 +18,16 @@ function OutputView({ worktree }: { worktree: string }) {
   const [success, setSuccess] = useState<boolean | null>(null);
   const { pop } = useNavigation();
   const hasStarted = useRef(false);
+  const domain = getAllegroDomain();
 
   useEffect(() => {
     // Prevent double execution (React strict mode)
     if (hasStarted.current) return;
     hasStarted.current = true;
 
-    setOutput(["🚀 Starting containers for " + worktree + "...", ""]);
+    setOutput([`🚀 Starting containers for ${worktree} @ ${domain}...`, ""]);
 
-    startContainersStream(worktree, {
+    startContainersStream({ worktree, domain }, {
       onOutput: (line) => {
         setOutput((prev) => [...prev, line]);
       },

@@ -9,13 +9,15 @@
 # @raycast.icon ~/.config/raycast/script-commands/icons/docker.svg
 # @raycast.packageName IDL Docker
 # @raycast.argument1 { "type": "text", "placeholder": "worktree", "optional": true }
+# @raycast.argument2 { "type": "text", "placeholder": "domain", "optional": true }
 
 # Documentation:
-# @raycast.description Start IDL Docker containers (indirect.test)
+# @raycast.description Start IDL Docker containers
 # @raycast.author Ammon Casey
 
 BASE_DIR="$HOME/Developer/code/indirect"
 WORKTREE="${1:-main}"
+ALLEGRO_DOMAIN="${2:-indirect.test}"
 
 # Get list of available worktrees (directories in BASE_DIR)
 # Uses fd if available, otherwise falls back to find
@@ -38,9 +40,9 @@ fi
 
 cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
 
-ALLEGRO_DOMAIN=indirect.test docker compose -f docker-compose.yaml \
+ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" docker compose -f docker-compose.yaml \
     --profile sftp \
     up --force-recreate --build --detach --remove-orphans
 
-echo "✅ IDL containers started ($WORKTREE)"
+echo "✅ IDL containers started ($WORKTREE) @ $ALLEGRO_DOMAIN"
 

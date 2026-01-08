@@ -6,6 +6,7 @@ import { homedir } from "os";
 interface Preferences {
   baseDir: string;
   defaultWorktree: string;
+  allegroDomain: string;
 }
 
 /**
@@ -32,6 +33,14 @@ export function getBaseDir(): string {
 export function getDefaultWorktree(): string {
   const { defaultWorktree } = getPreferenceValues<Preferences>();
   return defaultWorktree || "main";
+}
+
+/**
+ * Get the Allegro domain from preferences
+ */
+export function getAllegroDomain(): string {
+  const { allegroDomain } = getPreferenceValues<Preferences>();
+  return allegroDomain || "indirect.test";
 }
 
 /**
