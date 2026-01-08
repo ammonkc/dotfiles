@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { exec, ExecException } from "child_process";
 import { promisify } from "util";
 import { getWorktreePath } from "./worktrees";
 
@@ -8,6 +8,41 @@ export interface DockerResult {
   success: boolean;
   message: string;
   output?: string;
+}
+
+// Ensure common paths are available (Homebrew, etc.)
+function getEnvWithPath(): NodeJS.ProcessEnv {
+  const additionalPaths = [
+    "/opt/homebrew/bin",
+    "/opt/homebrew/sbin",
+    "/usr/local/bin",
+    "/usr/local/sbin",
+    "/usr/bin",
+    "/bin",
+  ];
+  const currentPath = process.env.PATH || "";
+  return {
+    ...process.env,
+    PATH: `${additionalPaths.join(":")}:${currentPath}`,
+  };
+}
+
+// Extract meaningful error message from exec error
+function getErrorDetails(error: unknown): string {
+  if (error && typeof error === "object") {
+    const execError = error as ExecException & { stderr?: string; stdout?: string };
+    // Prefer stderr, fall back to stdout, then message
+    if (execError.stderr?.trim()) {
+      return execError.stderr.trim();
+    }
+    if (execError.stdout?.trim()) {
+      return execError.stdout.trim();
+    }
+    if (execError.message) {
+      return execError.message;
+    }
+  }
+  return String(error);
 }
 
 /**
@@ -21,7 +56,7 @@ export async function startContainers(worktree: string): Promise<DockerResult> {
   try {
     const { stdout, stderr } = await execAsync(command, {
       timeout: 300000, // 5 minute timeout for build
-      env: { ...process.env },
+      env: getEnvWithPath(),
     });
 
     return {
@@ -30,10 +65,9 @@ export async function startContainers(worktree: string): Promise<DockerResult> {
       output: stdout || stderr,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       success: false,
-      message: `Failed to start containers: ${errorMessage}`,
+      message: getErrorDetails(error),
     };
   }
 }
@@ -49,7 +83,7 @@ export async function stopContainers(worktree: string): Promise<DockerResult> {
   try {
     const { stdout, stderr } = await execAsync(command, {
       timeout: 60000, // 1 minute timeout
-      env: { ...process.env },
+      env: getEnvWithPath(),
     });
 
     return {
@@ -58,10 +92,9 @@ export async function stopContainers(worktree: string): Promise<DockerResult> {
       output: stdout || stderr,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       success: false,
-      message: `Failed to stop containers: ${errorMessage}`,
+      message: getErrorDetails(error),
     };
   }
 }
@@ -77,7 +110,7 @@ export async function getContainerStatus(worktree: string): Promise<DockerResult
   try {
     const { stdout } = await execAsync(command, {
       timeout: 10000,
-      env: { ...process.env },
+      env: getEnvWithPath(),
     });
 
     return {
@@ -86,10 +119,9 @@ export async function getContainerStatus(worktree: string): Promise<DockerResult
       output: stdout,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       success: false,
-      message: `Failed to get status: ${errorMessage}`,
+      message: getErrorDetails(error),
     };
   }
 }
