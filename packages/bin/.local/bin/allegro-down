@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Stop allegro Docker containers (allegro.test)
+#
+
+PROJECT_DIR="$HOME/Developer/code/allegro.test"
+
+cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
+
+docker compose -f docker-compose.yaml \
+    --profile sftp \
+    --profile php8-work \
+    down
+
+echo "✅ allegro containers stopped"
+
