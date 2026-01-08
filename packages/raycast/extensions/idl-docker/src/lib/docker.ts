@@ -1,16 +1,6 @@
-import { exec, ExecException } from "child_process";
-import { promisify } from "util";
+import { spawn } from "child_process";
 import { homedir } from "os";
 import { join } from "path";
-import { getWorktreePath } from "./worktrees";
-
-const execAsync = promisify(exec);
-
-export interface DockerResult {
-  success: boolean;
-  message: string;
-  output?: string;
-}
 
 // Path to the bash scripts
 const SCRIPTS_DIR = join(homedir(), ".local", "bin");
@@ -33,99 +23,75 @@ function getEnvWithPath(): NodeJS.ProcessEnv {
   };
 }
 
-// Extract meaningful error message from exec error
-function getErrorDetails(error: unknown): string {
-  if (error && typeof error === "object") {
-    const execError = error as ExecException & { stderr?: string; stdout?: string };
-    // Prefer stderr, fall back to stdout, then message
-    if (execError.stderr?.trim()) {
-      return execError.stderr.trim();
-    }
-    if (execError.stdout?.trim()) {
-      return execError.stdout.trim();
-    }
-    if (execError.message) {
-      return execError.message;
-    }
-  }
-  return String(error);
+export interface StreamCallbacks {
+  onOutput: (line: string) => void;
+  onComplete: (success: boolean, message: string) => void;
 }
 
 /**
- * Start Docker containers for a worktree using idl-up script
+ * Start Docker containers for a worktree using idl-up script (streaming)
  */
-export async function startContainers(worktree: string): Promise<DockerResult> {
+export function startContainersStream(worktree: string, callbacks: StreamCallbacks): void {
   const script = join(SCRIPTS_DIR, "idl-up");
-  const command = `"${script}" "${worktree}"`;
 
-  try {
-    const { stdout, stderr } = await execAsync(command, {
-      timeout: 300000, // 5 minute timeout for build
-      env: getEnvWithPath(),
-    });
+  const proc = spawn(script, [worktree], {
+    env: getEnvWithPath(),
+    shell: true,
+  });
 
-    return {
-      success: true,
-      message: `Containers started for ${worktree}`,
-      output: stdout || stderr,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: getErrorDetails(error),
-    };
-  }
+  proc.stdout.on("data", (data: Buffer) => {
+    const lines = data.toString().split("\n").filter(Boolean);
+    lines.forEach((line) => callbacks.onOutput(line));
+  });
+
+  proc.stderr.on("data", (data: Buffer) => {
+    const lines = data.toString().split("\n").filter(Boolean);
+    lines.forEach((line) => callbacks.onOutput(line));
+  });
+
+  proc.on("close", (code) => {
+    if (code === 0) {
+      callbacks.onComplete(true, `Containers started for ${worktree}`);
+    } else {
+      callbacks.onComplete(false, `Failed with exit code ${code}`);
+    }
+  });
+
+  proc.on("error", (error) => {
+    callbacks.onComplete(false, error.message);
+  });
 }
 
 /**
- * Stop Docker containers for a worktree using idl-down script
+ * Stop Docker containers for a worktree using idl-down script (streaming)
  */
-export async function stopContainers(worktree: string): Promise<DockerResult> {
+export function stopContainersStream(worktree: string, callbacks: StreamCallbacks): void {
   const script = join(SCRIPTS_DIR, "idl-down");
-  const command = `"${script}" "${worktree}"`;
 
-  try {
-    const { stdout, stderr } = await execAsync(command, {
-      timeout: 60000, // 1 minute timeout
-      env: getEnvWithPath(),
-    });
+  const proc = spawn(script, [worktree], {
+    env: getEnvWithPath(),
+    shell: true,
+  });
 
-    return {
-      success: true,
-      message: `Containers stopped for ${worktree}`,
-      output: stdout || stderr,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: getErrorDetails(error),
-    };
-  }
-}
+  proc.stdout.on("data", (data: Buffer) => {
+    const lines = data.toString().split("\n").filter(Boolean);
+    lines.forEach((line) => callbacks.onOutput(line));
+  });
 
-/**
- * Get container status for a worktree
- */
-export async function getContainerStatus(worktree: string): Promise<DockerResult> {
-  const projectDir = getWorktreePath(worktree);
+  proc.stderr.on("data", (data: Buffer) => {
+    const lines = data.toString().split("\n").filter(Boolean);
+    lines.forEach((line) => callbacks.onOutput(line));
+  });
 
-  const command = `cd "${projectDir}" && docker compose -f docker-compose.yaml ps --format json 2>/dev/null || echo "[]"`;
+  proc.on("close", (code) => {
+    if (code === 0) {
+      callbacks.onComplete(true, `Containers stopped for ${worktree}`);
+    } else {
+      callbacks.onComplete(false, `Failed with exit code ${code}`);
+    }
+  });
 
-  try {
-    const { stdout } = await execAsync(command, {
-      timeout: 10000,
-      env: getEnvWithPath(),
-    });
-
-    return {
-      success: true,
-      message: "Status retrieved",
-      output: stdout,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: getErrorDetails(error),
-    };
-  }
+  proc.on("error", (error) => {
+    callbacks.onComplete(false, error.message);
+  });
 }

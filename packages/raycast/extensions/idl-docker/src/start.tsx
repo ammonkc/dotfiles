@@ -1,12 +1,70 @@
-import { Action, ActionPanel, Icon, List, showToast, Toast } from "@raycast/api";
-import { useState } from "react";
-import { startContainers } from "./lib/docker";
+import {
+  Action,
+  ActionPanel,
+  Detail,
+  Icon,
+  List,
+  showToast,
+  Toast,
+  useNavigation,
+} from "@raycast/api";
+import { useState, useEffect, useCallback } from "react";
+import { startContainersStream } from "./lib/docker";
 import { listWorktrees, getDefaultWorktree, worktreeExists } from "./lib/worktrees";
 
+function OutputView({ worktree }: { worktree: string }) {
+  const [output, setOutput] = useState<string[]>([]);
+  const [isRunning, setIsRunning] = useState(true);
+  const [success, setSuccess] = useState<boolean | null>(null);
+  const { pop } = useNavigation();
+
+  useEffect(() => {
+    setOutput(["🚀 Starting containers for " + worktree + "...", ""]);
+
+    startContainersStream(worktree, {
+      onOutput: (line) => {
+        setOutput((prev) => [...prev, line]);
+      },
+      onComplete: (succeeded, message) => {
+        setIsRunning(false);
+        setSuccess(succeeded);
+        setOutput((prev) => [...prev, "", succeeded ? `✅ ${message}` : `❌ ${message}`]);
+
+        showToast({
+          style: succeeded ? Toast.Style.Success : Toast.Style.Failure,
+          title: succeeded ? "Containers started" : "Failed to start",
+          message: worktree,
+        });
+      },
+    });
+  }, [worktree]);
+
+  const markdown = `# ${isRunning ? "⏳ Starting" : success ? "✅ Started" : "❌ Failed"} - ${worktree}
+
+\`\`\`
+${output.join("\n")}
+\`\`\`
+`;
+
+  return (
+    <Detail
+      markdown={markdown}
+      isLoading={isRunning}
+      actions={
+        <ActionPanel>
+          {!isRunning && (
+            <Action title="Done" icon={Icon.Check} onAction={pop} />
+          )}
+        </ActionPanel>
+      }
+    />
+  );
+}
+
 export default function StartCommand() {
-  const [isLoading, setIsLoading] = useState(false);
   const worktrees = listWorktrees();
   const defaultWorktree = getDefaultWorktree();
+  const { push } = useNavigation();
 
   // Sort worktrees with default first
   const sortedWorktrees = [...worktrees].sort((a, b) => {
@@ -15,38 +73,21 @@ export default function StartCommand() {
     return a.localeCompare(b);
   });
 
-  async function handleStart(worktree: string) {
-    if (!worktreeExists(worktree)) {
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "Worktree not found",
-        message: `Directory for "${worktree}" does not exist`,
-      });
-      return;
-    }
+  const handleStart = useCallback(
+    async (worktree: string) => {
+      if (!worktreeExists(worktree)) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Worktree not found",
+          message: `Directory for "${worktree}" does not exist`,
+        });
+        return;
+      }
 
-    setIsLoading(true);
-
-    const toast = await showToast({
-      style: Toast.Style.Animated,
-      title: "Starting containers...",
-      message: worktree,
-    });
-
-    const result = await startContainers(worktree);
-
-    if (result.success) {
-      toast.style = Toast.Style.Success;
-      toast.title = "Containers started";
-      toast.message = worktree;
-    } else {
-      toast.style = Toast.Style.Failure;
-      toast.title = "Failed to start";
-      toast.message = result.message;
-    }
-
-    setIsLoading(false);
-  }
+      push(<OutputView worktree={worktree} />);
+    },
+    [push]
+  );
 
   if (worktrees.length === 0) {
     return (
@@ -61,7 +102,7 @@ export default function StartCommand() {
   }
 
   return (
-    <List isLoading={isLoading} searchBarPlaceholder="Search worktrees...">
+    <List searchBarPlaceholder="Search worktrees...">
       {sortedWorktrees.map((worktree) => (
         <List.Item
           key={worktree}
