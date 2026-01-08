@@ -8,7 +8,7 @@ import {
   Toast,
   useNavigation,
 } from "@raycast/api";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { startContainersStream } from "./lib/docker";
 import { listWorktrees, getDefaultWorktree, worktreeExists } from "./lib/worktrees";
 
@@ -17,8 +17,13 @@ function OutputView({ worktree }: { worktree: string }) {
   const [isRunning, setIsRunning] = useState(true);
   const [success, setSuccess] = useState<boolean | null>(null);
   const { pop } = useNavigation();
+  const hasStarted = useRef(false);
 
   useEffect(() => {
+    // Prevent double execution (React strict mode)
+    if (hasStarted.current) return;
+    hasStarted.current = true;
+
     setOutput(["🚀 Starting containers for " + worktree + "...", ""]);
 
     startContainersStream(worktree, {
