@@ -25,12 +25,12 @@ function OutputView({ worktree }: { worktree: string }) {
       onOutput: (line) => {
         setOutput((prev) => [...prev, line]);
       },
-      onComplete: (succeeded, message) => {
+      onComplete: async (succeeded, message) => {
         setIsRunning(false);
         setSuccess(succeeded);
         setOutput((prev) => [...prev, "", succeeded ? `✅ ${message}` : `❌ ${message}`]);
 
-        showToast({
+        await showToast({
           style: succeeded ? Toast.Style.Success : Toast.Style.Failure,
           title: succeeded ? "Containers started" : "Failed to start",
           message: worktree,
@@ -39,8 +39,10 @@ function OutputView({ worktree }: { worktree: string }) {
     });
   }, [worktree]);
 
-  const markdown = `# ${isRunning ? "⏳ Starting" : success ? "✅ Started" : "❌ Failed"} - ${worktree}
+  const statusIcon = isRunning ? "⏳" : success ? "✅" : "❌";
+  const statusText = isRunning ? "Starting..." : success ? "Started" : "Failed";
 
+  const markdown = `
 \`\`\`
 ${output.join("\n")}
 \`\`\`
@@ -48,13 +50,31 @@ ${output.join("\n")}
 
   return (
     <Detail
+      navigationTitle={`${statusIcon} ${statusText} - ${worktree}`}
       markdown={markdown}
       isLoading={isRunning}
+      metadata={
+        <Detail.Metadata>
+          <Detail.Metadata.Label title="Worktree" text={worktree} />
+          <Detail.Metadata.Label
+            title="Status"
+            text={statusText}
+            icon={isRunning ? Icon.Clock : success ? Icon.Check : Icon.XMarkCircle}
+          />
+          <Detail.Metadata.Separator />
+          <Detail.Metadata.Label title="Lines" text={String(output.length)} />
+        </Detail.Metadata>
+      }
       actions={
         <ActionPanel>
           {!isRunning && (
             <Action title="Done" icon={Icon.Check} onAction={pop} />
           )}
+          <Action.CopyToClipboard
+            title="Copy Output"
+            content={output.join("\n")}
+            shortcut={{ modifiers: ["cmd"], key: "c" }}
+          />
         </ActionPanel>
       }
     />
