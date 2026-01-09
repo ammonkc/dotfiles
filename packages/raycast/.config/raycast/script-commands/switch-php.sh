@@ -14,11 +14,11 @@
 # @raycast.description Switch PHP version (leave empty to show current version)
 # @raycast.author Ammon Casey
 
-# Use zsh to call the phpswitch function and capture output
-output=$(/bin/zsh -ic "phpswitch $1" 2>/dev/null)
+# Use zsh to call the phpswitch function and capture output (TERM=dumb disables colors)
+output=$(TERM=dumb /bin/zsh -ic "phpswitch $1" 2>/dev/null)
 
-# Strip ANSI color codes and extract version number from first line
-version=$(echo "$output" | sed 's/\x1b\[[0-9;]*m//g' | head -1 | cut -d' ' -f2)
+# Extract version number from first line (e.g., "PHP 8.1.34 (cli)...")
+version=$(echo "$output" | head -1 | awk '{print $2}')
 
 if [[ -n "$1" ]]; then
     echo "Switched to PHP $version"
