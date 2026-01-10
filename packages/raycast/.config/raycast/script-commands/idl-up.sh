@@ -40,7 +40,11 @@ fi
 
 cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
 
-ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" docker compose -f docker-compose.yaml \
+ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" \
+    DOCKER_BUILDKIT=1 \
+    COMPOSE_DOCKER_CLI_BUILD=1 \
+    docker compose \
+    -f docker-compose.yaml \
     --profile sftp \
     up --force-recreate --build --detach --remove-orphans
 
