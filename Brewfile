@@ -174,7 +174,7 @@ if OS.mac?
     cask 'vlc'                 # Multimedia player
     cask 'yaak'                # REST, GraphQL and gRPC client
     cask 'zen'                 # Gecko based privacy focused web browser
-    cask 'zoom'                # Video communication and virtual meeting platform
+    # cask 'zoom'                # Video communication and virtual meeting platform
 
     # Fonts
     cask 'font-meslo-lg-nerd-font'
