@@ -15,7 +15,13 @@ return {
       { "<leader>lm", ":Laravel related<cr>", desc = "Laravel Related Files" },
     },
     event = { "VeryLazy" },
-    opts = {},
+    opts = {
+      -- All Laravel projects use docker-compose.
+      environments = {
+        default = "docker-compose",
+        ask_on_boot = false,
+      },
+    },
     config = true,
   },
   -- Neotest for running PHPUnit/Pest tests
