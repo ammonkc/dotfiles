@@ -133,7 +133,7 @@ final_space = true
       fetch_version = true
 
   [[blocks.segments]]
-    template = ' {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}  {{ .Full }}'
+    template = ' {{ if .PackageManagerIcon }}  {{ .PackageManagerIcon }} {{ end }}{{ .Full }}'
     foreground = "lightWhite"
     powerline_symbol = ''
     background = "p:node-green" #'#689f63'
