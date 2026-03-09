@@ -12,6 +12,7 @@ brew 'btop'                         # Resource monitor. C++ version and continua
 brew 'colima'                       # Container runtimes on MacOS (and Linux) with minimal setup
 brew 'curl'                         # Get a file from an HTTP, HTTPS or FTP server
 brew 'curlie'                       # Power of curl, ease of use of httpie
+brew 'diffnav'                      # Git diff pager based on delta but with a file tree
 brew 'docker'                       # Docker CLI
 brew 'docker-compose'               # Docker Compose CLI
 brew 'docker-credential-helper'     # Docker Credential Helper
