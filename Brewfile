@@ -52,6 +52,7 @@ brew 'procs'                        # Modern replacement for ps written in Rust
 brew 'resvg'                        # SVG rendering tool and library
 brew 'ripgrep'                      # Search tool like grep and The Silver Searcher
 brew 'sevenzip'                     # 7-Zip is a file archiver with a high compression ratio
+brew 'skills'                       # Open agent skills ecosystem
 brew 'stow'                         # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew 'svgo'                         # Nodejs-based tool for optimizing SVG vector graphics files
 brew 'tlrc'                         # Very fast implementation of tldr in Rust
@@ -124,9 +125,11 @@ if OS.mac?
 
     # Code Editors
     cask 'claude-code'         # Terminal-based AI coding assistant
+    cask 'cmux'                # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
     cask 'conductor'           # Claude code parallelisation
     cask 'cursor'              # Agentic AI code editor
     cask 'phpstorm'            # PHP IDE by JetBrains
+    cask 'superset'            # Terminal for orchestrating agents
     cask 'visual-studio-code'  # Microsoft Visual Studio Code
     cask 'zed'                 # Agentic code editor
 
