@@ -33,7 +33,6 @@ cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
 
 ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" docker compose -f docker-compose.yaml \
     --profile sftp \
-    --profile php8-work \
     down
 
 echo "✅ IDL containers stopped ($WORKTREE) @ $ALLEGRO_DOMAIN"
