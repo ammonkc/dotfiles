@@ -69,4 +69,34 @@ function set_poshcontext() {
   else
     unset DOCKER_COMPOSE_STATUS DOCKER_COMPOSE_STATE
   fi
+
+  # === AWS SSO Session Status ===
+  local _aws_cache_dir="$HOME/.aws/sso/cache"
+  if [[ -d "$_aws_cache_dir" ]] && (( $+commands[jq] )); then
+    local _aws_now_epoch=$(date +%s)
+    local _aws_authenticated=0
+
+    for _f in "$_aws_cache_dir"/*.json; do
+      # Only process token files (they have accessToken), skip registration files
+      if jq -e '.accessToken' "$_f" &>/dev/null 2>&1; then
+        local _expires_raw=$(jq -r '.expiresAt' "$_f" 2>/dev/null)
+        # Strip fractional seconds and Z: "2026-03-31T15:50:11.580Z" -> "2026-03-31T15:50:11"
+        local _expires_clean="${_expires_raw%%.*}"
+        # macOS BSD date parsing
+        local _expires_epoch=$(date -j -u -f "%Y-%m-%dT%H:%M:%S" "$_expires_clean" +%s 2>/dev/null)
+        if [[ -n "$_expires_epoch" && "$_aws_now_epoch" -lt "$_expires_epoch" ]]; then
+          _aws_authenticated=1
+          break
+        fi
+      fi
+    done
+
+    if [[ "$_aws_authenticated" -eq 1 ]]; then
+      export AWS_AUTH_STATUS="active"
+    else
+      unset AWS_AUTH_STATUS
+    fi
+  else
+    unset AWS_AUTH_STATUS
+  fi
 }

@@ -228,6 +228,9 @@ final_space = true
     invert_powerline = true
     template = '  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} '
     foreground = '#FF9900'
+    foreground_templates = [
+      '{{ if eq .Env.AWS_AUTH_STATUS "active" }}#00C853{{ end }}'
+    ]
     background = '#252F3E'
     background_templates = [
       '{{if contains "default" .Profile}}#252F3E{{end}}',
