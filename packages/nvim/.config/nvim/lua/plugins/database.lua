@@ -23,17 +23,21 @@ return {
       -- }
     end,
   },
-  -- Add completion for dadbod in SQL files
+  -- Add dadbod completion via blink.cmp
   {
-    "hrsh7th/nvim-cmp",
-    optional = true,
-    dependencies = {
-      "kristijanhusak/vim-dadbod-completion",
+    "saghen/blink.cmp",
+    opts = {
+      sources = {
+        per_filetype = {
+          sql = { "dadbod" },
+          mysql = { "dadbod" },
+          plsql = { "dadbod" },
+        },
+        providers = {
+          dadbod = { module = "vim_dadbod_completion.blink" },
+        },
+      },
     },
-    opts = function(_, opts)
-      opts.sources = opts.sources or {}
-      table.insert(opts.sources, { name = "vim-dadbod-completion" })
-    end,
   },
 }
 

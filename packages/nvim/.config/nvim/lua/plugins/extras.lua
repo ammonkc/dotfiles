@@ -23,16 +23,6 @@ return {
       { "<leader>st", "<cmd>TodoTelescope<cr>", desc = "Search Todos" },
     },
   },
-  -- Project-wide search and replace
-  {
-    "nvim-pack/nvim-spectre",
-    build = false,
-    cmd = "Spectre",
-    opts = { open_cmd = "noswapfile vnew" },
-    keys = {
-      { "<leader>sr", function() require("spectre").open() end, desc = "Replace in Files (Spectre)" },
-    },
-  },
   -- Better quickfix list
   {
     "kevinhwang91/nvim-bqf",

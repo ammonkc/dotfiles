@@ -12,8 +12,6 @@ require("lazy").setup({
     -- add LazyVim and import its plugins
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
     -- NOTE: Extras are now managed via :LazyExtras (stored in lazyvim.json)
-    -- Only keep essential ones that must be loaded before lazyvim.json
-    { import = "lazyvim.plugins.extras.lsp.none-ls" },
     -- import/override with your plugins
     { import = "plugins" },
   },
