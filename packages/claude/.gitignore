@@ -1,0 +1,4 @@
+# settings.json contains secrets (API keys, model ARNs, AWS profiles).
+# Manage it manually outside the repo.
+.claude/settings.json
+.claude/settings.local.json
