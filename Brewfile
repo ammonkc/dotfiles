@@ -175,6 +175,7 @@ if OS.mac?
     cask 'tailscale-app'       # Mesh VPN based on WireGuard
     cask 'transmit'            # File transfer application
     cask 'tweakphp/tap/tweakphp' # Desktop application with a code editor to tweak your PHP code
+    cask 'typewhisper/tap/typewhisper' # Speech-to-text and AI text processing for macOS
     cask 'utm'                 # Virtual machines UI using QEMU
     cask 'vlc'                 # Multimedia player
     cask 'yaak'                # REST, GraphQL and gRPC client
