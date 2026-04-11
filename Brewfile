@@ -128,6 +128,7 @@ if OS.mac?
     cask 'cmux'                # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
     cask 'conductor'           # Claude code parallelisation
     cask 'cursor'              # Agentic AI code editor
+    cask 'dockdoor'            # Window peeking utility app
     cask 'phpstorm'            # PHP IDE by JetBrains
     cask 'superset'            # Terminal for orchestrating agents
     cask 'visual-studio-code'  # Microsoft Visual Studio Code
