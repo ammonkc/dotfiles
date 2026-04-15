@@ -86,3 +86,4 @@ mise.local.toml
 .cursorignore
 .rules
 **/.claude/settings.local.json
+/docs/superpowers/
