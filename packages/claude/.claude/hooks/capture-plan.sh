@@ -136,6 +136,7 @@ print(json.dumps({
     "plan_title": title,
     "plan_slug": slug or "unnamed-plan",
     "date_prefix": now.strftime("%m-%d-%Y"),
+    "created_at": now.strftime("%m/%d/%Y"),
     "year": now.strftime("%Y"),
     "month_dir": now.strftime("%m-%B"),
 }))
@@ -149,6 +150,7 @@ fi
 PLAN_TITLE=$(echo "$EXTRACTED" | jq -r '.plan_title')
 PLAN_SLUG=$(echo "$EXTRACTED" | jq -r '.plan_slug')
 DATE_PREFIX=$(echo "$EXTRACTED" | jq -r '.date_prefix')
+CREATED_AT=$(echo "$EXTRACTED" | jq -r '.created_at')
 YEAR=$(echo "$EXTRACTED" | jq -r '.year')
 MONTH_DIR=$(echo "$EXTRACTED" | jq -r '.month_dir')
 
@@ -210,7 +212,7 @@ fi
 SUMMARY=$(echo "$SUMMARY" | tr '\n' ' ' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
 
 NOTE_CONTENT="---
-created: ${DATE_PREFIX}
+created: ${CREATED_AT}
 status: planned
 tags:
   - plan
