@@ -1,8 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-# Skip if cmux isn't available
+# Skip if cmux isn't available or no active session
 command -v cmux >/dev/null 2>&1 || exit 0
+cmux ping >/dev/null 2>&1 || exit 0
 
 STATUS_KEY="claude"
 STATE_DIR="/tmp/cmux-claude-progress"
