@@ -128,7 +128,6 @@ if OS.mac?
     cask 'cmux'                # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
     cask 'conductor'           # Claude code parallelisation
     cask 'cursor'              # Agentic AI code editor
-    cask 'dockdoor'            # Window peeking utility app
     cask 'phpstorm'            # PHP IDE by JetBrains
     cask 'superset'            # Terminal for orchestrating agents
     cask 'visual-studio-code'  # Microsoft Visual Studio Code
@@ -142,13 +141,13 @@ if OS.mac?
     cask 'bartender'           # Menu bar icon organiser
     cask 'betterdisplay'       # Display management tool
     cask 'boop'                # Scriptable scratchpad for developers
+    cask 'dockdoor'            # Window peeking utility app
     cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
     cask 'github'              # GitHub Desktop
     cask 'google-chrome'       # Google Chrome browser
     cask 'hammerspoon'         # Desktop automation application
     cask 'handbrake-app'       # Open-source video transcoder available for Linux, Mac, and Windows
     cask 'iina'                # Free and open-source media player
-    cask 'imagealpha'          # Utility to reduce the size of 24-bit PNG files
     cask 'imageoptim'          # Tool to optimise images to a smaller size
     cask 'istat-menus'         # System monitoring app
     cask 'iterm2'              # Terminal emulator as alternative to Apple's Terminal app
@@ -167,10 +166,8 @@ if OS.mac?
     cask 'postman'             # Collaboration platform for API development
     cask 'raycast'             # Control your tools with a few keystrokes
     cask 'sequel-ace'          # MySQL/MariaDB database management
-    cask 'screens'             # Remote access software focusing on usability
     cask 'slack'               # Team communication and collaboration software
     cask 'subler'              # Mux and tag mp4 files
-    cask 'superwhisper'        # Dictation tool including LLM reformatting
     cask 'tableplus'           # Native GUI tool for relational databases
     cask 'tailscale-app'       # Mesh VPN based on WireGuard
     cask 'transmit'            # File transfer application
@@ -192,8 +189,6 @@ if OS.mac?
     cask 'qlcolorcode'      #
     cask 'qlmarkdown'       # Quick Look generator for Markdown files
     cask 'qlstephen'        #
-    cask 'quicklook-json'   # depricated
-    cask 'quicklook-csv'    # depricated
     cask 'webpquicklook'    # Quick Look plugin for WebP images
     cask 'qlvideo'          # Thumbnails, static previews, and metadata for video files
 end
