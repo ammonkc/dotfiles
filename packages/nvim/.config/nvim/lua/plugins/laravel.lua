@@ -1,5 +1,6 @@
 return {
-  -- Laravel.nvim for artisan commands, route list, etc.
+  -- Laravel.nvim: needs a writable vendor/ and cwd at the app root. VeryLazy
+  -- loaded the plugin from any directory (e.g. dotfiles), so mkdir('vendor/nvim-laravel/') failed.
   {
     "adalessa/laravel.nvim",
     dependencies = {
@@ -7,6 +8,7 @@ return {
       "nvim-telescope/telescope.nvim",
       "MunifTanjim/nui.nvim",
       "kevinhwang91/promise-async",
+      "nvim-neotest/nvim-nio",
     },
     cmd = { "Laravel" },
     keys = {
@@ -14,7 +16,7 @@ return {
       { "<leader>lr", ":Laravel routes<cr>", desc = "Laravel Routes" },
       { "<leader>lm", ":Laravel related<cr>", desc = "Laravel Related Files" },
     },
-    event = { "VeryLazy" },
+    ft = { "php", "blade" },
     opts = {
       -- All Laravel projects use docker-compose.
       environments = {
