@@ -234,7 +234,7 @@ source_file: ${PLAN_FILE}
 ${PLAN_CONTENT}
 "
 
-ESCAPED_CONTENT=$(echo "$NOTE_CONTENT" | sed ':a;N;$!ba;s/\n/\\n/g' | sed "s/'/'\\\\''/g")
+ESCAPED_CONTENT=$(echo "$NOTE_CONTENT" | sed ':a;N;$!ba;s/\n/\\n/g')
 
 obsidian create path="${PLAN_PATH}" content="${ESCAPED_CONTENT}" silent 2>/dev/null || {
   echo "Failed to create plan note" >> "$DEBUG_LOG"

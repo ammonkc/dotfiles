@@ -273,7 +273,7 @@ ${FILE_CONTENT}
 "
 
 # --- Write to vault ---
-ESCAPED_CONTENT=$(echo "$NOTE_CONTENT" | sed ':a;N;$!ba;s/\n/\\n/g' | sed "s/'/'\\\\''/g")
+ESCAPED_CONTENT=$(echo "$NOTE_CONTENT" | sed ':a;N;$!ba;s/\n/\\n/g')
 
 obsidian vault=idl create path="${NOTE_PATH}" content="${ESCAPED_CONTENT}" overwrite silent 2>/dev/null || {
   echo "Failed to create ${NOTE_TYPE} note at ${NOTE_PATH}" >> "$DEBUG_LOG"
