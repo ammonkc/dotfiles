@@ -140,4 +140,4 @@ alias shrug="echo '¯\_(ツ)_/¯' | pbcopy"
 # ---- Git -----
 # Undo a `git push`
 alias undopush="git push -f origin HEAD^:master"
-alias git-cleanup-stale-branches="git fetch -p && git branch -vv | awk '/: gone]/ {print $1}' | xargs git branch -d"
+# Stale branch cleanup: autoloaded function `git-cleanup-stale-branches` (see functions/)
