@@ -87,3 +87,4 @@ mise.local.toml
 .rules
 **/.claude/settings.local.json
 /docs/superpowers/
+/docs/graphify-out/
