@@ -34,6 +34,7 @@ brew 'go-task'                      # Task is a task runner/build tool thats sim
 brew 'grex'                         # Command-line tool for generating regular expressions
 brew 'htop'                         # Improved top (interactive process viewer)
 brew 'httpie'                       # User-friendly cURL replacement (command-line HTTP client)
+brew 'modem-dev/tap/hunk'           # Desktop-inspired terminal diff viewer for agent-authored changesets
 brew 'jpegoptim'                    # Utility to optimize JPEG files
 brew 'jq'                           # Lightweight and flexible command-line JSON processor
 brew 'keychain'                     # User-friendly front-end to ssh-agent(1)
@@ -129,7 +130,7 @@ if OS.mac?
     cask 'conductor'           # Claude code parallelisation
     cask 'cursor'              # Agentic AI code editor
     cask 'phpstorm'            # PHP IDE by JetBrains
-    cask 'superset'            # Terminal for orchestrating agents
+    cask 'supacode'            # Native terminal coding agents command center
     cask 'visual-studio-code'  # Microsoft Visual Studio Code
     cask 'zed'                 # Agentic code editor
 
@@ -141,6 +142,7 @@ if OS.mac?
     cask 'bartender'           # Menu bar icon organiser
     cask 'betterdisplay'       # Display management tool
     cask 'boop'                # Scriptable scratchpad for developers
+    cask 'bruno'               # Open source IDE for exploring and testing APIs
     cask 'dockdoor'            # Window peeking utility app
     cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
     cask 'github'              # GitHub Desktop
