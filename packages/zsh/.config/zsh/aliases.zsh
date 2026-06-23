@@ -138,6 +138,4 @@ alias reload-aliases='source $ZDOTDIR/aliases.zsh'
 alias shrug="echo '¯\_(ツ)_/¯' | pbcopy"
 
 # ---- Git -----
-# Undo a `git push`
-alias undopush="git push -f origin HEAD^:master"
 # Stale branch cleanup: autoloaded function `git-cleanup-stale-branches` (see functions/)
