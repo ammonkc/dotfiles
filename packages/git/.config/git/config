@@ -4,7 +4,7 @@
   excludesfile = ~/.config/git/ignore
   editor = /opt/homebrew/bin/nvim
   autocrlf = input
-  pager = delta
+  pager = hunk pager
 [init]
 	defaultBranch = main
 [checkout]
