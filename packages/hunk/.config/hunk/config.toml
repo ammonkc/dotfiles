@@ -1,4 +1,4 @@
-theme = "Catppuccin Macchiato" # any built-in theme id, auto, or custom
+theme = "catppuccin-macchiato" # any built-in theme id, auto, or custom
 mode = "auto"        # auto, split, stack
 vcs = "git"          # git, jj, sl
 watch = false
