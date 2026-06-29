@@ -22,10 +22,12 @@ fi
 
 HOOK_EVENT=$(echo "$INPUT" | jq -r '.hook_event_name // empty')
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // "unknown"')
+TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
 
 PLAN_CONTENT=""
 PLAN_FILE=""
 PLAN_SOURCE="unknown"
+MODEL_USED=""
 
 # 1) PostToolUse inline plan
 PLAN_CONTENT=$(echo "$INPUT" | jq -r '.tool_response.plan // empty')
@@ -57,6 +59,11 @@ if [ -z "$PLAN_CONTENT" ]; then
     PLAN_CONTENT=$(cat "$PLAN_FILE")
     PLAN_SOURCE="tool_input.planFilePath"
   fi
+fi
+
+# Extract model from transcript if available
+if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
+  MODEL_USED=$(jq -r '.model // empty' "$TRANSCRIPT_PATH" 2>/dev/null | head -1) || MODEL_USED=""
 fi
 
 if [ -z "$PLAN_CONTENT" ] || [ "$PLAN_CONTENT" = "null" ] || [ ${#PLAN_CONTENT} -lt 20 ]; then
@@ -220,6 +227,7 @@ SUMMARY=$(echo "$SUMMARY" | tr '\n' ' ' | sed 's/^[[:space:]]*//;s/[[:space:]]*$
 NOTE_CONTENT="---
 created: ${CREATED_AT}
 status: planned
+model: ${MODEL_USED}
 tags:
   - plan
   - claude-session
