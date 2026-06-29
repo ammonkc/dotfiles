@@ -3,7 +3,7 @@
 # capture-plan.sh — Claude Code Hook for ExitPlanMode
 # ============================================================
 
-set -euo pipefail
+set -o pipefail
 
 DEBUG_LOG="/tmp/capture-plan-debug.log"
 
@@ -70,11 +70,16 @@ if [ -z "$PLAN_CONTENT" ] || [ "$PLAN_CONTENT" = "null" ] || [ ${#PLAN_CONTENT} 
 fi
 
 # --- Extract plan title, slug, and date metadata ---
-EXTRACTED=$(python3 - "$PLAN_CONTENT" << 'PYEOF'
+# Write plan content to temp file so dollar signs / backticks don't expand
+PLAN_TMP=$(mktemp /tmp/capture-plan-content-XXXXXX.md)
+printf '%s' "$PLAN_CONTENT" > "$PLAN_TMP"
+
+EXTRACTED=$(python3 - "$PLAN_TMP" << 'PYEOF'
 import json, re, sys
 from datetime import datetime
 
-plan_content = sys.argv[1]
+with open(sys.argv[1]) as f:
+    plan_content = f.read()
 
 title = "Unnamed Plan"
 
@@ -168,7 +173,7 @@ JOURNAL_PATH="Journal/${YEAR}/${MONTH_DIR}/${DATE_PREFIX}"
 } >> "$DEBUG_LOG"
 
 # --- Generate summary and tags using Claude ---
-CLAUDE_OUTPUT=$(echo "$PLAN_CONTENT" | claude -p \
+CLAUDE_OUTPUT=$(cat "$PLAN_TMP" | claude -p \
   --bare \
   --max-turns 1 \
   --model claude-haiku-4-5-20251001 \
@@ -184,10 +189,11 @@ NEW_TAGS=$(echo "$CLAUDE_OUTPUT" | tail -1 | sed 's/^[[:space:]]*//;s/[[:space:]
 
 # Fallback summary
 if [ -z "$SUMMARY" ] || [ ${#SUMMARY} -gt 300 ]; then
-  SUMMARY=$(python3 - "$PLAN_CONTENT" << 'PYEOF'
+  SUMMARY=$(python3 - "$PLAN_TMP" << 'PYEOF'
 import re, sys
 
-text = sys.argv[1]
+with open(sys.argv[1]) as f:
+    text = f.read()
 text = re.sub(r'```.*?```', ' ', text, flags=re.S)
 text = re.sub(r'^#+\s*', '', text, flags=re.M)
 text = re.sub(r'^\|.*\|$', ' ', text, flags=re.M)
@@ -234,20 +240,47 @@ source_file: ${PLAN_FILE}
 ${PLAN_CONTENT}
 "
 
-ESCAPED_CONTENT=$(echo "$NOTE_CONTENT" | sed ':a;N;$!ba;s/\n/\\n/g')
+VAULT_ROOT=$(obsidian vault info=path 2>/dev/null) || VAULT_ROOT=""
+NOTE_TMP=$(mktemp /tmp/capture-plan-note-XXXXXX.md)
+printf '%s' "$NOTE_CONTENT" > "$NOTE_TMP"
 
-obsidian create path="${PLAN_PATH}" content="${ESCAPED_CONTENT}" silent 2>/dev/null || {
-  echo "Failed to create plan note" >> "$DEBUG_LOG"
-  exit 0
-}
-
-JOURNAL_ENTRY="- [[${PLAN_PATH}|${PLAN_TITLE}]] (planned)\n  - ${SUMMARY}"
-
-obsidian append path="${JOURNAL_PATH}.md" content="${JOURNAL_ENTRY}" 2>/dev/null || {
-  obsidian daily:append content="${JOURNAL_ENTRY}" 2>/dev/null || {
-    echo "Failed to append journal entry" >> "$DEBUG_LOG"
+if [ -n "$VAULT_ROOT" ]; then
+  NOTE_DEST="${VAULT_ROOT}/${PLAN_PATH}.md"
+  mkdir -p "$(dirname "$NOTE_DEST")"
+  cp "$NOTE_TMP" "$NOTE_DEST" || {
+    echo "Failed to write plan note to vault" >> "$DEBUG_LOG"
   }
-}
+  rm -f "$NOTE_TMP"
+else
+  # Fallback: try obsidian CLI with content (may crash on large content)
+  ESCAPED_CONTENT=$(sed ':a;N;$!ba;s/\n/\\n/g' "$NOTE_TMP")
+  rm -f "$NOTE_TMP"
+  obsidian create path="${PLAN_PATH}" content="${ESCAPED_CONTENT}" silent 2>/dev/null || {
+    echo "Failed to create plan note" >> "$DEBUG_LOG"
+  }
+fi
+
+JOURNAL_ENTRY="- [[${PLAN_PATH}|${PLAN_TITLE}]] (planned)
+  - ${SUMMARY}"
+
+if [ -n "${VAULT_ROOT:-}" ]; then
+  JOURNAL_FILE="${VAULT_ROOT}/${JOURNAL_PATH}.md"
+  if [ -f "$JOURNAL_FILE" ]; then
+    printf '\n%s\n' "$JOURNAL_ENTRY" >> "$JOURNAL_FILE" || {
+      echo "Failed to append journal entry" >> "$DEBUG_LOG"
+    }
+  else
+    obsidian daily:append content="$JOURNAL_ENTRY" 2>/dev/null || {
+      echo "Failed to append journal entry (daily fallback)" >> "$DEBUG_LOG"
+    }
+  fi
+else
+  obsidian append path="${JOURNAL_PATH}.md" content="$JOURNAL_ENTRY" 2>/dev/null || {
+    obsidian daily:append content="$JOURNAL_ENTRY" 2>/dev/null || {
+      echo "Failed to append journal entry" >> "$DEBUG_LOG"
+    }
+  }
+fi
 
 DAILY_PATH=$(obsidian daily:path 2>/dev/null) || DAILY_PATH=""
 
@@ -278,4 +311,5 @@ PYEOF
   fi
 fi
 
+rm -f "${PLAN_TMP:-}"
 exit 0
