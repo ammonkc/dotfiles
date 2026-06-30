@@ -248,7 +248,25 @@ source_file: ${PLAN_FILE}
 ${PLAN_CONTENT}
 "
 
-VAULT_ROOT=$(obsidian vault info=path 2>/dev/null) || VAULT_ROOT=""
+# Resolve vault path from Obsidian's local config — zero CLI spawns
+_OBSIDIAN_JSON="$HOME/Library/Application Support/obsidian/obsidian.json"
+VAULT_ROOT=""
+if [ -f "$_OBSIDIAN_JSON" ]; then
+  VAULT_ROOT=$(jq -r '
+    (.vaults | to_entries[]
+      | select(.value.open == true)
+      | .value.path) // ""
+  ' "$_OBSIDIAN_JSON" 2>/dev/null | head -1) || VAULT_ROOT=""
+  if [ -z "$VAULT_ROOT" ]; then
+    VAULT_ROOT=$(jq -r '.vaults | to_entries[0].value.path // ""' \
+      "$_OBSIDIAN_JSON" 2>/dev/null) || VAULT_ROOT=""
+  fi
+fi
+if [ -z "$VAULT_ROOT" ] || [[ "$VAULT_ROOT" != /* ]] || [ ! -d "$VAULT_ROOT" ]; then
+  echo "VAULT_ROOT invalid or not found: ${VAULT_ROOT:-<empty>}" >> "$DEBUG_LOG"
+  VAULT_ROOT=""
+fi
+
 NOTE_TMP=$(mktemp /tmp/capture-plan-note-XXXXXX.md)
 printf '%s' "$NOTE_CONTENT" > "$NOTE_TMP"
 
@@ -260,12 +278,8 @@ if [ -n "$VAULT_ROOT" ]; then
   }
   rm -f "$NOTE_TMP"
 else
-  # Fallback: try obsidian CLI with content (may crash on large content)
-  ESCAPED_CONTENT=$(sed ':a;N;$!ba;s/\n/\\n/g' "$NOTE_TMP")
+  echo "VAULT_ROOT not available — skipping plan note write" >> "$DEBUG_LOG"
   rm -f "$NOTE_TMP"
-  obsidian create path="${PLAN_PATH}" content="${ESCAPED_CONTENT}" silent 2>/dev/null || {
-    echo "Failed to create plan note" >> "$DEBUG_LOG"
-  }
 fi
 
 JOURNAL_ENTRY="- [[${PLAN_PATH}|${PLAN_TITLE}]] (planned)
@@ -273,49 +287,55 @@ JOURNAL_ENTRY="- [[${PLAN_PATH}|${PLAN_TITLE}]] (planned)
 
 if [ -n "${VAULT_ROOT:-}" ]; then
   JOURNAL_FILE="${VAULT_ROOT}/${JOURNAL_PATH}.md"
-  if [ -f "$JOURNAL_FILE" ]; then
-    printf '\n%s\n' "$JOURNAL_ENTRY" >> "$JOURNAL_FILE" || {
-      echo "Failed to append journal entry" >> "$DEBUG_LOG"
-    }
-  else
-    obsidian daily:append content="$JOURNAL_ENTRY" 2>/dev/null || {
-      echo "Failed to append journal entry (daily fallback)" >> "$DEBUG_LOG"
-    }
-  fi
-else
-  obsidian append path="${JOURNAL_PATH}.md" content="$JOURNAL_ENTRY" 2>/dev/null || {
-    obsidian daily:append content="$JOURNAL_ENTRY" 2>/dev/null || {
-      echo "Failed to append journal entry" >> "$DEBUG_LOG"
-    }
+  mkdir -p "$(dirname "$JOURNAL_FILE")"
+  printf '\n%s\n' "$JOURNAL_ENTRY" >> "$JOURNAL_FILE" || {
+    echo "Failed to append journal entry" >> "$DEBUG_LOG"
   }
+else
+  echo "VAULT_ROOT not available — skipping journal append" >> "$DEBUG_LOG"
 fi
 
-DAILY_PATH=$(obsidian daily:path 2>/dev/null) || DAILY_PATH=""
+if [ -n "${VAULT_ROOT:-}" ] && [ -n "$NEW_TAGS" ]; then
+  DAILY_FILE="${VAULT_ROOT}/${JOURNAL_PATH}.md"
+  if [ -f "$DAILY_FILE" ]; then
+    python3 - "$DAILY_FILE" "$NEW_TAGS" << 'PYEOF'
+import sys, re
 
-if [ -n "$DAILY_PATH" ]; then
-  EXISTING_TAGS=$(obsidian property:read name="tags" path="${DAILY_PATH}" 2>/dev/null | grep -v '^Error:') || EXISTING_TAGS=""
+daily_path = sys.argv[1]
+new_tags = [t.strip() for t in sys.argv[2].split(",") if t.strip()]
 
-  MERGED_TAGS=$(python3 - "$EXISTING_TAGS" "$NEW_TAGS" << 'PYEOF'
-import sys
+with open(daily_path) as f:
+    content = f.read()
 
-existing = [t.strip() for t in sys.argv[1].split("\n") if t.strip()]
-new = [t.strip() for t in sys.argv[2].split(",") if t.strip()]
+fm_match = re.match(r'^---\n(.*?)\n---\n(.*)', content, re.DOTALL)
 
-seen = set()
-merged = []
-for tag in existing + new:
-    if tag not in seen:
-        seen.add(tag)
-        merged.append(tag)
+if fm_match:
+    fm_text, body = fm_match.group(1), fm_match.group(2)
+    tags_match = re.search(r'^tags:\n((?:  - .+\n)*)', fm_text, re.MULTILINE)
+    existing = []
+    if tags_match:
+        existing = [m.group(1) for m in re.finditer(r'  - (.+)', tags_match.group(1))]
+    seen = set(existing)
+    merged = list(existing)
+    for t in new_tags:
+        if t not in seen:
+            seen.add(t)
+            merged.append(t)
+    new_block = "tags:\n" + "".join(f"  - {t}\n" for t in merged)
+    if tags_match:
+        new_fm = fm_text[:tags_match.start()] + new_block + fm_text[tags_match.end():]
+    else:
+        new_fm = fm_text + "\n" + new_block.rstrip()
+    new_content = f"---\n{new_fm}\n---\n{body}"
+else:
+    block = "tags:\n" + "".join(f"  - {t}\n" for t in new_tags)
+    new_content = f"---\n{block}---\n{content}"
 
-print(",".join(merged))
+with open(daily_path, "w") as f:
+    f.write(new_content)
 PYEOF
-  ) || MERGED_TAGS=""
-
-  if [ -n "$MERGED_TAGS" ]; then
-    obsidian property:set name="tags" value="${MERGED_TAGS}" type=list path="${DAILY_PATH}" 2>/dev/null || {
-      echo "Failed to set tags" >> "$DEBUG_LOG"
-    }
+  else
+    echo "Daily note not yet created — tag merge skipped" >> "$DEBUG_LOG"
   fi
 fi
 
