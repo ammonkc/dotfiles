@@ -8,6 +8,10 @@ Always consider using the most appropriate skill when answering a query or respo
 
 Prefer using browser agent skill over using playwright directly.
 
+## Plan mode
+When a plan has been created/updated, always ask if I want to chat about the plan to make tweaks before asking to exit plan mode and start editing.
+Ask me questions if you're not sure about something. prefer asking me clarifying questions over making assumptions
+
 ## Writing docs / README
 Never use dashes (— or -) as punctuation in documentation or README files. Rephrase sentences using periods, commas, or parentheses instead.
 
