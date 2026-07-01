@@ -104,6 +104,13 @@ for raw_line in plan_content.splitlines():
     # Normalise whitespace
     line = re.sub(r'\s+', ' ', line).strip()
 
+    # Skip generic section headings that aren't descriptive plan titles
+    GENERIC = {"context", "background", "overview", "summary", "plan", "approach",
+               "implementation", "verification", "notes", "steps", "goal", "goals",
+               "problem", "solution", "description", "objective", "scope"}
+    if line.lower() in GENERIC:
+        continue
+
     if line:
         title = line
         break
