@@ -165,7 +165,6 @@ if OS.mac?
     cask 'omnidisksweeper'     # Finds large, unwanted files and deletes them
     cask 'paste'               # Limitless clipboard
     cask 'pika'                # Colour picker for colours onscreen
-    cask 'postman'             # Collaboration platform for API development
     cask 'raycast'             # Control your tools with a few keystrokes
     cask 'sequel-ace'          # MySQL/MariaDB database management
     cask 'slack'               # Team communication and collaboration software
@@ -174,10 +173,9 @@ if OS.mac?
     cask 'tailscale-app'       # Mesh VPN based on WireGuard
     cask 'transmit'            # File transfer application
     cask 'tweakphp/tap/tweakphp' # Desktop application with a code editor to tweak your PHP code
-    cask 'typewhisper/tap/typewhisper' # Speech-to-text and AI text processing for macOS
+    cask 'fluidvoice'          # Offline voice-to-text dictation app with AI enhancement
     cask 'utm'                 # Virtual machines UI using QEMU
     cask 'vlc'                 # Multimedia player
-    cask 'yaak'                # REST, GraphQL and gRPC client
     cask 'zen'                 # Gecko based privacy focused web browser
     # cask 'zoom'                # Video communication and virtual meeting platform
 
