@@ -18,6 +18,9 @@ Never use dashes (— or -) as punctuation in documentation or README files. Rep
 ## Coding Standards
 When working with Laravel/PHP projects, always use the php-guidelines-from-spatie skill.
 
+## Writing tests
+Only write tests and assertions that are genuinely meaningful. Avoid weak assertions that just add noise to our very large test suite.
+
 ## Using GitHub
 For questions about GitHub, use the gh tool.
 Never mention Claude Code in PR descriptions, PR comments, or issue comments.
