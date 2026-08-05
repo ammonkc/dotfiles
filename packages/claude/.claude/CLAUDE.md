@@ -26,6 +26,10 @@ For questions about GitHub, use the gh tool.
 Never mention Claude Code in PR descriptions, PR comments, or issue comments.
 Do not include a "Test plan" section in PR descriptions.
 
+## Self-learning
+- turn mistakes into rules
+- never repeat them
+
 ---
 
 # context-mode — MANDATORY routing rules
