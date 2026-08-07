@@ -79,7 +79,6 @@ mise.local.toml
 /.vectorcode/
 /.codanna/
 /.cursor/
-/.claude/
 /.qodo/
 /CLAUDE.local.md
 /.goosehints
