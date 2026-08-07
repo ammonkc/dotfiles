@@ -22,8 +22,6 @@ usage = "latest"
 "npm:ccusage" = "latest"
 
 [settings]
-# Force the npm: backend to use Bun to execute metadata checks and installations
-"npm.package_manager" = "bun"
 # experimental = true
 idiomatic_version_file_enable_tools = ['node']
 always_keep_download = false                       # deleted after install by default
@@ -34,9 +32,13 @@ jobs = 16                                          # number of plugins to instal
 not_found_auto_install = true                      # see MISE_NOT_FOUND_AUTO_INSTALL
 paranoid = false                                   # see MISE_PARANOID
 raw = false                                        # set to true to directly pipe plugins to stdin/stdout/stderr
-shorthands_file = '~/.config/mise/shorthands.toml' # path to the shorthands file, see `MISE_SHORTHANDS_FILE`
 verbose = false                                    # set to true to see full installation output, see `MISE_VERBOSE`
 yes = true                                         # set to true to automatically answer yes to all prompts
+
+[settings.npm]
+# Force the npm: backend to use Bun for metadata checks and installs
+# https://mise.jdx.dev/dev-tools/backends/npm.html
+package_manager = "bun"
 
 [settings.task]
 output = "prefix"                                  # see Tasks Runner for more information
