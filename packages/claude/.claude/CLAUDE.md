@@ -15,9 +15,6 @@ Ask me questions if you're not sure about something. prefer asking me clarifying
 ## Writing docs / README
 Never use dashes (— or -) as punctuation in documentation or README files. Rephrase sentences using periods, commas, or parentheses instead.
 
-## Coding Standards
-When working with Laravel/PHP projects, always use the php-guidelines-from-spatie skill.
-
 ## Writing tests
 Only write tests and assertions that are genuinely meaningful. Avoid weak assertions that just add noise to our very large test suite.
 
