@@ -288,7 +288,7 @@
             "font_weight": null
           },
           "property": {
-            "color": "#899090",
+            "color": "#268BD2",
             "font_style": null
           },
           "emphasis.strong": {
@@ -330,6 +330,9 @@
           },
           "constant.builtin": {
             "color": "#D33682"
+          },
+          "property.json_key": {
+            "color": "#268BD2"
           }
         }
       }
