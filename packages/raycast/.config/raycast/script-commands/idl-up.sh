@@ -10,13 +10,36 @@
 # @raycast.packageName IDL Docker
 # @raycast.argument1 { "type": "text", "placeholder": "worktree", "optional": true }
 # @raycast.argument2 { "type": "text", "placeholder": "domain", "optional": true }
+# @raycast.argument3 { "type": "dropdown", "placeholder": "Rebuild?", "optional": true, "data": [{"title": "No (fast)", "value": "false"}, {"title": "Yes (--build)", "value": "true"}] }
 
 # Documentation:
 # @raycast.description Start IDL Docker containers
 # @raycast.author Ammon Casey
 
 BASE_DIR="$HOME/Developer/code/indirect"
-ALLEGRO_DOMAIN="${2:-allegro.test}"
+BUILD=false
+POSITIONAL=()
+
+# Raycast dropdown arg3: "true" enables rebuild
+if [[ "${3:-}" == "true" ]]; then
+    BUILD=true
+fi
+
+# Also accept --build/-b if invoked from a shell
+for arg in "$1" "$2"; do
+    case "$arg" in
+        -b | --build) BUILD=true ;;
+    esac
+done
+
+# Collect positional worktree/domain (skip flags)
+for arg in "$1" "$2"; do
+    [[ -z "$arg" ]] && continue
+    case "$arg" in
+        -b | --build | true | false) ;;
+        *) POSITIONAL+=("$arg") ;;
+    esac
+done
 
 # Resolve worktree from arg, else from cwd under BASE_DIR, else 'main'
 default_worktree() {
@@ -31,7 +54,8 @@ default_worktree() {
     fi
 }
 
-WORKTREE="${1:-$(default_worktree)}"
+WORKTREE="${POSITIONAL[0]:-$(default_worktree)}"
+ALLEGRO_DOMAIN="${POSITIONAL[1]:-allegro.test}"
 
 # Get list of available worktrees (directories in BASE_DIR)
 # Uses fd if available, otherwise falls back to find
@@ -54,12 +78,21 @@ fi
 
 cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
 
+UP_ARGS=(up --detach --remove-orphans)
+if $BUILD; then
+    UP_ARGS=(up --force-recreate --build --detach --remove-orphans)
+fi
+
 ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" \
     DOCKER_BUILDKIT=1 \
     COMPOSE_DOCKER_CLI_BUILD=1 \
     docker compose \
     -f docker-compose.yaml \
     --profile sftp \
-    up --force-recreate --build --detach --remove-orphans
+    "${UP_ARGS[@]}"
 
-echo "✅ IDL containers started ($WORKTREE) @ $ALLEGRO_DOMAIN"
+if $BUILD; then
+    echo "✅ IDL containers started with rebuild ($WORKTREE) @ $ALLEGRO_DOMAIN"
+else
+    echo "✅ IDL containers started ($WORKTREE) @ $ALLEGRO_DOMAIN"
+fi
