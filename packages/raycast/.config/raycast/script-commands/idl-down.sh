@@ -16,8 +16,22 @@
 # @raycast.author Ammon Casey
 
 BASE_DIR="$HOME/Developer/code/indirect"
-WORKTREE="${1:-main}"
 ALLEGRO_DOMAIN="${2:-allegro.test}"
+
+# Resolve worktree from arg, else from cwd under BASE_DIR, else 'main'
+default_worktree() {
+    local pwd_real base_real rel
+    pwd_real="$(pwd -P 2>/dev/null)" || { echo main; return; }
+    base_real="$(cd "$BASE_DIR" 2>/dev/null && pwd -P)" || { echo main; return; }
+    if [[ "$pwd_real" == "$base_real"/* ]]; then
+        rel="${pwd_real#"$base_real"/}"
+        echo "${rel%%/*}"
+    else
+        echo main
+    fi
+}
+
+WORKTREE="${1:-$(default_worktree)}"
 
 # Get list of available worktrees (directories in BASE_DIR)
 # Uses fd if available, otherwise falls back to find
@@ -46,4 +60,3 @@ ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" docker compose -f docker-compose.yaml \
     down
 
 echo "✅ IDL containers stopped ($WORKTREE) @ $ALLEGRO_DOMAIN"
-
