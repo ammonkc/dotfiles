@@ -1,0 +1,191 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "cli_default_open_behavior": "new_window",
+  "base_keymap": "VSCode",
+  "ui_font_size": 16,
+  "ui_font_family": ".SystemUIFont",
+  "buffer_font_size": 14.0,
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "agent_buffer_font_size": 13.0,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Fiyah Dark Cursor",
+  },
+  "icon_theme": "Material Icon Theme",
+  "colorize_brackets": true,
+  "wrap_guides": [140],
+  "show_wrap_guides": false,
+  "cursor_shape": "bar",
+  "cursor_blink": true,
+  "bottom_dock_layout": "contained",
+  "use_system_window_tabs": true,
+  "indent_guides": {
+    "line_width": 1,
+    "coloring": "disabled",
+    "background_coloring": "disabled",
+    "enabled": true
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
+  "project_panel": {
+    "hide_root": true,
+    "indent_guides": {
+      "show": "never"
+    },
+    "git_status_indicator": true,
+    "bold_folder_labels": false,
+    "dock": "right",
+    "default_width": 280,
+  },
+  "outline_panel": {
+    "dock": "right",
+  },
+  "git_panel": {
+    "collapse_untracked_diff": false,
+    "file_icons": false,
+    "tree_view": true,
+    "dock": "right",
+  },
+  "title_bar": {
+    "show_menus": true,
+  },
+  "toolbar": {
+    "code_actions": false
+  },
+  "tab_bar": {
+    "show": true,
+  },
+  "tabs": {
+    "git_status": true,
+    "file_icons": true,
+    "close_position": "right",
+    "show_diagnostics": "errors",
+  },
+  "preview_tabs": {
+    "enable_preview_from_file_finder": false,
+  },
+  "scrollbar": {
+    "show": "auto"
+  },
+  "sticky_scroll": {
+    "enabled": true,
+  },
+  "gutter": {
+    "min_line_number_digits": 3
+  },
+  "prettier": {
+    "allowed": true,
+  },
+  "git": {
+    "inline_blame": {
+      "show_commit_summary": true,
+    },
+  },
+  "terminal": {
+    "font_family": "MesloLGS NF",
+    "font_size": 13,
+    "minimum_contrast": 0,
+    "env": {},
+  },
+  "minimap": {
+    "show": "never",
+  },
+  "auto_signature_help": true,
+  "languages": {
+    "PHP": {
+      "indent_guides": {
+        "background_coloring": "disabled",
+        "coloring": "fixed",
+        "enabled": true,
+      },
+      "formatter": {
+        "external": {
+          "command": "bash",
+          "arguments": [
+            "-c",
+            "cat > {buffer_path} && ./vendor/bin/pint --quiet {buffer_path} && cat {buffer_path}",
+          ],
+        },
+      },
+      "language_servers": ["phpactor", "!intelephense", "!phptools", "!phpcs"],
+      // Optional: configure auto-format on save
+      "format_on_save": "on",
+    },
+  },
+  "agent_servers": {
+    "claude-acp": {
+      "type": "registry",
+    },
+  },
+  "agent": {
+    "dock": "left",
+    "play_sound_when_agent_done": "always",
+    "default_model": {
+      "provider": "amazon-bedrock",
+      "model": "claude-sonnet-5",
+    },
+    "model_parameters": [],
+  },
+  "language_models": {
+    "bedrock": {
+      "authentication_method": "sso",
+      "profile": "genai",
+      "region": "us-east-1",
+    },
+  },
+  "multi_cursor_modifier": "cmd_or_ctrl",
+  "scroll_beyond_last_line": "off",
+  "when_closing_with_no_tabs": "keep_window_open",
+  "autosave": "on_focus_change",
+  "auto_indent_on_paste": true,
+  "show_whitespaces": "none",
+  "ensure_final_newline_on_save": true,
+  "remove_trailing_whitespace_on_save": true,
+  "soft_wrap": "editor_width",
+  "inlay_hints": {
+    "enabled": true,
+  },
+  // Molokai ANSI (from Ghostty) so the terminal matches ghostty, not the editor theme
+  "theme_overrides": {
+    "Fiyah Dark Cursor": {
+      "terminal.background": "#17242f",
+      "terminal.foreground": "#bbbbbb",
+      "terminal.bright_foreground": "#ffffff",
+      "terminal.dim_foreground": "#555555",
+      "terminal.ansi.black": "#121212",
+      "terminal.ansi.red": "#fa2573",
+      "terminal.ansi.green": "#98e123",
+      "terminal.ansi.yellow": "#dfd460",
+      "terminal.ansi.blue": "#1080d0",
+      "terminal.ansi.magenta": "#8700ff",
+      "terminal.ansi.cyan": "#43a8d0",
+      "terminal.ansi.white": "#bbbbbb",
+      "terminal.ansi.bright_black": "#555555",
+      "terminal.ansi.bright_red": "#f6669d",
+      "terminal.ansi.bright_green": "#b1e05f",
+      "terminal.ansi.bright_yellow": "#fff26d",
+      "terminal.ansi.bright_blue": "#00afff",
+      "terminal.ansi.bright_magenta": "#af87ff",
+      "terminal.ansi.bright_cyan": "#51ceff",
+      "terminal.ansi.bright_white": "#ffffff"
+    }
+  },
+  "diagnostics": {
+    "inline": {
+      "enabled": true,
+    },
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+}
