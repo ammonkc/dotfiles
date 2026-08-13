@@ -27,6 +27,15 @@ Do not include a "Test plan" section in PR descriptions.
 - turn mistakes into rules
 - never repeat them
 
+## Ask before you assume
+Never guess at intent. If a task leaves anything open - which core, which endpoint, what happens on failure, whether it needs a migration, etc - stop and ask. One question up front is cheaper than working in the wrong direction.
+
+- Ask when the request cold reasonably mean two different things.
+- Ask before changing a public API shape, or a DB schema.
+- Do not invent product decisions, copy, or acceptance criteria.
+- Do not widen scope past what was asked. Note the adjacent thing you spotted; don't fix it unprompted.
+- If you had to assume something you couldn't resolve, list it explicitly at the topof your summary.
+
 ---
 
 # context-mode — MANDATORY routing rules
