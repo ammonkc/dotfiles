@@ -192,4 +192,5 @@ if OS.mac?
     cask 'qlstephen'        #
     cask 'webpquicklook'    # Quick Look plugin for WebP images
     cask 'qlvideo'          # Thumbnails, static previews, and metadata for video files
+    cask 'xykong/tap/flux-markdown' # Markdown previews in Finder QuickLook with diagrams and math
 end
