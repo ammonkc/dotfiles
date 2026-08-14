@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Copy untracked (non-ignored) files from the primary worktree into another worktree.
+# Usage: git-worktree-copy-untracked [-n] [-v] [SOURCE] [DEST]
+#        git-worktree-copy-untracked [-n] [-v] DEST
+#        git-worktree-copy-untracked          # from inside the new worktree
+#
+# Agnostic: works after `git worktree add`, or from Zed/Cursor/VS Code/etc.
+# Editor env vars (e.g. ZED_*) are optional hints only.
+#
+# Options:
+#   -n, --dry-run   List paths that would be copied
+#   -v, --verbose   Show rsync progress
+#   -h, --help      Show help
+
+set -euo pipefail
+
+DRY_RUN=false
+VERBOSE=false
+
+usage() {
+  sed -n '2,14p' "$0" | sed 's/^# \?//'
+  exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -n | --dry-run) DRY_RUN=true; shift ;;
+    -v | --verbose) VERBOSE=true; shift ;;
+    -h | --help) usage ;;
+    -*)
+      echo "Unknown option: $1" >&2
+      exit 1
+      ;;
+    *) break ;;
+  esac
+done
+
+# Resolve through symlinks so ../lib works when invoked via ~/.local/bin/*
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -L "$SOURCE" ]]; do
+  DIR="$(cd "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd "$(dirname "$SOURCE")" && pwd)"
+# shellcheck source=../lib/git-worktree.sh
+source "$SCRIPT_DIR/../lib/git-worktree.sh"
+
+_gwt_resolve_paths "$@" || exit 1
+
+echo "📦 Untracked files: $GWT_SRC → $GWT_DEST"
+
+set +e
+git -C "$GWT_SRC" ls-files -o --exclude-standard -z \
+  | _gwt_copy_paths "$GWT_SRC" "$GWT_DEST" "$DRY_RUN" "$VERBOSE"
+status=$?
+set -e
+
+if [[ $status -eq 2 ]]; then
+  echo "ℹ️  No untracked files to copy"
+  exit 0
+elif [[ $status -ne 0 ]]; then
+  exit "$status"
+fi
+
+echo "✅ Copied untracked files into $GWT_DEST"

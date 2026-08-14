@@ -1,0 +1,14 @@
+// Zed tasks — https://zed.dev/docs/tasks
+// create_worktree runs the same agnostic setup script you'd use from a terminal.
+// Args are optional hints; empty expansions are ignored by the script.
+[
+  {
+    "label": "setup new worktree",
+    "command": "git-worktree-setup",
+    "args": ["$ZED_MAIN_GIT_WORKTREE", "$ZED_WORKTREE_ROOT"],
+    "hooks": ["create_worktree"],
+    "reveal": "no_focus",
+    "hide": "on_success",
+    "allow_concurrent_runs": true
+  }
+]

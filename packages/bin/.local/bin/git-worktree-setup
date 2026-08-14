@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Set up a new git worktree by copying ignored + untracked files from the primary.
+# Usage: git-worktree-setup [-n] [-v] [SOURCE] [DEST]
+#        git-worktree-setup [-n] [-v] DEST
+#        git-worktree-setup                  # from inside the new worktree
+#
+# Agnostic: works with git CLI, Zed, Cursor, VS Code, terminals, etc.
+#   git worktree add ../feature-x feature/x
+#   cd ../feature-x && git-worktree-setup
+#   # or from anywhere:
+#   git-worktree-setup /path/to/main /path/to/feature-x
+#   git-worktree-setup /path/to/feature-x
+#
+# Options:
+#   -n, --dry-run   Show what would be copied
+#   -v, --verbose   Verbose copy output
+#   -h, --help      Show help
+
+set -euo pipefail
+
+DRY_RUN=false
+VERBOSE=false
+PASS_ARGS=()
+
+usage() {
+  sed -n '2,16p' "$0" | sed 's/^# \?//'
+  exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -n | --dry-run) DRY_RUN=true; PASS_ARGS+=(-n); shift ;;
+    -v | --verbose) VERBOSE=true; PASS_ARGS+=(-v); shift ;;
+    -h | --help) usage ;;
+    -*)
+      echo "Unknown option: $1" >&2
+      exit 1
+      ;;
+    *) break ;;
+  esac
+done
+
+# Resolve through symlinks so ../lib works when invoked via ~/.local/bin/*
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -L "$SOURCE" ]]; do
+  DIR="$(cd "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd "$(dirname "$SOURCE")" && pwd)"
+# shellcheck source=../lib/git-worktree.sh
+source "$SCRIPT_DIR/../lib/git-worktree.sh"
+
+_gwt_resolve_paths "$@" || exit 1
+
+echo "🌲 Setting up worktree"
+echo "   source: $GWT_SRC"
+echo "   dest:   $GWT_DEST"
+$DRY_RUN && echo "   mode:   dry-run"
+$VERBOSE && echo "   mode:   verbose"
+echo
+
+"$SCRIPT_DIR/git-worktree-copy-ignored" "${PASS_ARGS[@]}" "$GWT_SRC" "$GWT_DEST"
+"$SCRIPT_DIR/git-worktree-copy-untracked" "${PASS_ARGS[@]}" "$GWT_SRC" "$GWT_DEST"
+
+echo
+echo "✅ Worktree setup complete"
