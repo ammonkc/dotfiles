@@ -144,6 +144,7 @@ if OS.mac?
     cask 'boop'                # Scriptable scratchpad for developers
     cask 'bruno'               # Open source IDE for exploring and testing APIs
     cask 'dockdoor'            # Window peeking utility app
+    cask 'fluidvoice'          # Offline voice-to-text dictation app with AI enhancement
     cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
     cask 'github'              # GitHub Desktop
     cask 'google-chrome'       # Google Chrome browser
