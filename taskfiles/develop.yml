@@ -6,7 +6,9 @@ silent: true
 vars:
   DEV_DIR: '{{.DEV_DIR | default "$HOME/Developer"}}'
   CODE_DIR: '{{.DEV_DIR}}/code'
+  DOCS_DIR: '{{.DEV_DIR}}/documentation'
   REPOS_DIR: '{{.DEV_DIR}}/repos'
+  WORKTREES_DIR: '{{.DEV_DIR}}/worktrees'
   # Get git username from config (empty if not found - skips creating personal dir)
   GIT_USER:
     sh: git config --get github.user 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr ' ' '-' || true
@@ -52,9 +54,11 @@ tasks:
       Structure:
         ~/Developer/
         ├── code/               # Active development projects
-        └── repos/              # Git repositories (organized by user/org)
+        ├── documentation/      # Documentation
+        ├── repos/              # Git repositories (organized by user/org)
+        └── worktrees/          # Git worktrees (organized by project)
 
-      Organization directories are determined by (in order of priority):
+      Organization directories under repos/ are determined by (in order of priority):
         1. Environment variable: DEFAULT_ORGS="org1 org2 org3" task dev:setup
         2. ~/.env.local file: export DEFAULT_ORGS="org1 org2 org3"
         3. Auto-detected from:
@@ -79,6 +83,8 @@ tasks:
       - echo ""
       - echo "Directory structure:"
       - echo "  {{.CODE_DIR}}/"
+      - echo "  {{.DOCS_DIR}}/"
+      - echo "  {{.WORKTREES_DIR}}/"
       - for:
           var: DEFAULT_ORGS
         cmd: echo "  {{.REPOS_DIR}}/{{.ITEM}}/"
@@ -88,13 +94,15 @@ tasks:
   list:
     desc: List development directories
     summary: |
-      Shows the development directory structure and repository counts
+      Shows the development directory structure and counts
     silent: true
     cmds:
       - echo "📂 Development Directories:"
       - echo ""
       - task: list:code
+      - task: list:docs
       - task: list:repos
+      - task: list:worktrees
 
   clone:
     desc: Clone a repository to the appropriate directory
@@ -192,6 +200,8 @@ tasks:
     silent: true
     cmds:
       - mkdir -p "{{.CODE_DIR}}"
+      - mkdir -p "{{.DOCS_DIR}}"
+      - mkdir -p "{{.WORKTREES_DIR}}"
       - for:
           var: DEFAULT_ORGS
         cmd: mkdir -p "{{.REPOS_DIR}}/{{.ITEM}}"
@@ -256,6 +266,30 @@ tasks:
         cmd: echo "  - {{.ITEM}}"
       - echo ""
 
+  list:docs:
+    internal: true
+    silent: true
+    vars:
+      DOCS_EXISTS:
+        sh: test -d "{{.DOCS_DIR}}" && echo "true" || echo "false"
+      DOC_ENTRIES:
+        sh: find "{{.DOCS_DIR}}" -mindepth 1 -maxdepth 1 -exec basename {} \; 2>/dev/null | sort || true
+      DOC_COUNT:
+        sh: find "{{.DOCS_DIR}}" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | xargs || echo "0"
+    cmds:
+      - echo "Documentation ({{.DOCS_DIR}}):"
+      - |
+        if [ "{{.DOCS_EXISTS}}" = "false" ]; then
+          echo "  (directory not created - run 'task develop:setup')"
+        elif [ "{{.DOC_COUNT}}" -eq 0 ]; then
+          echo "  (empty)"
+        fi
+      - for:
+          var: DOC_ENTRIES
+          split: '\n'
+        cmd: echo "  - {{.ITEM}}"
+      - echo ""
+
   list:repos:
     internal: true
     silent: true
@@ -280,6 +314,7 @@ tasks:
         task: list:org
         vars:
           ORG_NAME: '{{.ITEM}}'
+      - echo ""
 
   list:org:
     internal: true
@@ -308,3 +343,44 @@ tasks:
     cmds:
       - echo "    - {{.REPO_NAME}}"
 
+  list:worktrees:
+    internal: true
+    silent: true
+    vars:
+      WORKTREES_EXISTS:
+        sh: test -d "{{.WORKTREES_DIR}}" && echo "true" || echo "false"
+      WORKTREE_PROJECTS:
+        sh: find "{{.WORKTREES_DIR}}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort || true
+      PROJECT_COUNT:
+        sh: find "{{.WORKTREES_DIR}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | xargs || echo "0"
+    cmds:
+      - echo "Worktrees ({{.WORKTREES_DIR}}):"
+      - |
+        if [ "{{.WORKTREES_EXISTS}}" = "false" ]; then
+          echo "  (directory not created - run 'task develop:setup')"
+        elif [ "{{.PROJECT_COUNT}}" -eq 0 ]; then
+          echo "  (empty)"
+        fi
+      - for:
+          var: WORKTREE_PROJECTS
+          split: '\n'
+        task: list:worktree_project
+        vars:
+          PROJECT_NAME: '{{.ITEM}}'
+
+  list:worktree_project:
+    internal: true
+    silent: true
+    vars:
+      PROJECT_NAME: '{{.PROJECT_NAME}}'
+      PROJECT_PATH: '{{.WORKTREES_DIR}}/{{.PROJECT_NAME}}'
+      TREES:
+        sh: find "{{.PROJECT_PATH}}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort || true
+      TREE_COUNT:
+        sh: find "{{.PROJECT_PATH}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | xargs || echo "0"
+    cmds:
+      - echo "  {{.PROJECT_NAME}}/ ({{.TREE_COUNT}} worktrees)"
+      - for:
+          var: TREES
+          split: '\n'
+        cmd: echo "    - {{.ITEM}}"
