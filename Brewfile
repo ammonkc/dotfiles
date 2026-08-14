@@ -128,7 +128,6 @@ if OS.mac?
     # Code Editors
     cask 'claude-code'         # Terminal-based AI coding assistant
     cask 'cmux'                # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
-    cask 'conductor'           # Claude code parallelisation
     cask 'cursor'              # Agentic AI code editor
     cask 'phpstorm'            # PHP IDE by JetBrains
     cask 'supacode'            # Native terminal coding agents command center
