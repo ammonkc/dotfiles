@@ -44,7 +44,7 @@
     "git_status_indicator": true,
     "bold_folder_labels": false,
     "dock": "right",
-    "default_width": 280,
+    "default_width": 360,
   },
   "outline_panel": {
     "dock": "right",
