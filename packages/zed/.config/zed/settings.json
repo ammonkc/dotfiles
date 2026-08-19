@@ -120,6 +120,10 @@
       // Optional: configure auto-format on save
       "format_on_save": "on",
     },
+    "Markdown": {
+      "soft_wrap": "prefer_line",
+      "remove_trailing_whitespace_on_save": false
+    },
   },
   "agent_servers": {
     "claude-acp": {
@@ -132,6 +136,10 @@
     "default_model": {
       "provider": "amazon-bedrock",
       "model": "claude-sonnet-5",
+    },
+    "commit_message_model": {
+      "provider": "amazon-bedrock",
+      "model": "claude-haiku-3-5",
     },
     "model_parameters": [],
   },
