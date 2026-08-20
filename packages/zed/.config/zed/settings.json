@@ -158,6 +158,7 @@
   "show_whitespaces": "none",
   "ensure_final_newline_on_save": true,
   "remove_trailing_whitespace_on_save": true,
+  "extend_comment_on_newline": false,
   "soft_wrap": "editor_width",
   "inlay_hints": {
     "enabled": true,
