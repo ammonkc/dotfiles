@@ -29,7 +29,7 @@
   "use_system_window_tabs": true,
   "indent_guides": {
     "line_width": 1,
-    "coloring": "disabled",
+    "coloring": "fixed",
     "background_coloring": "disabled",
     "enabled": true
   },
