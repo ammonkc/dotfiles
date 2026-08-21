@@ -7,6 +7,21 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "context_servers": {
+    "mcp-server-github": {
+      "enabled": false,
+      "remote": false,
+      "settings": {}
+    },
+    "mcp-server-sequential-thinking": {
+      "enabled": false,
+      "remote": false,
+      "settings": {}
+    }
+  },
+  "edit_predictions": {
+    "allow_data_collection": "no"
+  },
   "cli_default_open_behavior": "new_window",
   "base_keymap": "VSCode",
   "ui_font_size": 16,
@@ -19,7 +34,11 @@
     "light": "One Light",
     "dark": "Fiyah Dark Cursor",
   },
-  "icon_theme": "Material Icon Theme",
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Material Icon Theme",
+    "dark": "Material Icon Theme"
+  },
   "colorize_brackets": true,
   "wrap_guides": [140],
   "show_wrap_guides": false,
@@ -50,6 +69,10 @@
     "dock": "right",
   },
   "git_panel": {
+    "status_style": "icon",
+    "show_count_badge": true,
+    "diff_stats": true,
+    "folder_icons": true,
     "collapse_untracked_diff": false,
     "file_icons": false,
     "tree_view": true,
@@ -59,7 +82,7 @@
     "show_menus": true,
   },
   "toolbar": {
-    "code_actions": false
+    "code_actions": true
   },
   "tab_bar": {
     "show": true,
@@ -126,11 +149,20 @@
     },
   },
   "agent_servers": {
+    "codex-acp": {
+      "type": "registry"
+    },
     "claude-acp": {
       "type": "registry",
     },
   },
   "agent": {
+    "inline_assistant_model": {
+      "provider": "amazon-bedrock",
+      "model": "gpt-5.6-terra",
+      "enable_thinking": false
+    },
+    "show_turn_stats": true,
     "dock": "left",
     "play_sound_when_agent_done": "always",
     "default_model": {
