@@ -88,3 +88,4 @@ mise.local.toml
 **/.claude/settings.local.json
 /docs/superpowers/
 /docs/graphify-out/
+/.token-optimizer/
