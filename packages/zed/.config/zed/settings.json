@@ -44,7 +44,7 @@
   "show_wrap_guides": false,
   "cursor_shape": "bar",
   "cursor_blink": true,
-  "bottom_dock_layout": "contained",
+  "bottom_dock_layout": "right_aligned",
   "use_system_window_tabs": true,
   "indent_guides": {
     "line_width": 1,
