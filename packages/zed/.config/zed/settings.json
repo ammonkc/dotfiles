@@ -117,6 +117,7 @@
     "font_family": "MesloLGS NF",
     "font_size": 13,
     "minimum_contrast": 0,
+    "default_height": 560,
     "env": {},
   },
   "minimap": {
