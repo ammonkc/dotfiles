@@ -40,7 +40,7 @@ function OutputView({ worktree }: { worktree: string }) {
 
         await showToast({
           style: succeeded ? Toast.Style.Success : Toast.Style.Failure,
-          title: succeeded ? "Containers stopped" : "Failed to stop",
+          title: succeeded ? "✅ Containers stopped" : "❌ Failed to stop",
           message: worktree,
         });
       },
