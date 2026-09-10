@@ -12,6 +12,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { stopContainersStream } from "./lib/docker";
 import { listWorktrees, getDefaultWorktree, worktreeExists, getAllegroDomain } from "./lib/worktrees";
 
+const LIVE_OUTPUT_LINE_LIMIT = 12;
+
 function OutputView({ worktree }: { worktree: string }) {
   const [output, setOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(true);
@@ -47,10 +49,11 @@ function OutputView({ worktree }: { worktree: string }) {
 
   const statusIcon = isRunning ? "⏳" : success ? "✅" : "❌";
   const statusText = isRunning ? "Stopping..." : success ? "Stopped" : "Failed";
+  const visibleOutput = output.slice(-LIVE_OUTPUT_LINE_LIMIT);
 
   const markdown = `
 \`\`\`
-${output.join("\n")}
+${visibleOutput.join("\n")}
 \`\`\`
 `;
 
@@ -70,6 +73,9 @@ ${output.join("\n")}
             icon={isRunning ? Icon.Clock : success ? Icon.Check : Icon.XMarkCircle}
           />
           <Detail.Metadata.Label title="Lines" text={String(output.length)} />
+          {output.length > LIVE_OUTPUT_LINE_LIMIT && (
+            <Detail.Metadata.Label title="Live View" text={`Last ${LIVE_OUTPUT_LINE_LIMIT} lines`} />
+          )}
         </Detail.Metadata>
       }
       actions={
