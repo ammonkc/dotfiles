@@ -10,6 +10,7 @@
 # @raycast.packageName IDL Docker
 # @raycast.argument1 { "type": "text", "placeholder": "worktree", "optional": true }
 # @raycast.argument2 { "type": "text", "placeholder": "domain", "optional": true }
+# @raycast.argument3 { "type": "text", "placeholder": "profiles (comma-separated)", "optional": true }
 
 # Documentation:
 # @raycast.description Stop IDL Docker containers
@@ -17,6 +18,14 @@
 
 BASE_DIR="$HOME/Developer/code/indirect"
 ALLEGRO_DOMAIN="${2:-allegro.test}"
+COMPOSE_PROFILES=(--profile sftp --profile php8-work)
+
+IFS=',' read -r -a PROFILES <<< "${3:-}"
+for profile in "${PROFILES[@]}"; do
+    profile="${profile#"${profile%%[![:space:]]*}"}"
+    profile="${profile%"${profile##*[![:space:]]}"}"
+    [[ -n "$profile" ]] && COMPOSE_PROFILES+=(--profile "$profile")
+done
 
 # Resolve worktree from arg, else from cwd under BASE_DIR, else 'main'
 default_worktree() {
@@ -55,8 +64,7 @@ fi
 cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
 
 ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" docker compose -f docker-compose.yaml \
-    --profile sftp \
-    --profile php8-work \
-    down
+    "${COMPOSE_PROFILES[@]}" \
+    down || exit $?
 
 echo "✅ IDL containers stopped ($WORKTREE) @ $ALLEGRO_DOMAIN"

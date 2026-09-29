@@ -10,11 +10,23 @@ import {
 } from "@raycast/api";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { stopContainersStream } from "./lib/docker";
-import { listWorktrees, getDefaultWorktree, worktreeExists, getAllegroDomain } from "./lib/worktrees";
+import { ProfileForm } from "./lib/profile-form";
+import {
+  listWorktrees,
+  getDefaultWorktree,
+  worktreeExists,
+  getAllegroDomain,
+} from "./lib/worktrees";
 
 const LIVE_OUTPUT_LINE_LIMIT = 12;
 
-function OutputView({ worktree }: { worktree: string }) {
+function OutputView({
+  worktree,
+  profiles,
+}: {
+  worktree: string;
+  profiles: string[];
+}) {
   const [output, setOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(true);
   const [success, setSuccess] = useState<boolean | null>(null);
@@ -29,23 +41,30 @@ function OutputView({ worktree }: { worktree: string }) {
 
     setOutput([`🛑 Stopping containers for ${worktree} @ ${domain}...`, ""]);
 
-    stopContainersStream({ worktree, domain }, {
-      onOutput: (line) => {
-        setOutput((prev) => [...prev, line]);
-      },
-      onComplete: async (succeeded, message) => {
-        setIsRunning(false);
-        setSuccess(succeeded);
-        setOutput((prev) => [...prev, "", succeeded ? `✅ ${message}` : `❌ ${message}`]);
+    stopContainersStream(
+      { worktree, domain, profiles },
+      {
+        onOutput: (line) => {
+          setOutput((prev) => [...prev, line]);
+        },
+        onComplete: async (succeeded, message) => {
+          setIsRunning(false);
+          setSuccess(succeeded);
+          setOutput((prev) => [
+            ...prev,
+            "",
+            succeeded ? `✅ ${message}` : `❌ ${message}`,
+          ]);
 
-        await showToast({
-          style: succeeded ? Toast.Style.Success : Toast.Style.Failure,
-          title: succeeded ? "✅ Containers stopped" : "❌ Failed to stop",
-          message: worktree,
-        });
+          await showToast({
+            style: succeeded ? Toast.Style.Success : Toast.Style.Failure,
+            title: succeeded ? "✅ Containers stopped" : "❌ Failed to stop",
+            message: worktree,
+          });
+        },
       },
-    });
-  }, [worktree]);
+    );
+  }, [worktree, profiles, domain]);
 
   const statusIcon = isRunning ? "⏳" : success ? "✅" : "❌";
   const statusText = isRunning ? "Stopping..." : success ? "Stopped" : "Failed";
@@ -66,15 +85,26 @@ ${visibleOutput.join("\n")}
         <Detail.Metadata>
           <Detail.Metadata.Label title="Worktree" text={worktree} />
           <Detail.Metadata.Label title="Domain" text={domain} />
+          {profiles.length > 0 && (
+            <Detail.Metadata.Label
+              title="Additional Profiles"
+              text={profiles.join(", ")}
+            />
+          )}
           <Detail.Metadata.Separator />
           <Detail.Metadata.Label
             title="Status"
             text={statusText}
-            icon={isRunning ? Icon.Clock : success ? Icon.Check : Icon.XMarkCircle}
+            icon={
+              isRunning ? Icon.Clock : success ? Icon.Check : Icon.XMarkCircle
+            }
           />
           <Detail.Metadata.Label title="Lines" text={String(output.length)} />
           {output.length > LIVE_OUTPUT_LINE_LIMIT && (
-            <Detail.Metadata.Label title="Live View" text={`Last ${LIVE_OUTPUT_LINE_LIMIT} lines`} />
+            <Detail.Metadata.Label
+              title="Live View"
+              text={`Last ${LIVE_OUTPUT_LINE_LIMIT} lines`}
+            />
           )}
         </Detail.Metadata>
       }
@@ -107,7 +137,7 @@ export default function StopCommand() {
   });
 
   const handleStop = useCallback(
-    async (worktree: string) => {
+    async (worktree: string, profiles: string[] = []) => {
       if (!worktreeExists(worktree)) {
         await showToast({
           style: Toast.Style.Failure,
@@ -117,9 +147,9 @@ export default function StopCommand() {
         return;
       }
 
-      push(<OutputView worktree={worktree} />);
+      push(<OutputView worktree={worktree} profiles={profiles} />);
     },
-    [push]
+    [push],
   );
 
   if (worktrees.length === 0) {
@@ -143,7 +173,9 @@ export default function StopCommand() {
           title={worktree}
           subtitle={worktree === defaultWorktree ? "default" : undefined}
           accessories={[
-            worktree === defaultWorktree ? { icon: Icon.Star, tooltip: "Default" } : {},
+            worktree === defaultWorktree
+              ? { icon: Icon.Star, tooltip: "Default" }
+              : {},
           ]}
           actions={
             <ActionPanel>
@@ -151,6 +183,16 @@ export default function StopCommand() {
                 title="Stop Containers"
                 icon={Icon.Stop}
                 onAction={() => handleStop(worktree)}
+              />
+              <Action.Push
+                title="Stop With Profiles"
+                icon={Icon.Plus}
+                target={
+                  <ProfileForm
+                    actionTitle="Stop Containers"
+                    onSubmit={(profiles) => handleStop(worktree, profiles)}
+                  />
+                }
               />
             </ActionPanel>
           }

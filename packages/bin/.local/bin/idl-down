@@ -1,13 +1,56 @@
 #!/bin/bash
 #
 # Stop IDL Docker containers
-# Usage: idl-down [worktree] [domain]
+# Usage: idl-down [--profile NAME ...] [worktree] [domain]
 #        worktree - current BASE_DIR worktree if cwd is inside one, else 'main'
 #        domain   - defaults to 'allegro.test'
 #
 
 BASE_DIR="$HOME/Developer/code/indirect"
-ALLEGRO_DOMAIN="${2:-allegro.test}"
+POSITIONAL=()
+COMPOSE_PROFILES=(--profile sftp)
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --profile)
+            if [[ -z "${2:-}" || "$2" == -* ]]; then
+                echo "--profile requires a profile name" >&2
+                exit 1
+            fi
+            COMPOSE_PROFILES+=(--profile "$2")
+            shift 2
+            ;;
+        --profile=*)
+            profile="${1#--profile=}"
+            if [[ -z "$profile" ]]; then
+                echo "--profile requires a profile name" >&2
+                exit 1
+            fi
+            COMPOSE_PROFILES+=(--profile "$profile")
+            shift
+            ;;
+        -h | --help)
+            cat <<'EOF'
+Usage: idl-down [--profile NAME ...] [worktree] [domain]
+
+  --profile     Enable an additional Compose profile (repeatable; sftp is always enabled)
+  worktree      Defaults to cwd under ~/Developer/code/indirect, else main
+  domain        Defaults to allegro.test
+EOF
+            exit 0
+            ;;
+        -*)
+            echo "Unknown option: $1 (try --help)" >&2
+            exit 1
+            ;;
+        *)
+            POSITIONAL+=("$1")
+            shift
+            ;;
+    esac
+done
+
+ALLEGRO_DOMAIN="${POSITIONAL[1]:-allegro.test}"
 
 # Resolve worktree from arg, else from cwd under BASE_DIR, else 'main'
 default_worktree() {
@@ -22,7 +65,7 @@ default_worktree() {
     fi
 }
 
-WORKTREE="${1:-$(default_worktree)}"
+WORKTREE="${POSITIONAL[0]:-$(default_worktree)}"
 
 # Get list of available worktrees (directories in BASE_DIR)
 # Uses fd if available, otherwise falls back to find
@@ -46,7 +89,7 @@ fi
 cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
 
 ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" docker compose -f docker-compose.yaml \
-    --profile sftp \
-    down
+    "${COMPOSE_PROFILES[@]}" \
+    down || exit $?
 
 echo "✅ IDL containers stopped ($WORKTREE) @ $ALLEGRO_DOMAIN"

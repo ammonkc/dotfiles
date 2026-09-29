@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Start IDL Docker containers
-# Usage: idl-up [--build|-b] [worktree] [domain]
+# Usage: idl-up [--build|-b] [--profile NAME ...] [worktree] [domain]
 #        --build  - also --force-recreate --build (rebuild images)
 #        worktree - current BASE_DIR worktree if cwd is inside one, else 'main'
 #        domain   - defaults to 'allegro.test'
@@ -10,6 +10,7 @@
 BASE_DIR="$HOME/Developer/code/indirect"
 BUILD=false
 POSITIONAL=()
+COMPOSE_PROFILES=(--profile sftp)
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -17,11 +18,29 @@ while [[ $# -gt 0 ]]; do
             BUILD=true
             shift
             ;;
+        --profile)
+            if [[ -z "${2:-}" || "$2" == -* ]]; then
+                echo "--profile requires a profile name" >&2
+                exit 1
+            fi
+            COMPOSE_PROFILES+=(--profile "$2")
+            shift 2
+            ;;
+        --profile=*)
+            profile="${1#--profile=}"
+            if [[ -z "$profile" ]]; then
+                echo "--profile requires a profile name" >&2
+                exit 1
+            fi
+            COMPOSE_PROFILES+=(--profile "$profile")
+            shift
+            ;;
         -h | --help)
             cat <<'EOF'
-Usage: idl-up [--build|-b] [worktree] [domain]
+Usage: idl-up [--build|-b] [--profile NAME ...] [worktree] [domain]
 
   --build, -b   Rebuild images and force-recreate containers
+  --profile     Enable an additional Compose profile (repeatable; sftp is always enabled)
   worktree      Defaults to cwd under ~/Developer/code/indirect, else main
   domain        Defaults to allegro.test
 EOF
@@ -85,8 +104,8 @@ ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" \
     COMPOSE_DOCKER_CLI_BUILD=1 \
     docker compose \
     -f docker-compose.yaml \
-    --profile sftp \
-    "${UP_ARGS[@]}"
+    "${COMPOSE_PROFILES[@]}" \
+    "${UP_ARGS[@]}" || exit $?
 
 if $BUILD; then
     echo "✅ IDL containers started with rebuild ($WORKTREE) @ $ALLEGRO_DOMAIN"

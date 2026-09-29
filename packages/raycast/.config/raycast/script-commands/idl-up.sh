@@ -10,7 +10,7 @@
 # @raycast.packageName IDL Docker
 # @raycast.argument1 { "type": "text", "placeholder": "worktree", "optional": true }
 # @raycast.argument2 { "type": "text", "placeholder": "domain", "optional": true }
-# @raycast.argument3 { "type": "dropdown", "placeholder": "Rebuild?", "optional": true, "data": [{"title": "No (fast)", "value": "false"}, {"title": "Yes (--build)", "value": "true"}] }
+# @raycast.argument3 { "type": "text", "placeholder": "profiles, --build (optional)", "optional": true }
 
 # Documentation:
 # @raycast.description Start IDL Docker containers
@@ -19,11 +19,19 @@
 BASE_DIR="$HOME/Developer/code/indirect"
 BUILD=false
 POSITIONAL=()
+COMPOSE_PROFILES=(--profile sftp)
 
-# Raycast dropdown arg3: "true" enables rebuild
-if [[ "${3:-}" == "true" ]]; then
-    BUILD=true
-fi
+# Third Raycast argument accepts comma-separated profiles and --build.
+IFS=',' read -r -a OPTIONS <<< "${3:-}"
+for option in "${OPTIONS[@]}"; do
+    option="${option#"${option%%[![:space:]]*}"}"
+    option="${option%"${option##*[![:space:]]}"}"
+    case "$option" in
+        -b | --build | true) BUILD=true ;;
+        "" | false) ;;
+        *) COMPOSE_PROFILES+=(--profile "$option") ;;
+    esac
+done
 
 # Also accept --build/-b if invoked from a shell
 for arg in "$1" "$2"; do
@@ -88,8 +96,8 @@ ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" \
     COMPOSE_DOCKER_CLI_BUILD=1 \
     docker compose \
     -f docker-compose.yaml \
-    --profile sftp \
-    "${UP_ARGS[@]}"
+    "${COMPOSE_PROFILES[@]}" \
+    "${UP_ARGS[@]}" || exit $?
 
 if $BUILD; then
     echo "✅ IDL containers started with rebuild ($WORKTREE) @ $ALLEGRO_DOMAIN"

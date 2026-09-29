@@ -31,19 +31,30 @@ export interface StreamCallbacks {
 export interface ContainerOptions {
   worktree: string;
   domain: string;
+  profiles?: string[];
 }
 
 /**
  * Start Docker containers for a worktree using idl-up script (streaming)
  */
-export function startContainersStream(options: ContainerOptions, callbacks: StreamCallbacks): void {
-  const { worktree, domain } = options;
+export function startContainersStream(
+  options: ContainerOptions,
+  callbacks: StreamCallbacks,
+): void {
+  const { worktree, domain, profiles = [] } = options;
   const script = join(SCRIPTS_DIR, "idl-up");
 
-  const proc = spawn(script, [worktree, domain], {
-    env: getEnvWithPath(),
-    shell: true,
-  });
+  const proc = spawn(
+    script,
+    [
+      worktree,
+      domain,
+      ...profiles.flatMap((profile) => ["--profile", profile]),
+    ],
+    {
+      env: getEnvWithPath(),
+    },
+  );
 
   proc.stdout.on("data", (data: Buffer) => {
     const lines = data.toString().split("\n").filter(Boolean);
@@ -57,7 +68,10 @@ export function startContainersStream(options: ContainerOptions, callbacks: Stre
 
   proc.on("close", (code) => {
     if (code === 0) {
-      callbacks.onComplete(true, `Containers started for ${worktree} @ ${domain}`);
+      callbacks.onComplete(
+        true,
+        `Containers started for ${worktree} @ ${domain}`,
+      );
     } else {
       callbacks.onComplete(false, `Failed with exit code ${code}`);
     }
@@ -71,14 +85,24 @@ export function startContainersStream(options: ContainerOptions, callbacks: Stre
 /**
  * Stop Docker containers for a worktree using idl-down script (streaming)
  */
-export function stopContainersStream(options: ContainerOptions, callbacks: StreamCallbacks): void {
-  const { worktree, domain } = options;
+export function stopContainersStream(
+  options: ContainerOptions,
+  callbacks: StreamCallbacks,
+): void {
+  const { worktree, domain, profiles = [] } = options;
   const script = join(SCRIPTS_DIR, "idl-down");
 
-  const proc = spawn(script, [worktree, domain], {
-    env: getEnvWithPath(),
-    shell: true,
-  });
+  const proc = spawn(
+    script,
+    [
+      worktree,
+      domain,
+      ...profiles.flatMap((profile) => ["--profile", profile]),
+    ],
+    {
+      env: getEnvWithPath(),
+    },
+  );
 
   proc.stdout.on("data", (data: Buffer) => {
     const lines = data.toString().split("\n").filter(Boolean);
@@ -92,7 +116,10 @@ export function stopContainersStream(options: ContainerOptions, callbacks: Strea
 
   proc.on("close", (code) => {
     if (code === 0) {
-      callbacks.onComplete(true, `Containers stopped for ${worktree} @ ${domain}`);
+      callbacks.onComplete(
+        true,
+        `Containers stopped for ${worktree} @ ${domain}`,
+      );
     } else {
       callbacks.onComplete(false, `Failed with exit code ${code}`);
     }

@@ -5,7 +5,7 @@ Manage IDL Docker containers across git worktrees.
 ## Features
 
 - **Dynamic worktree discovery** - Automatically lists all worktrees
-- **Start/Stop commands** - Quick container management
+- **Start/Stop commands** - Quick container management with optional Compose profiles
 - **Configurable** - Set base directory and default worktree in preferences
 
 ## Setup
@@ -33,6 +33,17 @@ Manage IDL Docker containers across git worktrees.
 
 - **Start Containers** - Start Docker containers for a selected worktree
 - **Stop Containers** - Stop Docker containers for a selected worktree
+
+Select **Start With Profiles** or **Stop With Profiles** from a worktree's actions to enter additional profiles, separated by commas (for example, `queue, worker`). The existing default profiles remain enabled.
+
+The shell commands accept repeatable profile flags:
+
+```bash
+idl-up --profile queue main
+idl-down --profile queue main
+```
+
+In the Raycast script commands, enter `queue` (or `queue, worker`) in the profiles field. The IDL Up script command also accepts `--build` in that field, for example `queue, --build`.
 
 ## Development
 
