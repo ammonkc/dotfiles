@@ -36,6 +36,18 @@ Never guess at intent. If a task leaves anything open - which core, which endpoi
 - Do not widen scope past what was asked. Note the adjacent thing you spotted; don't fix it unprompted.
 - If you had to assume something you couldn't resolve, list it explicitly at the topof your summary.
 
+## Commit message suggestion
+When you finish implementing a plan, include in your final summary an example
+git commit message in the format: <type>(scope): description
+
+- type is a conventional commit type (feat, fix, refactor, test, chore, docs, ci, etc.)
+- scope is the area of the codebase affected
+- description is short, imperative, and lowercase
+- Only suggest the message. Do not run git commit.
+
+## Research reports
+When a task is research or a code deep dive that ends without a plan or edits, use the `report` skill to present the findings as a markdown report instead of a long chat answer. A hook saves it to Obsidian under Projects/Engineering/Research.
+
 ---
 
 # context-mode — MANDATORY routing rules
