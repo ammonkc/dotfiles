@@ -128,7 +128,7 @@ if OS.mac?
     # Code Editors
     cask 'claude-code'         # Terminal-based AI coding assistant
     cask 'cmux'                # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
-    cask 'cursor'              # Agentic AI code editor
+    cask 'codex'               # OpenAI's coding agent that runs in your terminal
     cask 'phpstorm'            # PHP IDE by JetBrains
     cask 'supacode'            # Native terminal coding agents command center
     cask 'visual-studio-code'  # Microsoft Visual Studio Code
@@ -137,19 +137,21 @@ if OS.mac?
     # Apps casks
     cask '1password'           # 1Password app
     cask '1password-cli'       # Command-line interface for 1Password
-    cask 'alt-tab'             # Enable Windows-like alt-tab
     cask 'appcleaner'          # Application uninstaller
     cask 'bartender'           # Menu bar icon organiser
     cask 'betterdisplay'       # Display management tool
     cask 'boop'                # Scriptable scratchpad for developers
     cask 'bruno'               # Open source IDE for exploring and testing APIs
     cask 'dockdoor'            # Window peeking utility app
+    cask 'easydmg'             # One click DMG installs
     cask 'fluidvoice'          # Offline voice-to-text dictation app with AI enhancement
+    cask 'lab421/tap/forel'    # File-automation app that watches folders and runs rules
     cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
     cask 'github'              # GitHub Desktop
     cask 'google-chrome'       # Google Chrome browser
     cask 'hammerspoon'         # Desktop automation application
     cask 'handbrake-app'       # Open-source video transcoder available for Linux, Mac, and Windows
+    cask 'hovrly'              # Display and convert timezones time in different cities
     cask 'iina'                # Free and open-source media player
     cask 'imageoptim'          # Tool to optimise images to a smaller size
     cask 'istat-menus'         # System monitoring app
@@ -187,10 +189,11 @@ if OS.mac?
     cask 'font-symbols-only-nerd-font'
 
     # Quicklook
-    cask 'qlcolorcode'      #
-    cask 'qlmarkdown'       # Quick Look generator for Markdown files
-    cask 'qlstephen'        #
-    cask 'webpquicklook'    # Quick Look plugin for WebP images
-    cask 'qlvideo'          # Thumbnails, static previews, and metadata for video files
+    #cask 'qlcolorcode'            #
+    #cask 'qlmarkdown'             # Quick Look generator for Markdown files
+    #cask 'qlstephen'              #
+    #cask 'webpquicklook'          # Quick Look plugin for WebP images
+    cask 'quickjson'                # Quick Look plugin to pretty-print JSON
+    cask 'qlvideo'                  # Thumbnails, static previews, and metadata for video files
     cask 'xykong/tap/flux-markdown' # Markdown previews in Finder QuickLook with diagrams and math
 end
