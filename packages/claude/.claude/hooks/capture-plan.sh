@@ -61,6 +61,11 @@ if [ -z "$PLAN_CONTENT" ]; then
   fi
 fi
 
+# Record the source file even when the plan body came inline
+if [ -z "$PLAN_FILE" ] || [ "$PLAN_FILE" = "null" ]; then
+  PLAN_FILE=$(echo "$INPUT" | jq -r '.tool_input.planFilePath // .tool_response.filePath // empty')
+fi
+
 # Extract model from transcript if available
 if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
   MODEL_USED=$(jq -r '.model // empty' "$TRANSCRIPT_PATH" 2>/dev/null | head -1) || MODEL_USED=""
