@@ -83,7 +83,8 @@ fi
 
 # --- Extract plan title, slug, and date metadata ---
 # Write plan content to temp file so dollar signs / backticks don't expand
-PLAN_TMP=$(mktemp /tmp/capture-plan-content-XXXXXX.md)
+PLAN_TMP=$(mktemp /tmp/capture-plan-content.XXXXXX)
+trap 'rm -f "${PLAN_TMP:-}" "${NOTE_TMP:-}"' EXIT
 printf '%s' "$PLAN_CONTENT" > "$PLAN_TMP"
 
 EXTRACTED=$(python3 - "$PLAN_TMP" << 'PYEOF'
@@ -279,7 +280,7 @@ if [ -z "$VAULT_ROOT" ] || [[ "$VAULT_ROOT" != /* ]] || [ ! -d "$VAULT_ROOT" ]; 
   VAULT_ROOT=""
 fi
 
-NOTE_TMP=$(mktemp /tmp/capture-plan-note-XXXXXX.md)
+NOTE_TMP=$(mktemp /tmp/capture-plan-note.XXXXXX)
 printf '%s' "$NOTE_CONTENT" > "$NOTE_TMP"
 
 if [ -n "$VAULT_ROOT" ]; then
