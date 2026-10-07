@@ -12,14 +12,14 @@
       "enabled": false,
       "remote": false,
       "settings": {}
-    },
-    "mcp-server-sequential-thinking": {
-      "enabled": false,
-      "remote": false,
-      "settings": {}
     }
   },
   "edit_predictions": {
+    "provider": "open_ai_compatible_api",
+    "open_ai_compatible_api": {
+      "model": "glm-5p3-flash-us",
+      "api_url": "https://us.api.fireworks.ai/inference/v1"
+    },
     "allow_data_collection": "no"
   },
   "cli_default_open_behavior": "new_window",
