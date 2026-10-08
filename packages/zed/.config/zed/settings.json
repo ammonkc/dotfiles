@@ -118,14 +118,16 @@
       },
       "formatter": {
         "external": {
-          "command": "bash",
+          "command": "sh",
           "arguments": [
             "-c",
-            "cat > {buffer_path} && ./vendor/bin/pint --quiet {buffer_path} && cat {buffer_path}",
+            "if [ -x ./vendor/bin/pint ]; then ./vendor/bin/pint --quiet --stdin-filename=\"$1\"; else cat; fi",
+            "zed-pint",
+            "{buffer_path}",
           ],
         },
       },
-      "language_servers": ["phpactor", "!intelephense", "!phptools", "!phpcs"],
+      "language_servers": ["intelephense", "laravel", "!phpactor", "!phptools", "!phpcs"],
       // Optional: configure auto-format on save
       "format_on_save": "on",
     },
