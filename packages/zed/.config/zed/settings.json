@@ -7,21 +7,6 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "context_servers": {
-    "mcp-server-github": {
-      "enabled": false,
-      "remote": false,
-      "settings": {}
-    }
-  },
-  "edit_predictions": {
-    "provider": "open_ai_compatible_api",
-    "open_ai_compatible_api": {
-      "model": "glm-5p3-flash-us",
-      "api_url": "https://us.api.fireworks.ai/inference/v1"
-    },
-    "allow_data_collection": "no"
-  },
   "cli_default_open_behavior": "new_window",
   "base_keymap": "VSCode",
   "ui_font_size": 16,
@@ -150,6 +135,9 @@
     },
   },
   "agent_servers": {
+    "opencode": {
+      "type": "registry"
+    },
     "codex-acp": {
       "type": "registry"
     },
@@ -178,11 +166,96 @@
     "model_parameters": [],
   },
   "language_models": {
+    "openai_compatible": {
+      "Fireworks AI": {
+        "api_url": "https://us.api.fireworks.ai/inference/v1",
+        "available_models": [
+          {
+            "name": "GLM 5.3 Flash (US)",
+            "max_tokens": 1048576,
+            "max_output_tokens": 131072,
+            "max_completion_tokens": 200000,
+            "capabilities": {
+              "tools": true,
+              "images": false,
+              "parallel_tool_calls": false,
+              "prompt_cache_key": false,
+              "chat_completions": true,
+              "interleaved_reasoning": false,
+              "max_tokens_parameter": false
+            }
+          },
+          {
+            "name": "GLM 5.3 (US)",
+            "max_tokens": 1048576,
+            "max_output_tokens": 131072,
+            "max_completion_tokens": 200000,
+            "reasoning_effort": "medium",
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": true,
+              "chat_completions": true,
+              "interleaved_reasoning": false,
+              "max_tokens_parameter": false
+            }
+          },
+          {
+            "name": "DeepSeek V4.1 Flash (US)",
+            "max_tokens": 1048576,
+            "max_output_tokens": 16384,
+            "max_completion_tokens": 200000,
+            "reasoning_effort": "medium",
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": true,
+              "chat_completions": true,
+              "interleaved_reasoning": false,
+              "max_tokens_parameter": false
+            }
+          },
+          {
+            "name": "Kimi K3 (US)",
+            "max_tokens": 1048576,
+            "max_output_tokens": 131072,
+            "max_completion_tokens": 200000,
+            "reasoning_effort": "medium",
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": true,
+              "chat_completions": true,
+              "interleaved_reasoning": false,
+              "max_tokens_parameter": false
+            }
+          }
+        ]
+      }
+    },
     "bedrock": {
       "authentication_method": "sso",
       "profile": "genai",
       "region": "us-east-1",
     },
+  },
+  "context_servers": {
+    "mcp-server-github": {
+      "enabled": false,
+      "remote": false,
+      "settings": {}
+    }
+  },
+  "edit_predictions": {
+    "provider": "open_ai_compatible_api",
+    "open_ai_compatible_api": {
+      "model": "glm-5p3-flash-us",
+      "api_url": "https://us.api.fireworks.ai/inference/v1"
+    },
+    "allow_data_collection": "no"
   },
   "multi_cursor_modifier": "cmd_or_ctrl",
   "scroll_beyond_last_line": "off",
