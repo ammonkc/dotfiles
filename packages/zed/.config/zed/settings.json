@@ -136,7 +136,8 @@
   },
   "agent_servers": {
     "opencode": {
-      "type": "registry"
+      "type": "custom",
+      "command": "/opt/homebrew/bin/opencode acp"
     },
     "codex-acp": {
       "type": "registry"
@@ -148,7 +149,7 @@
   "agent": {
     "inline_assistant_model": {
       "provider": "amazon-bedrock",
-      "model": "gpt-5.6-terra",
+      "model": "arn:aws:bedrock:us-east-1:714322698969:application-inference-profile/xwhpey89sqjo",
       "enable_thinking": false
     },
     "show_turn_stats": true,
@@ -156,11 +157,11 @@
     "play_sound_when_agent_done": "always",
     "default_model": {
       "provider": "amazon-bedrock",
-      "model": "claude-sonnet-5",
+      "model": "arn:aws:bedrock:us-east-1:714322698969:application-inference-profile/tvqyohaedh8v",
     },
     "commit_message_model": {
       "provider": "amazon-bedrock",
-      "model": "claude-haiku-3-5",
+      "model": "arn:aws:bedrock:us-east-1:714322698969:application-inference-profile/xwhpey89sqjo",
     },
     "commit_message_instructions": "Use the Conventional Commits format: <type>(<scope>): <description>.",
     "model_parameters": [],
@@ -171,7 +172,8 @@
         "api_url": "https://us.api.fireworks.ai/inference/v1",
         "available_models": [
           {
-            "name": "GLM 5.3 Flash (US)",
+            "name": "accounts/fireworks/routers/glm-5p3-flash-us",
+            "display_name": "GLM 5.3 Flash (US)",
             "max_tokens": 1048576,
             "max_output_tokens": 131072,
             "max_completion_tokens": 200000,
@@ -186,7 +188,8 @@
             }
           },
           {
-            "name": "GLM 5.3 (US)",
+            "name": "accounts/fireworks/routers/glm-5p3-us",
+            "display_name": "GLM 5.3 (US)",
             "max_tokens": 1048576,
             "max_output_tokens": 131072,
             "max_completion_tokens": 200000,
@@ -202,7 +205,8 @@
             }
           },
           {
-            "name": "DeepSeek V4.1 Flash (US)",
+            "name": "accounts/fireworks/routers/deepseek-v4p1-flash-us",
+            "display_name": "DeepSeek V4.1 Flash (US)",
             "max_tokens": 1048576,
             "max_output_tokens": 16384,
             "max_completion_tokens": 200000,
@@ -218,7 +222,8 @@
             }
           },
           {
-            "name": "Kimi K3 (US)",
+            "name": "accounts/fireworks/routers/kimi-k3-us",
+            "display_name": "Kimi K3 (US)",
             "max_tokens": 1048576,
             "max_output_tokens": 131072,
             "max_completion_tokens": 200000,
@@ -240,6 +245,23 @@
       "authentication_method": "sso",
       "profile": "genai",
       "region": "us-east-1",
+      "available_models": [
+        {
+          "name": "arn:aws:bedrock:us-east-1:714322698969:application-inference-profile/tvqyohaedh8v",
+          "display_name": "Claude Sonnet (genai)",
+          "max_tokens": 200000
+        },
+        {
+          "name": "arn:aws:bedrock:us-east-1:714322698969:application-inference-profile/xwhpey89sqjo",
+          "display_name": "Claude Haiku (genai)",
+          "max_tokens": 200000
+        },
+        {
+          "name": "arn:aws:bedrock:us-east-1:714322698969:application-inference-profile/zlf3082ule37",
+          "display_name": "Claude Opus (genai)",
+          "max_tokens": 200000
+        }
+      ]
     },
   },
   "context_servers": {
@@ -252,8 +274,8 @@
   "edit_predictions": {
     "provider": "open_ai_compatible_api",
     "open_ai_compatible_api": {
-      "model": "glm-5p3-flash-us",
-      "api_url": "https://us.api.fireworks.ai/inference/v1"
+      "model": "accounts/fireworks/routers/glm-5p3-flash-us",
+      "api_url": "https://us.api.fireworks.ai/inference/v1/completions"
     },
     "allow_data_collection": "no"
   },
