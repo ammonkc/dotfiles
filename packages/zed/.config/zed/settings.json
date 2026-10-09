@@ -149,8 +149,8 @@
   },
   "agent": {
     "inline_assistant_model": {
-      "provider": "amazon-bedrock",
-      "model": "arn:aws:bedrock:us-east-1:714322698969:application-inference-profile/xwhpey89sqjo",
+      "provider": "Fireworks AI",
+      "model": "accounts/fireworks/routers/glm-5p3-flash-us",
       "enable_thinking": false
     },
     "show_turn_stats": true,
