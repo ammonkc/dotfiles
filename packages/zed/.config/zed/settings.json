@@ -164,7 +164,7 @@
       "provider": "amazon-bedrock",
       "model": "arn:aws:bedrock:us-east-1:714322698969:application-inference-profile/xwhpey89sqjo",
     },
-    "commit_message_instructions": "Use the Conventional Commits format: <type>(<scope>): <description>.",
+    "commit_message_instructions": "Use the Conventional Commits format: <type>(<scope>): <description>. keep message concise.",
     "model_parameters": [],
   },
   "language_models": {
