@@ -127,9 +127,7 @@ if OS.mac?
 
     # Code Editors
     cask 'claude-code'         # Terminal-based AI coding assistant
-    cask 'cmux'                # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
     cask 'codex'               # OpenAI's coding agent that runs in your terminal
-    cask 'phpstorm'            # PHP IDE by JetBrains
     cask 'supacode'            # Native terminal coding agents command center
     cask 'visual-studio-code'  # Microsoft Visual Studio Code
     cask 'zed'                 # Agentic code editor
