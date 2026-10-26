@@ -32,6 +32,7 @@ brew 'glow'                         # markdown viewer
 brew 'gnupg'                        # GNU Pretty Good Privacy (PGP) package
 brew 'go-task'                      # Task is a task runner/build tool thats simpler and easier to use
 brew 'grex'                         # Command-line tool for generating regular expressions
+brew 'herdr'                        # Agent multiplexer that lives in your terminal
 brew 'htop'                         # Improved top (interactive process viewer)
 brew 'httpie'                       # User-friendly cURL replacement (command-line HTTP client)
 brew 'modem-dev/tap/hunk'           # Desktop-inspired terminal diff viewer for agent-authored changesets
@@ -121,6 +122,7 @@ if OS.mac?
     cask 'agentasticai/tap/dev' # Native macOS code editor
     cask 'claude-code'         # Terminal-based AI coding assistant
     cask 'codex'               # OpenAI's coding agent that runs in your terminal
+    cask 'opencode-desktop'    # AI coding agent desktop client
     cask 'stablyai/orca/orca'  # IDE for orchestrating AI coding agents across terminals and worktrees
     cask 'supacode'            # Native terminal coding agents command center
     cask 'visual-studio-code'  # Microsoft Visual Studio Code
@@ -144,6 +146,7 @@ if OS.mac?
     cask 'google-chrome'       # Google Chrome browser
     cask 'hammerspoon'         # Desktop automation application
     cask 'handbrake-app'       # Open-source video transcoder available for Linux, Mac, and Windows
+    cask 'homebrew-app'        # Homebrew's official GUI
     cask 'hovrly'              # Display and convert timezones time in different cities
     cask 'iina'                # Free and open-source media player
     cask 'imageoptim'          # Tool to optimise images to a smaller size
