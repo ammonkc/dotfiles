@@ -1,4 +1,4 @@
-# Taps
+       # Taps
 tap 'shivammathur/php'
 tap 'shivammathur/extensions'
 
@@ -26,7 +26,6 @@ brew 'gh'                           # GitHub command-line tool
 brew 'gifsicle'                     # GIF image/animation creator/editor
 brew 'git'                          # Distributed revision control system
 brew 'git-delta'                    # Syntax-highlighting pager for git and diff output
-brew 'git-flow'                     # Extensions to follow Vincent Driessen's branching model
 brew 'git-lfs'                      # Git extension for versioning large files
 brew 'github-keygen'                # Bootstrap GitHub SSH configuration
 brew 'glow'                         # markdown viewer
@@ -67,7 +66,7 @@ brew 'xh'                           # Friendly and fast tool for sending HTTP re
 brew 'xz'                           # General-purpose data compression with high compression ratio
 brew 'yazi'                         # Blazing fast terminal file manager written in Rust, based on async I/O
 brew 'yq'                           # Process YAML, JSON, XML, CSV and properties documents from the CLI
-brew 'zlib'                         # Needed for Memcached
+brew 'zlib'
 brew 'zoxide'                       # Shell extension to navigate your filesystem faster
 brew 'zimfw'                        # Zsh plugin manager
 brew 'zsh'                          # UNIX shell (command interpreter)
@@ -82,7 +81,6 @@ brew 'imagemagick'              # Tools and libraries to manipulate images in ma
 brew 'shivammathur/php/php@8.4' # php version 8.4
 brew 'shivammathur/php/php@8.3' # php version 8.3
 brew 'shivammathur/php/php@8.2' # php version 8.2
-brew 'shivammathur/php/php@8.1' # php version 8.1
 # php 8.5 exts
 brew 'shivammathur/extensions/pcov@8.5'
 brew 'shivammathur/extensions/xdebug@8.5'
@@ -103,11 +101,6 @@ brew 'shivammathur/extensions/pcov@8.2'
 brew 'shivammathur/extensions/xdebug@8.2'
 brew 'shivammathur/extensions/imagick@8.2'
 brew 'shivammathur/extensions/redis@8.2'
-# php 8.1 exts
-brew 'shivammathur/extensions/pcov@8.1'
-brew 'shivammathur/extensions/xdebug@8.1'
-brew 'shivammathur/extensions/imagick@8.1'
-brew 'shivammathur/extensions/redis@8.1'
 
 # Agentic AI
 brew 'opencode'                # AI coding agent, built for the terminal
@@ -116,7 +109,6 @@ if OS.mac?
     # macOS-specific cli tools
     brew 'mas'                 # Mac App Store manager
     brew 'terminal-notifier'   # Send macOS User Notifications from the command-line
-    brew 'svn'                 # Needed to install fonts via Homebrew casks
 
     # GNU tools (macOS needs these, Linux has them by default)
     brew 'coreutils'           # Those that come with macOS are outdated
@@ -126,8 +118,10 @@ if OS.mac?
     brew 'grep'                # GNU grep, egrep and fgrep
 
     # Code Editors
+    cask 'agentasticai/tap/dev' # Native macOS code editor
     cask 'claude-code'         # Terminal-based AI coding assistant
     cask 'codex'               # OpenAI's coding agent that runs in your terminal
+    cask 'stablyai/orca/orca'  # IDE for orchestrating AI coding agents across terminals and worktrees
     cask 'supacode'            # Native terminal coding agents command center
     cask 'visual-studio-code'  # Microsoft Visual Studio Code
     cask 'zed'                 # Agentic code editor
@@ -141,6 +135,7 @@ if OS.mac?
     cask 'boop'                # Scriptable scratchpad for developers
     cask 'bruno'               # Open source IDE for exploring and testing APIs
     cask 'dockdoor'            # Window peeking utility app
+    cask 'clop'                # Image, video and clipboard optimiser
     cask 'easydmg'             # One click DMG installs
     cask 'fluidvoice'          # Offline voice-to-text dictation app with AI enhancement
     cask 'lab421/tap/forel'    # File-automation app that watches folders and runs rules
@@ -172,9 +167,9 @@ if OS.mac?
     cask 'subler'              # Mux and tag mp4 files
     cask 'tableplus'           # Native GUI tool for relational databases
     cask 'tailscale-app'       # Mesh VPN based on WireGuard
+    cask 'abue-ammar/tinycast/tinycast' # Tiny, fully native launcher, hotkeys, and clipboard history
     cask 'transmit'            # File transfer application
     cask 'tweakphp/tap/tweakphp' # Desktop application with a code editor to tweak your PHP code
-    cask 'fluidvoice'          # Offline voice-to-text dictation app with AI enhancement
     cask 'utm'                 # Virtual machines UI using QEMU
     cask 'vlc'                 # Multimedia player
     cask 'zen'                 # Gecko based privacy focused web browser
