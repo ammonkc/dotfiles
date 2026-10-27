@@ -59,15 +59,17 @@ tasks:
     silent: true
 
   install:
-    desc: Complete system setup - installs dependencies, builds utilities, configures dotfiles, and sets up Neovim
+    desc: Install base tools and configs; 1Password post-install follows separately
     summary: |
       Performs a full system setup by:
-      1. Installing all system dependencies (Homebrew and packages)
+      1. Installing core Homebrew packages and, by default, the full optional bundle
       2. Installing and configuring all dotfiles (stow packages)
       3. Installing mise-managed tools (after mise config is stowed)
       4. Restoring Neovim plugins to the state specified in lazy-lock.json
       5. Installing yazi plugins and flavors from package.toml
 
+      Run DOTFILES_PROFILE=core task install for a smaller first setup.
+      Run task system:post-install after signing into 1Password.
       Note: This does NOT apply macOS system preferences.
       Run 'task mac:set:defaults' separately if you want to apply them.
     cmds:

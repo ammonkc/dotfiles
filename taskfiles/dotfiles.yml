@@ -14,15 +14,11 @@ vars:
   DOTFILES_DIR: '{{.ROOT_DIR}}'
   PACKAGES_DIR: '{{.DOTFILES_DIR}}/packages'
   STOW_FLAGS: '--restow --no-folding'
-  # Determine Homebrew prefix based on architecture (for macOS)
+  # Apple Silicon Homebrew prefix; Linux uses its native PATH.
   BREW_PREFIX:
     sh: |
       if [[ "$(uname)" == "Darwin" ]]; then
-        if [[ $(uname -m) == "arm64" ]]; then
-          echo "/opt/homebrew"
-        else
-          echo "/usr/local"
-        fi
+        echo "/opt/homebrew"
       else
         echo ""
       fi
@@ -161,6 +157,11 @@ tasks:
         vars:
           LOCAL_FILE: '{{.LOCAL_FILE}}'
       - task: copy_local_ssh_config
+      - |
+        for file in "$HOME/.gitconfig.local" "$HOME/.env.local" "$HOME/.ssh/config"; do
+          if [ -f "$file" ]; then chmod 600 "$file"; fi
+        done
+        chmod 700 "$HOME/.ssh"
 
   copy_local_file:
     internal: true
@@ -176,7 +177,7 @@ tasks:
       - test -f "{{.DEST_FILE}}"
     cmds:
       - echo "Copying {{.FILENAME}} to {{.DEST_FILE}}..."
-      - cp "{{.PACKAGES_DIR}}/{{.LOCAL_FILE}}" "{{.DEST_FILE}}"
+      - umask 077 && cp "{{.PACKAGES_DIR}}/{{.LOCAL_FILE}}" "{{.DEST_FILE}}" && chmod 600 "{{.DEST_FILE}}"
       - echo "✓ Created {{.DEST_FILE}} - please customize it"
 
   copy_local_ssh_config:

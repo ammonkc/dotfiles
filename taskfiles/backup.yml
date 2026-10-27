@@ -8,15 +8,11 @@ vars:
   BACKUP_BASE: '${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles/backups'
   BACKUP_DIR:
     sh: echo "{{.BACKUP_BASE}}/$(date +%Y%m%d-%H%M%S)"
-  # Determine Homebrew prefix based on architecture (for macOS)
+  # Apple Silicon Homebrew prefix; Linux uses its native PATH.
   BREW_PREFIX:
     sh: |
       if [[ "$(uname)" == "Darwin" ]]; then
-        if [[ $(uname -m) == "arm64" ]]; then
-          echo "/opt/homebrew"
-        else
-          echo "/usr/local"
-        fi
+        echo "/opt/homebrew"
       else
         echo ""
       fi
@@ -277,4 +273,3 @@ tasks:
       BACKUP_DIR: '{{.BACKUP_DIR}}'
     cmds:
       - rm -rf "{{.BACKUP_BASE}}/{{.BACKUP_DIR}}"
-

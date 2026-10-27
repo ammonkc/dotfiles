@@ -1,0 +1,27 @@
+# Minimum packages needed to stow configs and complete the base setup.
+brew 'atuin'
+brew 'bat'
+brew 'coreutils'
+brew 'eza'
+brew 'fd'
+brew 'fzf'
+brew 'gh'
+brew 'git'
+brew 'gnupg'
+brew 'go-task'
+brew 'jq'
+brew 'mise'
+brew 'neovim'
+brew 'oh-my-posh'
+brew 'ripgrep'
+brew 'stow'
+brew 'tmux'
+brew 'yazi'
+brew 'zoxide'
+brew 'zimfw'
+brew 'zsh'
+
+if OS.mac?
+  cask '1password'
+  cask '1password-cli'
+end

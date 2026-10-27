@@ -3,14 +3,7 @@ version: 3
 
 vars:
   DOTFILES: "{{.ROOT_DIR}}"
-  # Determine Homebrew prefix based on architecture
-  BREW_PREFIX:
-    sh: |
-      if [[ $(uname -m) == "arm64" ]]; then
-        echo "/opt/homebrew"
-      else
-        echo "/usr/local"
-      fi
+  BREW_PREFIX: /opt/homebrew
 
 tasks:
   # ============================================================================
@@ -20,6 +13,9 @@ tasks:
   install:
     platforms: [darwin]
     desc: Install Homebrew and tools defined in Brewfile
+    preconditions:
+      - sh: test "$(uname -m)" = arm64
+        msg: "macOS setup requires Apple Silicon and a native arm64 shell"
     cmds:
       - task: install:homebrew
       - task: install:gnu_stow
@@ -27,6 +23,9 @@ tasks:
   upgrade:
     platforms: [darwin]
     desc: Update Homebrew and upgrade all installed packages
+    preconditions:
+      - sh: test "$(uname -m)" = arm64
+        msg: "macOS setup requires Apple Silicon and a native arm64 shell"
     cmds:
       - brew update
       - brew upgrade
@@ -35,6 +34,9 @@ tasks:
   update:
     platforms: [darwin]
     desc: Update Brewfile with current brew packages and commit changes
+    preconditions:
+      - sh: test "$(uname -m)" = arm64
+        msg: "macOS setup requires Apple Silicon and a native arm64 shell"
     cmds:
       - task: update_no_commit
       - task: commit
@@ -42,6 +44,9 @@ tasks:
   cleanup:
     desc: Remove unused brew dependencies
     platforms: [darwin]
+    preconditions:
+      - sh: test "$(uname -m)" = arm64
+        msg: "macOS setup requires Apple Silicon and a native arm64 shell"
     cmds:
       - brew cleanup
       - brew autoremove
@@ -52,10 +57,20 @@ tasks:
       Retries installing packages from Brewfile
       Useful after network failures or interrupted installations
     platforms: [darwin]
+    preconditions:
+      - sh: test "$(uname -m)" = arm64
+        msg: "macOS setup requires Apple Silicon and a native arm64 shell"
     dir: "/{{.DOTFILES}}"
     silent: true
     cmds:
-      - brew bundle
+      - |
+        set -e
+        export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
+        brew bundle --file="{{.DOTFILES}}/Brewfile"
+        state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles"
+        mkdir -p "$state_dir"
+        touch "$state_dir/full-brew-complete"
+        rm -f "$state_dir/full-brew-pending"
 
   # ============================================================================
   # Internal Tasks
@@ -65,13 +80,16 @@ tasks:
     internal: true
     silent: true
     platforms: [darwin]
+    preconditions:
+      - sh: test "$(uname -m)" = arm64
+        msg: "macOS setup requires Apple Silicon and a native arm64 shell"
     status:
       - which brew
     cmds:
       - |
         # Refresh sudo timestamp to ensure it's still valid
         sudo -v
-      - NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - NONINTERACTIVE=1 bash "{{.DOTFILES}}/scripts/download-installer.sh" https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
       - eval "$({{.BREW_PREFIX}}/bin/brew shellenv)"
 
   install:gnu_stow:
@@ -98,8 +116,25 @@ tasks:
       - install:homebrew
     cmds:
       - |
+        set -e
         export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
-        brew bundle
+        brew bundle --file="{{.DOTFILES}}/Brewfile.core"
+        case "${DOTFILES_PROFILE:-full}" in
+          core) ;;
+          full)
+            state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles"
+            mkdir -p "$state_dir"
+            if brew bundle --file="{{.DOTFILES}}/Brewfile"; then
+              touch "$state_dir/full-brew-complete"
+              rm -f "$state_dir/full-brew-pending"
+            else
+              rm -f "$state_dir/full-brew-complete"
+              touch "$state_dir/full-brew-pending"
+              echo "Full Homebrew bundle is incomplete. Retry with: task brew:retry" >&2
+            fi
+            ;;
+          *) echo "DOTFILES_PROFILE must be core or full" >&2; exit 1 ;;
+        esac
 
   update_no_commit:
     internal: true

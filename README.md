@@ -6,23 +6,23 @@
 
 > 🚀 Automated development environment setup for macOS (and Linux) using GNU Stow and Taskfile
 
-Personal dotfiles and automated setup scripts for macOS with secondary Linux support. Get from zero to fully configured in one command.
+Personal dotfiles and automated setup scripts for Apple Silicon Macs with secondary Linux support. Bootstrap installs the base environment; 1Password configuration follows after sign-in.
 
 ## ✨ Features
 
 - 🏡 **XDG Compliant** - Clean home directory with configs in `~/.config/`
 - ⚡ **Taskfile Automation** - Modern task runner for all operations
 - 🎨 **Enhanced Shell** - Zsh + Zim + Oh My Posh + modern CLI tools
-- 🔧 **One-Command Setup** - Fresh machine to fully configured in ~20 minutes
+- 🔧 **Resumable Setup** - Install the base environment, then finish secrets after sign-in
 - 🔄 **Idempotent & Safe** - Run multiple times without issues
-- 📦 **Version Controlled** - Tool versions locked via mise and Neovim
+- 📦 **Version Controlled** - Core tool versions pinned via mise; Neovim plugins locked
 
 ## 🚀 Quick Start
 
 ### **macOS**
 
 **Prerequisites:**
-- macOS 11+
+- An Apple Silicon Mac, running a native arm64 shell, with a macOS release supported by current Homebrew and the packages in this Brewfile
 - Administrator access (you'll be prompted for your password several times during the installation process)
 
 **Step 1: Install Xcode Command Line Tools**
@@ -39,6 +39,10 @@ Wait for the installation to complete (you may need to accept a license agreemen
 curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/bootstrap.sh | bash
 ```
 
+For a smaller first install, use `DOTFILES_PROFILE=core` with a local checkout (`DOTFILES_PROFILE=core ./bin/install`), or export the variable before running the bootstrap command. The default `full` profile installs the core package set first, then the full Brewfile. A failure in the optional full bundle is recorded and can be retried with `task brew:retry`.
+
+After bootstrap, sign in with `op signin`, run `dotfiles system:post-install`, then check `dotfiles system:status`. The status command is safe to rerun and lists remaining work.
+
 ### **Linux** (Debian/Ubuntu or Arch)
 
 Should work, but is not really tested at this time.
@@ -46,10 +50,10 @@ Should work, but is not really tested at this time.
 **What gets installed:**
 - Homebrew (macOS) or native package managers (Linux)
 - GNU Stow, Zsh, Neovim, Git, modern CLI tools
-- Development runtimes via [mise](https://mise.jdx.dev/) (Node, Python, Go, etc.)
+- Development runtimes via [mise](https://mise.jdx.dev/) (Node, Python, and other configured tools)
 - Optional: macOS apps via Cask, custom system preferences
 
-**Duration:** 15-30 minutes
+**Duration:** Depends on network speed, full bundle size, and app installation prompts.
 
 ## 📂 dotfiles Project Structure
 
@@ -58,13 +62,14 @@ Should work, but is not really tested at this time.
 ├── packages/         # Stowed configs (zsh, nvim, git, tmux, etc.)
 ├── taskfiles/        # Task definitions by domain
 ├── scripts/          # Bootstrap & automation
-├── Brewfile          # Homebrew packages
+├── Brewfile          # Full Homebrew packages
+├── Brewfile.core     # Core Homebrew packages
 └── taskfile.dist.yml # Main task orchestration
 ```
 
 GNU Stow creates symlinks from `packages/*/` to your home directory following XDG standards.
 
-**Result:** Only `.zshenv` in `~/` - everything else in `~/.config/`, `~/.local/`, `~/.cache/`
+**Result:** Most tool configs live under `~/.config/`, `~/.local/`, and `~/.cache/`; local secrets and shell entry files remain in `~/`.
 
 ## 💡 Usage
 
@@ -125,18 +130,18 @@ dotfiles info:all           # Show detailed system info
 
 ## 📋 Post-Installation
 
-1. **Restart terminal:** `exec $SHELL`
-2. **Verify installation:** `dotfiles --list` (should show all tasks)
+1. **Check progress:** `dotfiles system:status`
+2. **Restart terminal:** `exec $SHELL`
 3. **[Optional] Apply macOS preferences:** Review `scripts/macos.sh`, then `dotfiles mac:set:defaults`
 4. **Sign In to 1Password**
     - **Enable Touch ID:** Settings > Security and turn on Touch ID
     - **Enable CLI integration:** Developer > Settings and select "Integrate with 1Password CLI"
     - **Enable 1Password SSH:** Settings → Developer → Enable SSH agent
-    - **Run** `dotfiles mac:op:setup`
+    - **Run** `dotfiles system:post-install` after `op signin`
 5. **Setup 1Password Items:** Ensure items follow the naming conventions below
-6. **Setup Secrets:** Run `dotfiles secrets:install`
+6. **Setup Secrets:** `dotfiles system:post-install` handles these; rerun it after interruptions
 7. **Customize local configs:** Edit files in `~/.*.local`
-8. **Setup Developer folders:** Run `dotfiles dev:setup`
+8. **Setup Developer folders:** Included in `dotfiles system:post-install`
 
 **Quick verification:**
 ```bash

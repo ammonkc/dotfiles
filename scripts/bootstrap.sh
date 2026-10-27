@@ -20,6 +20,10 @@ fi
 
 # Preflight checks
 info "Running preflight checks..."
+if [[ "$OSTYPE" == "darwin"* && "$(uname -m)" != "arm64" ]]; then
+  error "This macOS bootstrap supports Apple Silicon in a native arm64 shell only."
+  exit 1
+fi
 
 # Request sudo access upfront (needed for Homebrew installation)
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -35,14 +39,23 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 fi
 
-# Check internet connectivity
-if ! ping -c 1 -W 2 github.com >/dev/null 2>&1; then
-  error "No internet connection detected"
+# Check the protocol this bootstrap actually uses; ICMP may be blocked.
+if ! curl -fsSIL --retry 2 --connect-timeout 5 --max-time 20 https://github.com >/dev/null; then
+  error "GitHub is not reachable over HTTPS"
   error "Please check your network connection and try again"
   exit 1
 fi
 
-# Check available disk space (need at least 2GB)
+# Full installs include a large optional app bundle; core installs need less space.
+DOTFILES_PROFILE="${DOTFILES_PROFILE:-full}"
+case "$DOTFILES_PROFILE" in
+  full) MIN_SPACE_GB=20 ;;
+  core) MIN_SPACE_GB=5 ;;
+  *) error "DOTFILES_PROFILE must be core or full"; exit 1 ;;
+esac
+export DOTFILES_PROFILE
+
+# Check available disk space.
 if [[ "$OSTYPE" == "darwin"* ]]; then
   AVAILABLE_SPACE=$(df -g "$HOME" | tail -1 | awk '{print $4}')
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -51,10 +64,10 @@ else
   AVAILABLE_SPACE=999  # Skip check on unknown OS
 fi
 
-if [[ "$AVAILABLE_SPACE" -lt 2 ]]; then
+if [[ "$AVAILABLE_SPACE" -lt "$MIN_SPACE_GB" ]]; then
   warning "Low disk space detected (${AVAILABLE_SPACE}GB available)"
-  warning "Installation requires at least 2GB of free space"
-  if [[ -z "$NONINTERACTIVE" ]]; then
+  warning "The $DOTFILES_PROFILE profile recommends at least ${MIN_SPACE_GB}GB free"
+  if [[ -z "${NONINTERACTIVE:-}" ]]; then
     read -p "Continue anyway? (y/N) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -88,7 +101,7 @@ if ! command -v git >/dev/null 2>&1; then
   # Detect OS and install git accordingly
   if [[ "$OSTYPE" == "darwin"* ]]; then
     error "Git should be available after installing Xcode Command Line Tools"
-    tip "Try running: xcode-select --install"
+    info "Try running: xcode-select --install"
     exit 1
   elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     info "Installing git..."
@@ -110,9 +123,9 @@ if ! command -v git >/dev/null 2>&1; then
   fi
 fi
 
-if [[ ! -d $DOTFILES_DIR ]]; then
+if [[ ! -d "$DOTFILES_DIR" ]]; then
   info "Cloning dotfiles repository..."
-  git clone $DOTFILES_REPO --branch $DOTFILES_BRANCH --single-branch $DOTFILES_DIR || {
+  git clone "$DOTFILES_REPO" --branch "$DOTFILES_BRANCH" --single-branch "$DOTFILES_DIR" || {
     error "Failed to clone dotfiles"
     exit 1
   }
@@ -130,7 +143,7 @@ else
 
   # Pull latest changes
   info "Updating from remote..."
-  git pull origin $DOTFILES_BRANCH
+  git pull origin "$DOTFILES_BRANCH"
 
   # Inform about stash but don't auto-pop (safer)
   if git stash list | grep -q "Auto-stash before bootstrap"; then

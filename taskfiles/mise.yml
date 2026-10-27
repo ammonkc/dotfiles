@@ -4,15 +4,11 @@ version: 3
 silent: true
 
 vars:
-  # Determine Homebrew prefix based on architecture (for macOS)
+  # Apple Silicon Homebrew prefix; Linux uses its native PATH.
   BREW_PREFIX:
     sh: |
       if [[ "$(uname)" == "Darwin" ]]; then
-        if [[ $(uname -m) == "arm64" ]]; then
-          echo "/opt/homebrew"
-        else
-          echo "/usr/local"
-        fi
+        echo "/opt/homebrew"
       else
         echo ""
       fi
@@ -47,7 +43,11 @@ tasks:
     cmds:
       - |
         {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
-        mise install
+        case "${DOTFILES_PROFILE:-full}" in
+          core) mise install node python uv bun usage ;;
+          full) mise install ;;
+          *) echo "DOTFILES_PROFILE must be core or full" >&2; exit 1 ;;
+        esac
 
   update:
     aliases: [up, upgrade]

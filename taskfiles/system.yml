@@ -83,6 +83,10 @@ tasks:
       - echo ""
       - echo "Your development environment is ready."
 
+  status:
+    desc: Show remaining setup steps without changing the machine
+    cmd: bash "{{.ROOT_DIR}}/scripts/install-status.sh"
+
   install:requirements:
     internal: true
     cmds:

@@ -1,0 +1,29 @@
+name: Validate dotfiles
+on:
+  push:
+  pull_request:
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/setup-task@v2
+      - name: Install validation tools
+        run: sudo apt-get update && sudo apt-get install -y stow shellcheck
+      - name: Shell and Taskfile checks
+        run: |
+          bash -n bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh tests/bootstrap-helpers.sh tests/architecture.sh
+          shellcheck -S warning bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh
+          task --list >/dev/null
+          bash tests/bootstrap-helpers.sh
+          bash tests/architecture.sh
+          bash tests/neovim-failure.sh
+      - name: Stow dry run
+        run: |
+          target="$(mktemp -d)"
+          trap 'rm -rf "$target"' EXIT
+          mkdir -p "$target/.config" "$target/.local"
+          for package in packages/*; do
+            test -d "$package" || continue
+            stow -n --no-folding -d packages -t "$target" "$(basename "$package")"
+          done

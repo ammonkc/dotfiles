@@ -13,6 +13,7 @@ brew 'bruno-cli'                    # CLI of the open-source IDE for exploring a
 brew 'colima'                       # Container runtimes on MacOS (and Linux) with minimal setup
 brew 'container'                    # Create and run Linux containers using lightweight virtual machines
 brew 'curl'                         # Get a file from an HTTP, HTTPS or FTP server
+brew 'coreutils'                    # GNU timeout for Neovim maintenance tasks
 brew 'curlie'                       # Power of curl, ease of use of httpie
 brew 'diffnav'                      # Git diff pager based on delta but with a file tree
 brew 'docker'                       # Docker CLI
