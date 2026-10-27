@@ -84,7 +84,7 @@ tasks:
       - sh: test "$(uname -m)" = arm64
         msg: "macOS setup requires Apple Silicon and a native arm64 shell"
     status:
-      - which brew
+      - test -x "{{.BREW_PREFIX}}/bin/brew"
     cmds:
       - |
         # Refresh sudo timestamp to ensure it's still valid

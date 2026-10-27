@@ -15,6 +15,18 @@ test "$(grep -c '^TOKEN=second$' "$target")" -eq 1
 grep -q '^KEEP=1$' "$target"
 test "$(stat -f %Lp "$target" 2>/dev/null || stat -c %a "$target")" = 600
 
+# Older work setup appended this setting inside the personal secrets section.
+# Refreshing that section must move it ahead of the marker and keep it once.
+printf 'KEEP=1\n# managed\nTOKEN=old\nexport OP_WORK_ACCOUNT="work.example"\n' > "$target"
+printf 'TOKEN=new\n' | bash "$root/scripts/secret-block.sh" "$target" '# managed' 'export OP_WORK_ACCOUNT='
+printf 'TOKEN=newer\n' | bash "$root/scripts/secret-block.sh" "$target" '# managed' 'export OP_WORK_ACCOUNT='
+test "$(grep -c '^export OP_WORK_ACCOUNT="work.example"$' "$target")" -eq 1
+test "$(grep -c '^# managed$' "$target")" -eq 1
+grep -q '^TOKEN=newer$' "$target"
+! grep -q '^TOKEN=old$' "$target"
+! grep -q '^TOKEN=new$' "$target"
+awk '/^export OP_WORK_ACCOUNT=/ { account = NR } /^# managed$/ { marker = NR } END { exit !(account > 0 && marker > account) }' "$target"
+
 mkdir "$scratch/bin"
 cat > "$scratch/bin/curl" <<'EOF'
 #!/bin/bash
