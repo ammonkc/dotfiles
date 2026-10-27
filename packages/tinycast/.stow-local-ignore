@@ -1,0 +1,21 @@
+# Keep extension source and build dependencies in the dotfiles checkout.
+# Tinycast imports the built bundle through Settings > Extensions > Add from folder.
+^/\.config/tinycast/extensions$
+
+# Preserve Stow's defaults when using a package-local ignore list.
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.hg
+\.git
+\.gitignore
+\.gitmodules
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING

@@ -6,7 +6,7 @@
 # @raycast.mode fullOutput
 
 # Optional parameters:
-# @raycast.icon ~/.config/raycast/script-commands/icons/nvim.svg
+# @raycast.icon ~/.config/tinycast/script-commands/icons/nvim.svg
 # @raycast.packageName Dotfiles
 
 # Documentation:
@@ -15,4 +15,3 @@
 
 cd "$HOME/.dotfiles" || exit 1
 task nvim:update
-

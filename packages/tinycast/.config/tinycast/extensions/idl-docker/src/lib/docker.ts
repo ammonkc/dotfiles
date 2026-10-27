@@ -1,6 +1,7 @@
 import { spawn } from "child_process";
 import { homedir } from "os";
 import { join } from "path";
+import { getBaseDir } from "./worktrees";
 
 // Path to the bash scripts
 const SCRIPTS_DIR = join(homedir(), ".local", "bin");
@@ -20,6 +21,7 @@ function getEnvWithPath(): NodeJS.ProcessEnv {
   return {
     ...process.env,
     PATH: `${additionalPaths.join(":")}:${currentPath}`,
+    IDL_WORKTREES_DIR: getBaseDir(),
   };
 }
 

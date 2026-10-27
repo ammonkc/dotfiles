@@ -1,12 +1,12 @@
 # Dependencies
 node_modules/
 
-# Build output
+# Build output for Tinycast's "Add from folder"
+build/
 dist/
 
 # Raycast
 .raycast/
-package-lock.json
 raycast-env.d.ts
 
 # OS

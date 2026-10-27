@@ -6,7 +6,7 @@
 # @raycast.mode compact
 
 # Optional parameters:
-# @raycast.icon ~/.config/raycast/script-commands/icons/github.svg
+# @raycast.icon ~/.config/tinycast/script-commands/icons/github.svg
 # @raycast.packageName GitHub
 
 # Documentation:
@@ -29,4 +29,3 @@ if echo "$OUTPUT" | grep -q "successfully authenticated"; then
 else
   echo "❌ $OUTPUT"
 fi
-

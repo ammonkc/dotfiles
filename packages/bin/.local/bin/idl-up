@@ -4,10 +4,11 @@
 # Usage: idl-up [--build|-b] [--profile NAME ...] [worktree] [domain]
 #        --build  - also --force-recreate --build (rebuild images)
 #        worktree - current BASE_DIR worktree if cwd is inside one, else 'main'
+#        BASE_DIR can be overridden with IDL_WORKTREES_DIR
 #        domain   - defaults to 'allegro.test'
 #
 
-BASE_DIR="$HOME/Developer/code/indirect"
+BASE_DIR="${IDL_WORKTREES_DIR:-$HOME/Developer/code/indirect}"
 BUILD=false
 POSITIONAL=()
 COMPOSE_PROFILES=(--profile sftp)

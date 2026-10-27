@@ -6,7 +6,7 @@
 # @raycast.mode compact
 
 # Optional parameters:
-# @raycast.icon ~/.config/raycast/script-commands/icons/claude.svg
+# @raycast.icon ~/.config/tinycast/script-commands/icons/claude.svg
 # @raycast.packageName GenAI
 
 # Documentation:
@@ -16,4 +16,3 @@
 aws sso login --profile genai
 
 echo "✅ AWS SSO login initiated for genai profile"
-

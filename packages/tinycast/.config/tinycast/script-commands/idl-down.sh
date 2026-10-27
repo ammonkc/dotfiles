@@ -6,7 +6,7 @@
 # @raycast.mode compact
 
 # Optional parameters:
-# @raycast.icon ~/.config/raycast/script-commands/icons/docker.svg
+# @raycast.icon ~/.config/tinycast/script-commands/icons/docker.svg
 # @raycast.packageName IDL Docker
 # @raycast.argument1 { "type": "text", "placeholder": "worktree", "optional": true }
 # @raycast.argument2 { "type": "text", "placeholder": "domain", "optional": true }

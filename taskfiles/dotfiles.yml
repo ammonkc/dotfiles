@@ -194,7 +194,7 @@ tasks:
       - echo "✓ Created {{.DEST_FILE}} - please customize it"
 
   # ============================================================================
-  # Raycast Extension Tasks
+  # Launcher Extension Tasks
   # ============================================================================
 
   raycast:extension:
@@ -216,6 +216,24 @@ tasks:
       - cd "{{.EXTENSION_DIR}}" && npm run dev &
       - sleep 3
       - echo "✓ Extension registered! You can now use 'IDL Docker' commands in Raycast"
+
+  tinycast:extension:
+    desc: Build the IDL Docker extension for import into Tinycast
+    summary: |
+      Installs dependencies and builds a local command bundle.
+      In Tinycast Settings > Extensions, enable extensions and choose Add from folder.
+      Select the build directory printed by this task.
+    vars:
+      EXTENSION_DIR: '{{.ROOT_DIR}}/packages/tinycast/.config/tinycast/extensions/idl-docker'
+    preconditions:
+      - sh: command -v npm >/dev/null 2>&1
+        msg: "npm is not installed. Install Node.js first."
+      - sh: test -f "{{.EXTENSION_DIR}}/package.json"
+        msg: "Tinycast extension not found at {{.EXTENSION_DIR}}"
+    cmds:
+      - cd "{{.EXTENSION_DIR}}" && npm ci
+      - cd "{{.EXTENSION_DIR}}" && npm run build
+      - echo "In Tinycast Settings > Extensions > Add from folder, select {{.EXTENSION_DIR}}/build"
 
   # ============================================================================
   # Health Check / Doctor Tasks
