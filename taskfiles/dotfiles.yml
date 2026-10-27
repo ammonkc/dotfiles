@@ -242,7 +242,8 @@ tasks:
   tinycast:utilities:
     desc: Build Developer Utilities for Tinycast
     summary: |
-      Builds Clean Node Modules and Git Standup commands in the active checkout.
+      Builds Clean Node Modules, Git Standup, Open Worktree, and GenAI AWS SSO
+      commands in the active checkout.
       After deploying dotfiles, run `dotfiles dot:tinycast:utilities`, then import
       the printed build folder in Tinycast Settings > Extensions.
     vars:
