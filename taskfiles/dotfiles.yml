@@ -199,10 +199,10 @@ tasks:
   # ============================================================================
 
   raycast:extension:
-    desc: Install and register Raycast IDL Docker extension
+    desc: Run Raycast IDL Docker extension in development mode
     summary: |
-      Installs npm dependencies and registers the IDL Docker extension with Raycast.
-      Run this after stowing dotfiles on a new machine.
+      Installs npm dependencies and starts the IDL Docker extension in Raycast.
+      Keep this task running while using the local extension.
     vars:
       EXTENSION_DIR: '{{.ROOT_DIR}}/packages/raycast/extensions/idl-docker'
     preconditions:
@@ -213,10 +213,23 @@ tasks:
     cmds:
       - echo "📦 Installing Raycast IDL Docker extension..."
       - cd "{{.EXTENSION_DIR}}" && npm install
-      - echo "🚀 Registering extension with Raycast..."
-      - cd "{{.EXTENSION_DIR}}" && npm run dev &
-      - sleep 3
-      - echo "✓ Extension registered! You can now use 'IDL Docker' commands in Raycast"
+      - cd "{{.EXTENSION_DIR}}" && npm run dev
+
+  raycast:utilities:
+    desc: Register shared Developer Utilities extension with Raycast
+    summary: |
+      Developer Utilities has one source tree shared by Raycast and Tinycast.
+      Installs its dependencies and starts Raycast development mode for local use.
+    vars:
+      EXTENSION_DIR: '{{.ROOT_DIR}}/packages/raycast/extensions/developer-utilities'
+    preconditions:
+      - sh: command -v npm >/dev/null 2>&1
+        msg: "npm is not installed. Install Node.js first."
+      - sh: test -f "{{.EXTENSION_DIR}}/package.json"
+        msg: "Developer Utilities extension not found at {{.EXTENSION_DIR}}"
+    cmds:
+      - cd "{{.EXTENSION_DIR}}" && npm ci
+      - cd "{{.EXTENSION_DIR}}" && npm run dev
 
   tinycast:extension:
     desc: Build the IDL Docker extension for import into Tinycast

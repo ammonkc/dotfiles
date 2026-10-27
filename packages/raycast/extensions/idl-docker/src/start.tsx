@@ -10,7 +10,6 @@ import {
 } from "@raycast/api";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { startContainersStream } from "./lib/docker";
-import { ProfileForm } from "./lib/profile-form";
 import {
   listWorktrees,
   getDefaultWorktree,
@@ -184,15 +183,10 @@ export default function StartCommand() {
                 icon={Icon.Play}
                 onAction={() => handleStart(worktree)}
               />
-              <Action.Push
-                title="Start With Profiles"
+              <Action
+                title="Start with Queue"
                 icon={Icon.Plus}
-                target={
-                  <ProfileForm
-                    actionTitle="Start Containers"
-                    onSubmit={(profiles) => handleStart(worktree, profiles)}
-                  />
-                }
+                onAction={() => handleStart(worktree, ["queue"])}
               />
             </ActionPanel>
           }

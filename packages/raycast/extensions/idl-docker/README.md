@@ -1,55 +1,29 @@
-# IDL Docker - Raycast Extension
+# IDL Docker in Raycast
 
-Manage IDL Docker containers across git worktrees.
-
-## Features
-
-- **Dynamic worktree discovery** - Automatically lists all worktrees
-- **Start/Stop commands** - Quick container management with optional Compose profiles
-- **Configurable** - Set base directory and default worktree in preferences
+Manage IDL Docker Compose services across git worktrees. Both commands call
+`~/.local/bin/idl-up` or `~/.local/bin/idl-down` and pass the configured
+Worktrees Directory to the helpers. Install the `bin` dotfiles package first.
 
 ## Setup
 
-1. Add an extension icon (required):
-   - Add a 512x512 PNG icon as `assets/extension-icon.png`
-   - You can use any Docker-related icon or create one
+From the deployed checkout, run `dotfiles dot:raycast:extension` to install
+dependencies and register the extension in Raycast development mode. From the
+development checkout, run `task dot:raycast:extension` instead.
+Keep that task running while using the local extension.
+`npm run build` compiles into this checkout's ignored `build/` directory.
 
-2. Install dependencies:
-   ```bash
-   cd packages/raycast/extensions/idl-docker
-   npm install
-   ```
-
-3. Start development mode:
-   ```bash
-   npm run dev
-   ```
-
-4. Configure preferences in Raycast:
-   - **Worktrees Directory**: Base path containing worktrees (default: `~/Developer/code/indirect`)
-   - **Default Worktree**: Worktree shown first in list (default: `main`)
+Set **Worktrees Directory** to the parent of your IDL worktrees. The default is
+`~/Developer/code/indirect`; **Default Worktree** is `main`; **Allegro Domain**
+defaults to `indirect.test`.
 
 ## Commands
 
-- **Start Containers** - Start Docker containers for a selected worktree
-- **Stop Containers** - Stop Docker containers for a selected worktree
+- **Start Containers** starts the selected worktree with the default `sftp`
+  profile. **Start with Queue** also enables `queue`.
+- **Stop Containers** stops the selected worktree with both `sftp` and `queue`
+  profiles, matching the shared `idl-down` helper.
 
-Select **Start With Profiles** or **Stop With Profiles** from a worktree's actions to enter additional profiles, separated by commas (for example, `queue, worker`). The existing default profiles remain enabled.
-
-The shell commands accept repeatable profile flags:
-
-```bash
-idl-up --profile queue main
-idl-down --profile queue main
-```
-
-In the Raycast script commands, enter `queue` (or `queue, worker`) in the profiles field. The IDL Up script command also accepts `--build` in that field, for example `queue, --build`.
-
-## Development
-
-```bash
-npm run dev      # Start development mode
-npm run build    # Build extension
-npm run lint     # Run linter
-npm run fix-lint # Fix lint issues
-```
+Raycast shows Docker output as it arrives and keeps the last 12 lines visible.
+**Copy Output** copies the full result. The separate IDL script commands under
+`~/.config/raycast/script-commands/` use the same stowed helpers and accept
+`queue` and `--build` in the third argument.

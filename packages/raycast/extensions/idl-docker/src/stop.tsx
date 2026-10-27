@@ -10,7 +10,6 @@ import {
 } from "@raycast/api";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { stopContainersStream } from "./lib/docker";
-import { ProfileForm } from "./lib/profile-form";
 import {
   listWorktrees,
   getDefaultWorktree,
@@ -20,13 +19,7 @@ import {
 
 const LIVE_OUTPUT_LINE_LIMIT = 12;
 
-function OutputView({
-  worktree,
-  profiles,
-}: {
-  worktree: string;
-  profiles: string[];
-}) {
+function OutputView({ worktree }: { worktree: string }) {
   const [output, setOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(true);
   const [success, setSuccess] = useState<boolean | null>(null);
@@ -42,7 +35,7 @@ function OutputView({
     setOutput([`🛑 Stopping containers for ${worktree} @ ${domain}...`, ""]);
 
     stopContainersStream(
-      { worktree, domain, profiles },
+      { worktree, domain },
       {
         onOutput: (line) => {
           setOutput((prev) => [...prev, line]);
@@ -64,7 +57,7 @@ function OutputView({
         },
       },
     );
-  }, [worktree, profiles, domain]);
+  }, [worktree, domain]);
 
   const statusIcon = isRunning ? "⏳" : success ? "✅" : "❌";
   const statusText = isRunning ? "Stopping..." : success ? "Stopped" : "Failed";
@@ -85,12 +78,6 @@ ${visibleOutput.join("\n")}
         <Detail.Metadata>
           <Detail.Metadata.Label title="Worktree" text={worktree} />
           <Detail.Metadata.Label title="Domain" text={domain} />
-          {profiles.length > 0 && (
-            <Detail.Metadata.Label
-              title="Additional Profiles"
-              text={profiles.join(", ")}
-            />
-          )}
           <Detail.Metadata.Separator />
           <Detail.Metadata.Label
             title="Status"
@@ -137,7 +124,7 @@ export default function StopCommand() {
   });
 
   const handleStop = useCallback(
-    async (worktree: string, profiles: string[] = []) => {
+    async (worktree: string) => {
       if (!worktreeExists(worktree)) {
         await showToast({
           style: Toast.Style.Failure,
@@ -147,7 +134,7 @@ export default function StopCommand() {
         return;
       }
 
-      push(<OutputView worktree={worktree} profiles={profiles} />);
+      push(<OutputView worktree={worktree} />);
     },
     [push],
   );
@@ -183,16 +170,6 @@ export default function StopCommand() {
                 title="Stop Containers"
                 icon={Icon.Stop}
                 onAction={() => handleStop(worktree)}
-              />
-              <Action.Push
-                title="Stop With Profiles"
-                icon={Icon.Plus}
-                target={
-                  <ProfileForm
-                    actionTitle="Stop Containers"
-                    onSubmit={(profiles) => handleStop(worktree, profiles)}
-                  />
-                }
               />
             </ActionPanel>
           }

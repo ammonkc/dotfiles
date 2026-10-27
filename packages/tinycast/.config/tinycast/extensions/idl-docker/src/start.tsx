@@ -185,7 +185,7 @@ export default function StartCommand() {
                 onAction={() => handleStart(worktree)}
               />
               <Action
-                title="Start With Queue"
+                title="Start with Queue"
                 icon={Icon.Plus}
                 onAction={() => handleStart(worktree, ["queue"])}
               />

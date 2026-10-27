@@ -41,3 +41,17 @@ jobs:
           npm run lint
           npm test
           npm run build
+      - name: Shared Raycast Developer Utilities source
+        run: test "$(realpath packages/raycast/extensions/developer-utilities)" = "$(realpath packages/tinycast/.config/tinycast/extensions/developer-utilities)"
+      - name: Tinycast IDL Docker
+        working-directory: packages/tinycast/.config/tinycast/extensions/idl-docker
+        run: |
+          npm ci --no-audit --no-fund
+          npm run lint
+          npm run build
+      - name: Raycast IDL Docker
+        working-directory: packages/raycast/extensions/idl-docker
+        run: |
+          npm install --no-audit --no-fund
+          npm run lint
+          npm run build

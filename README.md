@@ -108,6 +108,8 @@ dotfiles dev:setup          # Setup development directories
 dotfiles dev:list           # List development projects
 dotfiles dev:clone REPO=url # Clone repo to organized location
 dotfiles dot:tinycast:extensions # Build both Tinycast extensions for import
+dotfiles dot:raycast:extension   # Run Raycast IDL Docker (keep task running)
+dotfiles dot:raycast:utilities   # Run Developer Utilities in Raycast (keep running)
 
 # Git Operations
 dotfiles git:status         # Git status of dotfiles repo
@@ -119,6 +121,8 @@ dotfiles backup:list        # List backups
 dotfiles clean:all          # Clean system caches
 dotfiles info:all           # Show detailed system info
 ```
+
+Run the two Raycast extension tasks in separate terminals if you use both.
 
 ## 🎨 Customization
 
