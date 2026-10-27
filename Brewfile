@@ -11,6 +11,7 @@ brew 'bat'                          # Clone of cat(1) with syntax highlighting a
 brew 'btop'                         # Resource monitor. C++ version and continuation of bashtop and bpytop
 brew 'bruno-cli'                    # CLI of the open-source IDE for exploring and testing APIs
 brew 'colima'                       # Container runtimes on MacOS (and Linux) with minimal setup
+brew 'container'                    # Create and run Linux containers using lightweight virtual machines
 brew 'curl'                         # Get a file from an HTTP, HTTPS or FTP server
 brew 'curlie'                       # Power of curl, ease of use of httpie
 brew 'diffnav'                      # Git diff pager based on delta but with a file tree
