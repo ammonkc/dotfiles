@@ -14,6 +14,13 @@ check() {
 check 'Task available' 'command -v task' 'run bin/install'
 check 'Dotfiles stowed' "test -L \"\$HOME/.config/nvim\" -o -L \"\$HOME/.config/nvim/init.lua\"" 'run task dot:install'
 check 'mise available' 'command -v mise' 'run task mise:install after packages are installed'
+lockfile="${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lazy-lock.json"
+nvim_data="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
+if [ -f "$lockfile" ]; then
+  lock_hash="$(shasum -a 256 "$lockfile" | cut -d' ' -f1)"
+  check 'Neovim plugins restored' "test -d \"$nvim_data/lazy/lazy.nvim\" && test \"\$(cat \"$nvim_data/.lazy-restore-hash\" 2>/dev/null)\" = \"$lock_hash\"" 'run task nvim:restore'
+  check 'Neovim parsers and tools installed' "test \"\$(cat \"$nvim_data/.lazy-tools-hash\" 2>/dev/null)\" = \"$lock_hash\"" 'run task nvim:restore'
+fi
 if [ "$(uname -s)" = Darwin ]; then
   brew_state="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles"
   if [ -f "$brew_state/full-brew-pending" ]; then

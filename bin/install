@@ -78,8 +78,11 @@ if task install; then
     echo "     • Open 1Password → Settings → Developer"
     echo "     • Enable 'Use the SSH agent'"
     echo "     • Run: $(tput bold)dotfiles mac:op:setup$(tput sgr0)"
+    echo "     • To use SSH for GitHub HTTPS URLs: $(tput bold)dotfiles mac:github:force_ssh$(tput sgr0)"
     echo ""
-    echo "  4. Customize local configs if needed:"
+    echo "  4. [Optional] Set up work accounts: $(tput bold)dotfiles system:work-setup$(tput sgr0)"
+    echo ""
+    echo "  5. Customize local configs if needed:"
   else
     echo "  2. Customize local configs if needed:"
   fi
@@ -91,7 +94,7 @@ if task install; then
   echo ""
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "  5. Run: $(tput bold)dotfiles --list$(tput sgr0) to see all available commands"
+    echo "  6. Run: $(tput bold)dotfiles --list$(tput sgr0) to see all available commands"
   else
     echo "  3. Run: $(tput bold)dotfiles --list$(tput sgr0) to see all available commands"
   fi

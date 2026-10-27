@@ -34,7 +34,6 @@ tasks:
         msg: "macOS defaults script not found at {{.MACOS_SCRIPT}}"
     cmds:
       - bash "{{.MACOS_SCRIPT}}"
-      - task: github:force_ssh
       - task: clean:bootstrap_install
 
   preview:defaults:

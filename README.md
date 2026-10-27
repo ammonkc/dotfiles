@@ -137,10 +137,9 @@ dotfiles info:all           # Show detailed system info
 4. **Sign In to 1Password**
     - **Enable Touch ID:** Settings > Security and turn on Touch ID
     - **Enable CLI integration:** Developer > Settings and select "Integrate with 1Password CLI"
-    - **Enable 1Password SSH:** Settings → Developer → Enable SSH agent
     - **Run** `dotfiles system:post-install` after `op signin`
-5. **Setup 1Password Items:** Ensure items follow the naming conventions below
-6. **Setup Secrets:** `dotfiles system:post-install` handles these; rerun it after interruptions
+5. **[Optional] Enable 1Password SSH agent:** In 1Password, Settings → Developer → Enable SSH agent; then run `dotfiles mac:op:setup`. Run `dotfiles mac:github:force_ssh` if GitHub HTTPS URLs should use SSH.
+6. **[Optional] Set up work accounts:** Sign into the business accounts in 1Password, then run `dotfiles system:work-setup`.
 7. **Customize local configs:** Edit files in `~/.*.local`
 8. **Setup Developer folders:** Included in `dotfiles system:post-install`
 

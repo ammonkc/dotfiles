@@ -26,60 +26,82 @@ tasks:
       Restores Neovim plugins to the state specified in lazy-lock.json
       Useful for bootstrapping a fresh machine or after cloning dotfiles
 
-      Skips if plugins are already at the correct versions (checks lazy-lock.json hash)
+      Tracks plugin restoration and parser/tool installation separately so failed
+      maintenance steps are retried without restoring plugins again.
     vars:
       NVIM_DATA: '${XDG_DATA_HOME:-$HOME/.local/share}/nvim'
       LAZY_LOCK_HASH:
         sh: test -f "{{.LAZY_LOCK}}" && shasum -a 256 "{{.LAZY_LOCK}}" | cut -d' ' -f1 || echo ""
       LAST_RESTORE_HASH:
         sh: test -f "{{.NVIM_DATA}}/.lazy-restore-hash" && cat "{{.NVIM_DATA}}/.lazy-restore-hash" || echo ""
+      LAST_TOOLS_HASH:
+        sh: test -f "{{.NVIM_DATA}}/.lazy-tools-hash" && cat "{{.NVIM_DATA}}/.lazy-tools-hash" || echo ""
     preconditions:
       - sh: if [ -n "${NVIM_BIN:-}" ]; then test -x "$NVIM_BIN"; else command -v nvim >/dev/null 2>&1 {{if ne .BREW_PREFIX ""}}|| test -x "{{.BREW_PREFIX}}/bin/nvim"{{end}}; fi
         msg: "Neovim is not installed. Run 'brew install neovim' first"
       - sh: test -f "{{.LAZY_LOCK}}"
         msg: "lazy-lock.json not found at {{.LAZY_LOCK}}"
     status:
-      # Skip if lazy-lock.json hasn't changed since last restore
-      - test -d "{{.NVIM_DATA}}/lazy/lazy.nvim" && test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}"
+      - test -d "{{.NVIM_DATA}}/lazy/lazy.nvim" && test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_TOOLS_HASH}}"
     cmds:
       - |
         set -e
         {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
         NVIM_BIN="${NVIM_BIN:-nvim}"
         LAZY_PATH="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim"
-        if [[ ! -d "$LAZY_PATH" ]]; then
-          git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
-        fi
+        if [ -d "$LAZY_PATH" ] && [ -n "{{.LAZY_LOCK_HASH}}" ] && [ "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" ]; then
+          echo "✓ Neovim plugins already restored"
+        else
+          if [[ ! -d "$LAZY_PATH" ]]; then
+            git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
+          fi
 
-        # The lockfile hash is written only after the required restore succeeds.
-        RESTORE_OUTPUT=$("$NVIM_BIN" --headless \
-          +'lua if vim.fn.exists(":Lazy") == 0 then io.stderr:write("Lazy command unavailable\\n"); vim.cmd("cq") end' \
-          +'Lazy! restore' +'qa' 2>&1) || {
-          printf '%s\n' "$RESTORE_OUTPUT" >&2
-          exit 1
-        }
-        printf '%s\n' "$RESTORE_OUTPUT"
-        if printf '%s\n' "$RESTORE_OUTPUT" | grep -Eiq '(^|[[:space:]])E[0-9]+:|Error detected|Error executing|Failed to (clone|checkout|install|restore|update)'; then
-          echo "Neovim reported an error during Lazy restore" >&2
-          exit 1
+          RESTORE_OUTPUT=$("$NVIM_BIN" --headless \
+            +'lua if vim.fn.exists(":Lazy") == 0 then io.stderr:write("Lazy command unavailable\\n"); vim.cmd("cq") end' \
+            +'Lazy! restore' +'qa' 2>&1) || {
+            printf '%s\n' "$RESTORE_OUTPUT" >&2
+            exit 1
+          }
+          printf '%s\n' "$RESTORE_OUTPUT"
+          if printf '%s\n' "$RESTORE_OUTPUT" | grep -Eiq '(^|[[:space:]])E[0-9]+:|Error detected|Error executing|Failed to (clone|checkout|install|restore|update)'; then
+            echo "Neovim reported an error during Lazy restore" >&2
+            exit 1
+          fi
+          mkdir -p "{{.NVIM_DATA}}"
+          printf '%s\n' "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
         fi
         if ! "$NVIM_BIN" --headless +'Lazy! clean' +'qa' 2>&1; then
           echo "⚠️  Lazy cleanup failed; the plugin restore succeeded" >&2
         fi
-        if ! timeout 120 "$NVIM_BIN" --headless +'TSUpdateSync' +'qa' 2>&1; then
+        run_nvim_step() {
+          STEP_OUTPUT=$("$@" 2>&1) || {
+            printf '%s\n' "$STEP_OUTPUT" >&2
+            return 1
+          }
+          if [ -n "$STEP_OUTPUT" ]; then printf '%s\n' "$STEP_OUTPUT"; fi
+          if printf '%s\n' "$STEP_OUTPUT" | grep -Eiq '(^|[[:space:]])E[0-9]+:|Error detected|Error executing|Failed to (clone|checkout|install|restore|update)'; then
+            return 1
+          fi
+        }
+        TOOLS_OK=1
+        if ! run_nvim_step timeout 120 "$NVIM_BIN" --headless +'TSUpdateSync' +'qa'; then
           echo "⚠️  TreeSitter parser update failed or timed out" >&2
+          TOOLS_OK=0
         fi
 
-        # Install Mason packages (first run may not have the plugin yet)
-        if ! timeout 300 "$NVIM_BIN" --headless \
-          +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsInstall") else vim.cmd("qa") end' \
-          2>&1; then
+        if ! run_nvim_step timeout 300 "$NVIM_BIN" --headless \
+          +'lua if not pcall(require, "mason-tool-installer") then io.stderr:write("Mason tool installer unavailable\\n"); vim.cmd("cq") else vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsInstall") end'; then
           echo "⚠️  Mason tool installation failed or timed out" >&2
+          TOOLS_OK=0
         fi
 
-        mkdir -p "{{.NVIM_DATA}}"
-        echo "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
-        echo "✓ Neovim plugins installed"
+        if [ "$TOOLS_OK" -eq 1 ]; then
+          printf '%s\n' "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-tools-hash"
+          echo "✓ Neovim parsers and tools installed"
+        else
+          rm -f "{{.NVIM_DATA}}/.lazy-tools-hash"
+          echo "⚠️  Neovim parsers or tools remain pending; rerun task nvim:restore" >&2
+        fi
 
   update:
     desc: Update Neovim plugins, CLI utils, and TreeSitter

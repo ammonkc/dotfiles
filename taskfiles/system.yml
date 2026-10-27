@@ -57,7 +57,6 @@ tasks:
       This task configures:
         - Git credentials and signing keys from 1Password
         - SSH config with GitHub username
-        - Work-specific git configs
         - Development directory structure
 
       Prerequisites:
@@ -74,14 +73,23 @@ tasks:
 
           Then run this task again.
     cmds:
-      - task: mac:github:force_ssh
-      - task: mac:op:setup
       - task: secrets:install
       - task develop:setup
       - echo ""
       - echo "✅ Post-installation complete!"
       - echo ""
       - echo "Your development environment is ready."
+
+  work-setup:
+    desc: Set up work accounts after signing into business 1Password accounts
+    summary: |
+      Opt in to work Git identities and GitHub keys from signed-in business
+      1Password accounts, then create work development directories and Git includes.
+      Run after system:post-install when this Mac is used for work.
+    platforms: [darwin]
+    cmds:
+      - task: secrets:install:work
+      - task: develop:setup
 
   status:
     desc: Show remaining setup steps without changing the machine
