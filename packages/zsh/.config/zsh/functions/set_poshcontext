@@ -76,7 +76,7 @@ function set_poshcontext() {
     local _aws_now_epoch=$(date +%s)
     local _aws_authenticated=0
 
-    for _f in "$_aws_cache_dir"/*.json; do
+    for _f in "$_aws_cache_dir"/*.json(N); do
       # Only process token files (they have accessToken), skip registration files
       if jq -e '.accessToken' "$_f" &>/dev/null 2>&1; then
         local _expires_raw=$(jq -r '.expiresAt' "$_f" 2>/dev/null)

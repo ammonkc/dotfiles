@@ -95,7 +95,7 @@ final_space = true
     background = "p:haiti" #'#292D3E'
     type = 'status'
     style = 'powerline'
-    foreground_templates = ['{{ if gt .Code 0 }}p:white{{ else }}p:fine-pine{{ end }}']
+    foreground_templates = ['{{ if gt .Code 0 }}lightWhite{{ else }}p:fine-pine{{ end }}']
     background_templates = ['{{ if gt .Code 0 }}p:red-pegasus{{ end }}']
     invert_powerline = true
 
