@@ -144,7 +144,6 @@ tasks:
         sh: |
           {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
           cd {{.PACKAGES_DIR}} && stow -n {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}" 2>&1 | grep "existing target is" | awk '{print $NF}' | tr -d "'" || true
-    dir: '{{.PACKAGES_DIR}}'
     status:
       # Skip entirely if no conflicts found
       - test -z "{{.CONFLICTS}}"
