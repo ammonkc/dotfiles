@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Raycast
+.raycast/
+package-lock.json
+raycast-env.d.ts
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+*.swp
+*.swo
