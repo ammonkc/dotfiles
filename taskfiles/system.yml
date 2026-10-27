@@ -91,6 +91,16 @@ tasks:
       - task: secrets:install:work
       - task: develop:setup
 
+  guided-setup:
+    desc: Choose optional post-install steps with Gum
+    summary: |
+      Interactive menu for personal and work setup, the 1Password SSH agent,
+      GitHub SSH URLs, macOS preferences, and the optional Homebrew bundle.
+      Requires a terminal and Gum. The individual tasks remain available for
+      scripts and unattended setup.
+    platforms: [darwin]
+    cmd: bash "{{.ROOT_DIR}}/scripts/guided-setup.sh"
+
   status:
     desc: Show remaining setup steps without changing the machine
     cmd: bash "{{.ROOT_DIR}}/scripts/install-status.sh"

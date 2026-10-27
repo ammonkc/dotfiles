@@ -42,6 +42,7 @@ curl -fsSL https://raw.githubusercontent.com/ammonkc/dotfiles/main/scripts/boots
 For a smaller first install, use `DOTFILES_PROFILE=core` with a local checkout (`DOTFILES_PROFILE=core ./bin/install`), or export the variable before running the bootstrap command. The default `full` profile installs the core package set first, then the full Brewfile. A failure in the optional full bundle is recorded and can be retried with `task brew:retry`.
 
 After bootstrap, sign in with `op signin`, run `dotfiles system:post-install`, then check `dotfiles system:status`. The status command is safe to rerun and lists remaining work.
+For an interactive menu of secondary setup steps on macOS, run `dotfiles system:guided-setup` in a terminal. Gum is included in the full Brewfile; after a core install, run `brew install gum` first. The menu is optional and does not run during bootstrap.
 
 ### **Linux** (Debian/Ubuntu or Arch)
 
@@ -140,6 +141,7 @@ dotfiles info:all           # Show detailed system info
     - **Run** `dotfiles system:post-install` after `op signin`
 5. **[Optional] Enable 1Password SSH agent:** In 1Password, Settings → Developer → Enable SSH agent; then run `dotfiles mac:op:setup`. Run `dotfiles mac:github:force_ssh` if GitHub HTTPS URLs should use SSH.
 6. **[Optional] Set up work accounts:** Sign into the business accounts in 1Password, then run `dotfiles system:work-setup`.
+   You can use `dotfiles system:guided-setup` to choose these optional steps from a terminal menu.
 7. **Customize local configs:** Edit files in `~/.*.local`
 8. **Setup Developer folders:** Included in `dotfiles system:post-install`
 

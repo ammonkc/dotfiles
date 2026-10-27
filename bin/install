@@ -61,6 +61,9 @@ if task install; then
   success "Base installation complete!"
   info "Finish setup after signing into 1Password: dotfiles system:post-install"
   info "Check remaining steps: dotfiles system:status"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    info "Optional interactive menu: dotfiles system:guided-setup"
+  fi
   echo ""
   info "$(tput bold)Next steps:$(tput sgr0)"
   echo ""

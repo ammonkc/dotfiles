@@ -34,6 +34,7 @@ brew 'glow'                         # markdown viewer
 brew 'gnupg'                        # GNU Pretty Good Privacy (PGP) package
 brew 'go-task'                      # Task is a task runner/build tool thats simpler and easier to use
 brew 'grex'                         # Command-line tool for generating regular expressions
+brew 'gum'                          # Interactive terminal prompts for optional setup
 brew 'herdr'                        # Agent multiplexer that lives in your terminal
 brew 'htop'                         # Improved top (interactive process viewer)
 brew 'httpie'                       # User-friendly cURL replacement (command-line HTTP client)
