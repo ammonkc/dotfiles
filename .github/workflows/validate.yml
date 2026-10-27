@@ -12,7 +12,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y stow shellcheck jq zsh rsync
       - name: Shell and Taskfile checks
         run: |
-          bash -n bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh packages/bin/.local/bin/idl-up packages/bin/.local/bin/idl-down packages/bin/.local/lib/git-worktree.sh packages/tinycast/.config/tinycast/script-commands/idl-up.sh packages/tinycast/.config/tinycast/script-commands/idl-down.sh packages/raycast/.config/raycast/script-commands/idl-up.sh packages/raycast/.config/raycast/script-commands/idl-down.sh tests/bootstrap-helpers.sh tests/architecture.sh tests/worktree-compat.sh tests/idl-tinycast-wrappers.sh tests/idl-profiles.sh
+          bash -n bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh packages/bin/.local/bin/idl-up packages/bin/.local/bin/idl-down packages/bin/.local/lib/git-worktree.sh packages/tinycast/.config/tinycast/script-commands/idl-up.sh packages/tinycast/.config/tinycast/script-commands/idl-down.sh packages/raycast/.config/raycast/script-commands/idl-up.sh packages/raycast/.config/raycast/script-commands/idl-down.sh tests/bootstrap-helpers.sh tests/architecture.sh tests/worktree-compat.sh tests/idl-tinycast-wrappers.sh tests/idl-profiles.sh tests/stow-extension-ignore.sh
           shellcheck -S warning bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh
           task --list >/dev/null
           bash tests/bootstrap-helpers.sh
@@ -23,6 +23,7 @@ jobs:
           bash tests/worktree-compat.sh
           bash tests/idl-tinycast-wrappers.sh
           bash tests/idl-profiles.sh
+          bash tests/stow-extension-ignore.sh
       - name: Stow dry run
         run: |
           target="$(mktemp -d)"
