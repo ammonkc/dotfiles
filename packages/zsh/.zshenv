@@ -48,7 +48,7 @@ chmod 700 "$XDG_DATA_HOME/gnupg"
 
 # Increase file descriptor limit (fixes "too many open files" errors)
 # macOS default is 256, which is too low for modern development tools like Neovim
-ulimit -n 10240
+ulimit -n 10240 2>/dev/null || true
 
 # Local config
 [[ -f $HOME/.zshenv.local ]] && source $HOME/.zshenv.local

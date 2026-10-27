@@ -39,8 +39,8 @@ export HOMEBREW_NO_ENV_HINTS=1
 # ZSH
 export SHELL_SESSION_DIR="$XDG_STATE_HOME/zsh/sessions"
 
-# Enable SSH Agent for all hosts
-export SSH_AUTH_SOCK=~/.1password/agent.sock
+# Prefer the 1Password agent when its socket is available; keep the system agent otherwise.
+[[ -S $HOME/.1password/agent.sock ]] && export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
 
 # Cursor
 export CURSOR_CONFIG_DIR="$XDG_CONFIG_HOME/cursor"
