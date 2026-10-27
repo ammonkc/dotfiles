@@ -41,6 +41,21 @@ tasks:
       - task: stow:packages
       - task: copy_local_configs
 
+  plan:
+    desc: Preview Stow changes and conflicts in your home directory
+    summary: |
+      Simulates restowing every package against your home directory.
+      Shows files that would be linked or conflict without changing them.
+    cmd: bash "{{.ROOT_DIR}}/scripts/dotfiles-plan.sh" "{{.ROOT_DIR}}" "$HOME"
+
+  verify:
+    desc: Check deployed commit and managed Stow links
+    summary: |
+      Compare ~/.dotfiles with the active development checkout, or with
+      ~/Developer/repos/ammonkc/dotfiles when run from ~/.dotfiles.
+      Set DOTFILES_SOURCE_DIR to use a different development checkout.
+    cmd: bash "{{.ROOT_DIR}}/scripts/dotfiles-verify.sh" "{{.ROOT_DIR}}"
+
   uninstall:
     desc: Remove dotfile symlinks
     cmds:

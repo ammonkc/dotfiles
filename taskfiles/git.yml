@@ -49,11 +49,8 @@ tasks:
   sync:
     desc: Pull latest changes and restow dotfiles
     summary: |
-      Safely sync dotfiles from remote:
-      1. Stash local changes if any
-      2. Pull latest from origin
-      3. Restow all packages
-      4. Report if stash exists (won't auto-pop)
+      Pull with rebase, then restow packages. Git stops the pull if local
+      changes prevent the rebase; this task does not stash changes.
 
       This is useful after pulling updates to ensure symlinks are current
     dir: '{{.DOTFILES_DIR}}'
@@ -132,4 +129,3 @@ tasks:
           echo "$OUTPUT"
           exit 1
         fi
-

@@ -8,6 +8,7 @@ vars:
   CODE_DIR: '{{.DEV_DIR}}/code'
   DOCS_DIR: '{{.DEV_DIR}}/documentation'
   REPOS_DIR: '{{.DEV_DIR}}/repos'
+  SCRIPTS_DIR: '{{.DEV_DIR}}/scripts'
   WORKTREES_DIR: '{{.DEV_DIR}}/worktrees'
   # Get git username from config (empty if not found - skips creating personal dir)
   GIT_USER:
@@ -56,6 +57,7 @@ tasks:
         ├── code/               # Active development projects
         ├── documentation/      # Documentation
         ├── repos/              # Git repositories (organized by user/org)
+        ├── scripts/            # Personal and project scripts
         └── worktrees/          # Git worktrees (organized by project)
 
       Organization directories under repos/ are determined by (in order of priority):
@@ -84,6 +86,8 @@ tasks:
       - echo "Directory structure:"
       - echo "  {{.CODE_DIR}}/"
       - echo "  {{.DOCS_DIR}}/"
+      - echo "  {{.REPOS_DIR}}/"
+      - echo "  {{.SCRIPTS_DIR}}/"
       - echo "  {{.WORKTREES_DIR}}/"
       - for:
           var: DEFAULT_ORGS
@@ -102,6 +106,7 @@ tasks:
       - task: list:code
       - task: list:docs
       - task: list:repos
+      - task: list:scripts
       - task: list:worktrees
 
   clone:
@@ -184,12 +189,11 @@ tasks:
       - echo "This will update all repositories"
 
   status:
-    desc: Show git status for all repositories (placeholder)
+    desc: Show local changes in development repositories and worktrees
     summary: |
-      Future: Show git status for all repos
-    cmds:
-      - echo "🚧 Not implemented yet"
-      - echo "This will show status of all repositories"
+      Read-only status of Git repositories under code/, repos/, and worktrees/.
+      Shows dirty repositories without fetching or pulling.
+    cmd: bash "{{.ROOT_DIR}}/scripts/develop-status.sh" "{{.DEV_DIR}}"
 
   # ============================================================================
   # Internal Tasks
@@ -201,6 +205,8 @@ tasks:
     cmds:
       - mkdir -p "{{.CODE_DIR}}"
       - mkdir -p "{{.DOCS_DIR}}"
+      - mkdir -p "{{.REPOS_DIR}}"
+      - mkdir -p "{{.SCRIPTS_DIR}}"
       - mkdir -p "{{.WORKTREES_DIR}}"
       - for:
           var: DEFAULT_ORGS
@@ -286,6 +292,30 @@ tasks:
         fi
       - for:
           var: DOC_ENTRIES
+          split: '\n'
+        cmd: echo "  - {{.ITEM}}"
+      - echo ""
+
+  list:scripts:
+    internal: true
+    silent: true
+    vars:
+      SCRIPTS_EXISTS:
+        sh: test -d "{{.SCRIPTS_DIR}}" && echo "true" || echo "false"
+      SCRIPT_ENTRIES:
+        sh: find "{{.SCRIPTS_DIR}}" -mindepth 1 -maxdepth 1 -exec basename {} \; 2>/dev/null | sort || true
+      SCRIPT_COUNT:
+        sh: find "{{.SCRIPTS_DIR}}" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | xargs || echo "0"
+    cmds:
+      - echo "Scripts ({{.SCRIPTS_DIR}}):"
+      - |
+        if [ "{{.SCRIPTS_EXISTS}}" = "false" ]; then
+          echo "  (directory not created - run 'task develop:setup')"
+        elif [ "{{.SCRIPT_COUNT}}" -eq 0 ]; then
+          echo "  (empty)"
+        fi
+      - for:
+          var: SCRIPT_ENTRIES
           split: '\n'
         cmd: echo "  - {{.ITEM}}"
       - echo ""

@@ -93,6 +93,9 @@ dotfiles info               # Show environment information
 dotfiles install            # Install/update dotfiles
 dotfiles list               # List installed packages
 dotfiles restow             # Re-stow all packages
+dotfiles dot:plan            # Preview Stow links and conflicts without changing files
+dotfiles dot:verify          # Compare development and deployed commits; check managed links
+dotfiles system:check        # Strict, read-only core installation check
 
 # Package Management
 dotfiles brew:update        # Update Homebrew packages (macOS)
@@ -115,6 +118,7 @@ dotfiles dot:raycast:utilities   # Run Developer Utilities in Raycast (keep runn
 dotfiles git:status         # Git status of dotfiles repo
 dotfiles git:pull           # Pull latest changes
 dotfiles git:push           # Push changes
+dotfiles dev:status         # Show dirty repositories and worktrees under ~/Developer
 
 # Utilities
 dotfiles backup:list        # List backups
@@ -123,6 +127,11 @@ dotfiles info:all           # Show detailed system info
 ```
 
 Run the two Raycast extension tasks in separate terminals if you use both.
+
+Development directories created by `dotfiles dev:setup` are
+`~/Developer/{code,documentation,repos,scripts,worktrees}`. The `scripts/`
+directory is for your own scripts; the dotfiles command wrappers remain under
+`~/.local/bin`.
 
 ## 🎨 Customization
 

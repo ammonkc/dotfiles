@@ -105,6 +105,13 @@ tasks:
     desc: Show remaining setup steps without changing the machine
     cmd: bash "{{.ROOT_DIR}}/scripts/install-status.sh"
 
+  check:
+    desc: Strict, read-only check of the core installation
+    summary: |
+      Check core tools, deployed Stow links, Neovim restore markers, and
+      any pending full Homebrew bundle. Exits nonzero if a check fails.
+    cmd: bash "{{.ROOT_DIR}}/scripts/system-check.sh" "{{.ROOT_DIR}}"
+
   install:requirements:
     internal: true
     cmds:

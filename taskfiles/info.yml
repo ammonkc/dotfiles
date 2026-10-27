@@ -45,7 +45,7 @@ tasks:
       STOWED_COUNT:
         sh: find ~ -maxdepth 3 -type l -lname "*/.dotfiles/*" 2>/dev/null | wc -l | tr -d ' '
       BACKUP_COUNT:
-        sh: test -d "$XDG_STATE_HOME/dotfiles/backups" && find "$XDG_STATE_HOME/dotfiles/backups" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ' || echo "0"
+        sh: test -d "${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles/backups" && find "${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles/backups" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ' || echo "0"
     cmds:
       - echo "📦 Dotfiles Configuration"
       - echo "  Directory    {{.DOTFILES_DIR}}"
@@ -119,4 +119,3 @@ tasks:
       - echo "  XDG_CACHE_HOME  ${XDG_CACHE_HOME:-$HOME/.cache} $(test -d ${XDG_CACHE_HOME:-$HOME/.cache} && echo '✓' || echo '✗')"
       - echo "  ZDOTDIR         ${ZDOTDIR:-$HOME/.config/zsh} $(test -d ${ZDOTDIR:-$HOME/.config/zsh} && echo '✓' || echo '✗')"
       - echo ""
-
