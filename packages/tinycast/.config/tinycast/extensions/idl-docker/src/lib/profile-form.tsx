@@ -27,8 +27,8 @@ export function ProfileForm({ actionTitle, onSubmit }: ProfileFormProps) {
       <Form.TextField
         id="profiles"
         title="Additional Profiles"
-        placeholder="queue, worker"
-        info="Comma-separated Compose profiles. The script's default profiles stay enabled."
+        placeholder="queue"
+        info="Enable the queue services. sftp is always enabled."
       />
     </Form>
   );

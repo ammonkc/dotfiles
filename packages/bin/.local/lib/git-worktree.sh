@@ -137,7 +137,10 @@ _gwt_copy_paths() {
   local src="$1" dest="$2" dry_run="$3" verbose="$4"
   local -a paths=()
 
-  mapfile -d '' -t paths
+  local path
+  while IFS= read -r -d '' path; do
+    paths+=("$path")
+  done
 
   if ((${#paths[@]} == 0)); then
     return 2  # signal: nothing to copy
@@ -152,13 +155,12 @@ _gwt_copy_paths() {
 
   local -a rsync_flags=(-a)
   if [[ "$verbose" == true ]]; then
-    rsync_flags+=(--info=progress2 -v)
+    rsync_flags+=(--progress -v)
   fi
 
   if command -v rsync >/dev/null 2>&1; then
     printf '%s\0' "${paths[@]}" | rsync "${rsync_flags[@]}" --from0 --files-from=- "$src/" "$dest/"
   else
-    local path
     for path in "${paths[@]}"; do
       mkdir -p "$dest/$(dirname "$path")"
       cp -a "$src/$path" "$dest/$path"

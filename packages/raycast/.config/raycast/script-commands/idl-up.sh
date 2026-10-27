@@ -10,7 +10,7 @@
 # @raycast.packageName IDL Docker
 # @raycast.argument1 { "type": "text", "placeholder": "worktree", "optional": true }
 # @raycast.argument2 { "type": "text", "placeholder": "domain", "optional": true }
-# @raycast.argument3 { "type": "text", "placeholder": "profiles, --build (optional)", "optional": true }
+# @raycast.argument3 { "type": "text", "placeholder": "queue, --build (optional)", "optional": true }
 
 # Documentation:
 # @raycast.description Start IDL Docker containers
@@ -29,7 +29,9 @@ for option in "${OPTIONS[@]}"; do
     case "$option" in
         -b | --build | true) BUILD=true ;;
         "" | false) ;;
-        *) COMPOSE_PROFILES+=(--profile "$option") ;;
+        sftp) ;;
+        queue) COMPOSE_PROFILES+=(--profile queue) ;;
+        *) echo "Unknown Compose profile: $option (available: sftp, queue)" >&2; exit 1 ;;
     esac
 done
 

@@ -9,10 +9,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: arduino/setup-task@v2
       - name: Install validation tools
-        run: sudo apt-get update && sudo apt-get install -y stow shellcheck jq zsh
+        run: sudo apt-get update && sudo apt-get install -y stow shellcheck jq zsh rsync
       - name: Shell and Taskfile checks
         run: |
-          bash -n bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh tests/bootstrap-helpers.sh tests/architecture.sh
+          bash -n bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh packages/bin/.local/bin/idl-up packages/bin/.local/bin/idl-down packages/bin/.local/lib/git-worktree.sh packages/tinycast/.config/tinycast/script-commands/idl-up.sh packages/tinycast/.config/tinycast/script-commands/idl-down.sh packages/raycast/.config/raycast/script-commands/idl-up.sh packages/raycast/.config/raycast/script-commands/idl-down.sh tests/bootstrap-helpers.sh tests/architecture.sh tests/worktree-compat.sh tests/idl-tinycast-wrappers.sh tests/idl-profiles.sh
           shellcheck -S warning bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh
           task --list >/dev/null
           bash tests/bootstrap-helpers.sh
@@ -20,6 +20,9 @@ jobs:
           bash tests/neovim-failure.sh
           zsh -n packages/zsh/.config/zsh/functions/set_poshcontext
           bash tests/posh-context.sh
+          bash tests/worktree-compat.sh
+          bash tests/idl-tinycast-wrappers.sh
+          bash tests/idl-profiles.sh
       - name: Stow dry run
         run: |
           target="$(mktemp -d)"
@@ -29,3 +32,10 @@ jobs:
             test -d "$package" || continue
             stow -n --no-folding -d packages -t "$target" "$(basename "$package")"
           done
+      - name: Tinycast Developer Utilities
+        working-directory: packages/tinycast/.config/tinycast/extensions/developer-utilities
+        run: |
+          npm ci --no-audit --no-fund
+          npm run lint
+          npm test
+          npm run build

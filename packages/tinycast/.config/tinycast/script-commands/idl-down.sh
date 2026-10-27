@@ -10,61 +10,24 @@
 # @raycast.packageName IDL Docker
 # @raycast.argument1 { "type": "text", "placeholder": "worktree", "optional": true }
 # @raycast.argument2 { "type": "text", "placeholder": "domain", "optional": true }
-# @raycast.argument3 { "type": "text", "placeholder": "profiles (comma-separated)", "optional": true }
+# @raycast.argument3 { "type": "text", "placeholder": "queue (already included)", "optional": true }
 
 # Documentation:
 # @raycast.description Stop IDL Docker containers
 # @raycast.author Ammon Casey
 
-BASE_DIR="$HOME/Developer/code/indirect"
-ALLEGRO_DOMAIN="${2:-allegro.test}"
-COMPOSE_PROFILES=(--profile sftp --profile php8-work)
-
-IFS=',' read -r -a PROFILES <<< "${3:-}"
-for profile in "${PROFILES[@]}"; do
-    profile="${profile#"${profile%%[![:space:]]*}"}"
-    profile="${profile%"${profile##*[![:space:]]}"}"
-    [[ -n "$profile" ]] && COMPOSE_PROFILES+=(--profile "$profile")
-done
-
-# Resolve worktree from arg, else from cwd under BASE_DIR, else 'main'
-default_worktree() {
-    local pwd_real base_real rel
-    pwd_real="$(pwd -P 2>/dev/null)" || { echo main; return; }
-    base_real="$(cd "$BASE_DIR" 2>/dev/null && pwd -P)" || { echo main; return; }
-    if [[ "$pwd_real" == "$base_real"/* ]]; then
-        rel="${pwd_real#"$base_real"/}"
-        echo "${rel%%/*}"
-    else
-        echo main
-    fi
-}
-
-WORKTREE="${1:-$(default_worktree)}"
-
-# Get list of available worktrees (directories in BASE_DIR)
-# Uses fd if available, otherwise falls back to find
-get_worktrees() {
-    if command -v fd &>/dev/null; then
-        fd --type d --max-depth 1 --base-directory "$BASE_DIR" . 2>/dev/null | sort
-    else
-        /usr/bin/find "$BASE_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort
-    fi
-}
-
-PROJECT_DIR="$BASE_DIR/$WORKTREE"
-
-# Validate worktree exists
-if [[ ! -d "$PROJECT_DIR" ]]; then
-    echo "❌ Worktree '$WORKTREE' not found"
-    echo "Available: $(get_worktrees | tr '\n' ' ')"
-    exit 1
+helper="$HOME/.local/bin/idl-down"
+if [[ ! -x "$helper" ]]; then
+  echo "IDL helper missing: $helper. Install the bin dotfiles package." >&2
+  exit 1
 fi
 
-cd "$PROJECT_DIR" || { echo "❌ Cannot find $PROJECT_DIR"; exit 1; }
+args=("${1:-}" "${2:-}")
+IFS=',' read -r -a profiles <<< "${3:-}"
+for profile in "${profiles[@]}"; do
+  profile="${profile#"${profile%%[![:space:]]*}"}"
+  profile="${profile%"${profile##*[![:space:]]}"}"
+  [[ -n "$profile" ]] && args+=(--profile "$profile")
+done
 
-ALLEGRO_DOMAIN="$ALLEGRO_DOMAIN" docker compose -f docker-compose.yaml \
-    "${COMPOSE_PROFILES[@]}" \
-    down || exit $?
-
-echo "✅ IDL containers stopped ($WORKTREE) @ $ALLEGRO_DOMAIN"
+exec "$helper" "${args[@]}"

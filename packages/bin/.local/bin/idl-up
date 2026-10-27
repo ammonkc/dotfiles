@@ -13,6 +13,14 @@ BUILD=false
 POSITIONAL=()
 COMPOSE_PROFILES=(--profile sftp)
 
+add_profile() {
+    case "$1" in
+        sftp) ;; # Already enabled by default.
+        queue) COMPOSE_PROFILES+=(--profile queue) ;;
+        *) echo "Unknown Compose profile: $1 (available: sftp, queue)" >&2; exit 1 ;;
+    esac
+}
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -b | --build)
@@ -24,7 +32,7 @@ while [[ $# -gt 0 ]]; do
                 echo "--profile requires a profile name" >&2
                 exit 1
             fi
-            COMPOSE_PROFILES+=(--profile "$2")
+            add_profile "$2"
             shift 2
             ;;
         --profile=*)
@@ -33,7 +41,7 @@ while [[ $# -gt 0 ]]; do
                 echo "--profile requires a profile name" >&2
                 exit 1
             fi
-            COMPOSE_PROFILES+=(--profile "$profile")
+            add_profile "$profile"
             shift
             ;;
         -h | --help)
@@ -41,7 +49,7 @@ while [[ $# -gt 0 ]]; do
 Usage: idl-up [--build|-b] [--profile NAME ...] [worktree] [domain]
 
   --build, -b   Rebuild images and force-recreate containers
-  --profile     Enable an additional Compose profile (repeatable; sftp is always enabled)
+  --profile     Enable queue (sftp is always enabled; available: sftp, queue)
   worktree      Defaults to cwd under ~/Developer/code/indirect, else main
   domain        Defaults to allegro.test
 EOF

@@ -10,7 +10,7 @@
 # @raycast.packageName IDL Docker
 # @raycast.argument1 { "type": "text", "placeholder": "worktree", "optional": true }
 # @raycast.argument2 { "type": "text", "placeholder": "domain", "optional": true }
-# @raycast.argument3 { "type": "text", "placeholder": "profiles (comma-separated)", "optional": true }
+# @raycast.argument3 { "type": "text", "placeholder": "queue (already included)", "optional": true }
 
 # Documentation:
 # @raycast.description Stop IDL Docker containers
@@ -18,13 +18,16 @@
 
 BASE_DIR="$HOME/Developer/code/indirect"
 ALLEGRO_DOMAIN="${2:-allegro.test}"
-COMPOSE_PROFILES=(--profile sftp --profile php8-work)
+COMPOSE_PROFILES=(--profile sftp --profile queue)
 
 IFS=',' read -r -a PROFILES <<< "${3:-}"
 for profile in "${PROFILES[@]}"; do
     profile="${profile#"${profile%%[![:space:]]*}"}"
     profile="${profile%"${profile##*[![:space:]]}"}"
-    [[ -n "$profile" ]] && COMPOSE_PROFILES+=(--profile "$profile")
+    case "$profile" in
+        ""|sftp|queue) ;;
+        *) echo "Unknown Compose profile: $profile (available: sftp, queue)" >&2; exit 1 ;;
+    esac
 done
 
 # Resolve worktree from arg, else from cwd under BASE_DIR, else 'main'

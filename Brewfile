@@ -1,4 +1,4 @@
-       # Taps
+        # Taps
 tap 'shivammathur/php'
 tap 'shivammathur/extensions'
 

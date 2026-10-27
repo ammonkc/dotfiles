@@ -22,7 +22,7 @@ Changing a script's `@raycast.mode` header or importing the folder again does no
 
 ## Commands
 
-- **Start Containers**: choose a worktree; optionally add profiles such as `queue, worker`.
-- **Stop Containers**: choose a worktree and optional profiles.
+- **Start Containers**: choose a worktree; optionally add the `queue` profile. `sftp` is always enabled.
+- **Stop Containers**: choose a worktree. Both `sftp` and `queue` profiles are enabled for shutdown.
 
-The extension preserves the scripts' default Compose profiles. The separate IDL Up script command also accepts `--build` in its third argument, for example `queue, --build`.
+The extension and the separate IDL script commands both call the stowed `idl-up` and `idl-down` helpers. IDL Up accepts `--build` in its third argument, for example `queue, --build`. The only Compose profiles are `sftp` and `queue`.

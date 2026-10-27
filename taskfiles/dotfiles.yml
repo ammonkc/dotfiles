@@ -239,6 +239,30 @@ tasks:
       - cd "{{.EXTENSION_DIR}}" && npm run build
       - 'echo "Tinycast import folder (from this checkout): {{.EXTENSION_DIR}}/build"'
 
+  tinycast:utilities:
+    desc: Build Developer Utilities for Tinycast
+    summary: |
+      Builds Clean Node Modules and Git Standup commands in the active checkout.
+      After deploying dotfiles, run `dotfiles dot:tinycast:utilities`, then import
+      the printed build folder in Tinycast Settings > Extensions.
+    vars:
+      EXTENSION_DIR: '{{.ROOT_DIR}}/packages/tinycast/.config/tinycast/extensions/developer-utilities'
+    preconditions:
+      - sh: command -v npm >/dev/null 2>&1
+        msg: "npm is not installed. Install Node.js first."
+      - sh: test -f "{{.EXTENSION_DIR}}/package.json"
+        msg: "Developer Utilities extension not found at {{.EXTENSION_DIR}}"
+    cmds:
+      - cd "{{.EXTENSION_DIR}}" && npm ci
+      - cd "{{.EXTENSION_DIR}}" && npm run build
+      - 'echo "Tinycast import folder (from this checkout): {{.EXTENSION_DIR}}/build"'
+
+  tinycast:extensions:
+    desc: Build both Tinycast extensions for import
+    cmds:
+      - task: tinycast:extension
+      - task: tinycast:utilities
+
   # ============================================================================
   # Health Check / Doctor Tasks
   # ============================================================================

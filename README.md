@@ -106,6 +106,7 @@ dotfiles mac:op:setup       # Setup 1Password SSH agent
 dotfiles dev:setup          # Setup development directories
 dotfiles dev:list           # List development projects
 dotfiles dev:clone REPO=url # Clone repo to organized location
+dotfiles dot:tinycast:extensions # Build both Tinycast extensions for import
 
 # Git Operations
 dotfiles git:status         # Git status of dotfiles repo
