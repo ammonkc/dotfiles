@@ -22,7 +22,7 @@ tasks:
       Applies custom macOS defaults and preferences
 
       This will:
-      - Back up current defaults to ~/Desktop
+      - Save current user defaults and power settings to ~/Desktop
       - Apply settings for Dock, Finder, Safari, Mail, and more
       - Restart affected applications
       - Some changes require logout/restart to take full effect
@@ -39,9 +39,10 @@ tasks:
   preview:defaults:
     desc: Preview macOS defaults that will be applied
     summary: |
-      Displays all the macOS defaults commands that will be run by macos.sh
+      Displays the macOS preference commands that macos.sh will attempt
 
-      This extracts and formats all active defaults write commands for review.
+      This summarizes active preference commands for review. Read macos.sh
+      for exact multi-line values and conditions.
       Useful for seeing what changes will be made before applying them.
 
       Requires: glow (install with: brew install glow)

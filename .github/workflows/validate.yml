@@ -12,11 +12,12 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y stow shellcheck jq zsh rsync
       - name: Shell and Taskfile checks
         run: |
-          bash -n bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh packages/bin/.local/bin/idl-up packages/bin/.local/bin/idl-down packages/bin/.local/bin/idl-worktree-setup packages/bin/.local/lib/git-worktree.sh packages/tinycast/.config/tinycast/script-commands/idl-up.sh packages/tinycast/.config/tinycast/script-commands/idl-down.sh packages/raycast/.config/raycast/script-commands/idl-up.sh packages/raycast/.config/raycast/script-commands/idl-down.sh tests/bootstrap-helpers.sh tests/architecture.sh tests/worktree-compat.sh tests/idl-tinycast-wrappers.sh tests/idl-profiles.sh tests/stow-extension-ignore.sh tests/idl-zed-worktree-setup.sh
+          bash -n bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/macos.sh scripts/macos-preview.sh scripts/secret-block.sh scripts/install-status.sh packages/bin/.local/bin/idl-up packages/bin/.local/bin/idl-down packages/bin/.local/bin/idl-worktree-setup packages/bin/.local/lib/git-worktree.sh packages/tinycast/.config/tinycast/script-commands/idl-up.sh packages/tinycast/.config/tinycast/script-commands/idl-down.sh packages/raycast/.config/raycast/script-commands/idl-up.sh packages/raycast/.config/raycast/script-commands/idl-down.sh tests/bootstrap-helpers.sh tests/architecture.sh tests/macos-defaults.sh tests/worktree-compat.sh tests/idl-tinycast-wrappers.sh tests/idl-profiles.sh tests/stow-extension-ignore.sh tests/idl-zed-worktree-setup.sh
           shellcheck -S warning bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh
           task --list >/dev/null
           bash tests/bootstrap-helpers.sh
           bash tests/architecture.sh
+          bash tests/macos-defaults.sh
           bash tests/neovim-failure.sh
           zsh -n packages/zsh/.config/zsh/functions/set_poshcontext
           bash tests/posh-context.sh

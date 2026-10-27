@@ -1,6 +1,6 @@
 # Clean Mac validation
 
-Run this check in a disposable Apple Silicon macOS VM or fresh test account before relying on bootstrap for a new machine. Use a native arm64 shell. Do not run the bootstrap against an existing daily-use account for validation.
+Run this check in a disposable Apple Silicon macOS VM or fresh test account before relying on bootstrap for a new machine. For macOS 27 readiness, use macOS 27 and a native arm64 shell. Do not run the bootstrap against an existing daily-use account for validation.
 
 1. Install Xcode Command Line Tools and complete their dialog.
 2. Run the bootstrap from the README with `DOTFILES_PROFILE=core`. Confirm Homebrew, Task, Stow, mise, Neovim, and Yazi install without an existing shell configuration.
@@ -9,5 +9,6 @@ Run this check in a disposable Apple Silicon macOS VM or fresh test account befo
 5. Run `task nvim:restore` twice. The second run should skip work. Disconnect the network during a fresh plugin restore and confirm that the plugin hash is absent after failure. If a parser or Mason tool step fails, confirm the tools hash is absent and a rerun retries those steps without repeating plugin restoration.
 6. Run `DOTFILES_PROFILE=full task install`. If a full Homebrew package fails, check the status output, then run `task brew:retry` and check again.
 7. Check `task doctor`, a fresh shell, launcher script commands, and the Tinycast extension import workflow separately.
+8. Review `task mac:preview:defaults` against `scripts/macos.sh`. If applying preferences in the disposable account, confirm that both Desktop snapshots were created, optional failures are listed, and Ethernet settings and Launch Services quarantine remain untouched.
 
 The Linux path remains a secondary, manually checked setup. CI runs syntax, helper failure-path, and Stow checks; it does not install Homebrew or access 1Password.

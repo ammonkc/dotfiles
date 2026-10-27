@@ -38,7 +38,10 @@ echo -e "${BLUE}📝 Generating macOS defaults preview...${NC}" >&2
 cat > "$OUTPUT_FILE" << 'HEADER'
 # macOS Defaults Preview
 
-The following preferences will be applied by `scripts/macos.sh`:
+This is a summary of preferences attempted by `scripts/macos.sh`. Review the
+script itself for exact multi-line values and conditions. The script
+saves user defaults and power settings to the Desktop before applying anything.
+Optional failures are reported at runtime. It also closes and restarts affected apps.
 
 ---
 
@@ -77,6 +80,10 @@ while IFS= read -r line; do
   # Capture comment lines (descriptions)
   if [[ "$line" =~ ^#\ (.+)$ ]]; then
     comment="${BASH_REMATCH[1]}"
+    if [[ "$comment" =~ ^(defaults|sudo|networksetup|chflags|/usr/libexec/) ]]; then
+      previous_comment=""
+      continue
+    fi
     # Skip lines that are just separators or empty
     if [[ ! "$comment" =~ ^[-=]+$ ]]; then
       if [[ -n "$previous_comment" ]]; then
@@ -89,7 +96,7 @@ while IFS= read -r line; do
   fi
 
   # Extract active command lines (not commented)
-  if [[ "$line" =~ ^(defaults|sudo\ defaults|sudo\ pmset|sudo\ systemsetup|networksetup|chflags) ]] && \
+  if [[ "$line" =~ ^(run_optional\ )?(defaults|sudo\ defaults|sudo\ pmset|sudo\ systemsetup|/usr/libexec/PlistBuddy|networksetup|chflags) ]] && \
      [[ ! "$line" =~ ^# ]]; then
 
     # Extract the key name from defaults write commands
@@ -112,6 +119,10 @@ while IFS= read -r line; do
     elif [[ "$line" =~ -string\ [\"\'](.*)[\"\']] ]]; then
       value="${BASH_REMATCH[1]}"
       value="\`$value\`"
+    fi
+
+    if [[ -z "$value" ]]; then
+      value="\`$line\`"
     fi
 
     # Use comment as description, fall back to key name, or generic message

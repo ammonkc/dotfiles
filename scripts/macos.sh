@@ -20,22 +20,44 @@
 
 set -e
 
-# Close System Settings to prevent conflicts (called "System Preferences" in older macOS)
+optional_failures=()
+run_optional() {
+  local command_output
+  if command_output=$("$@" 2>&1); then
+    return 0
+  else
+    optional_failures+=("$*")
+    printf '  ⚠️  Could not apply: %s\n' "$*" >&2
+    if [[ -n "$command_output" ]]; then
+      printf '      %s\n' "$command_output" >&2
+    fi
+  fi
+}
+
+# Save preference snapshots before making any changes. These are reference
+# snapshots, not an automatic rollback of every setting in this script.
+now=$(date -u "+%Y-%m-%d-%H%M%S")
+backup_file=$(mktemp "$HOME/Desktop/macos-defaults-$now.XXXXXX") || {
+  printf '❌ Could not create a defaults snapshot on the Desktop. No preferences changed.\n' >&2
+  exit 1
+}
+power_backup_file=$(mktemp "$HOME/Desktop/macos-power-$now.XXXXXX") || {
+  rm -f "$backup_file"
+  printf '❌ Could not create a power settings snapshot on the Desktop. No preferences changed.\n' >&2
+  exit 1
+}
+if ! defaults read >"$backup_file" || ! pmset -g custom >"$power_backup_file"; then
+  rm -f "$backup_file" "$power_backup_file"
+  printf '❌ Could not save defaults or power settings. No preferences changed.\n' >&2
+  exit 1
+fi
+printf '📦 Saved preference snapshots:\n   %s\n   %s\n\n' "$backup_file" "$power_backup_file"
+
+# Close apps after the snapshots succeed.
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || \
 osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
-
-# Close Safari and Mail to allow writing to their containerized preferences
-# (Note: Containerized apps may still prevent direct defaults writes)
 killall Safari 2>/dev/null || true
 killall Mail 2>/dev/null || true
-
-# Back up current defaults
-now=$(date -u "+%Y-%m-%d-%H%M%S")
-backup_file="$HOME/Desktop/macos-defaults-$now.txt"
-printf "📦 Backing up current macOS defaults to:\n   %s\n\n" "$backup_file"
-if ! defaults read >"$backup_file" 2>/dev/null; then
-  printf "⚠️  Warning: Could not create backup. Continuing anyway...\n\n"
-fi
 
 printf "⚙️  Applying macOS preferences...\n\n"
 
@@ -75,9 +97,6 @@ defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 # Automatically quit printer app once print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
-# Disable the "Are you sure you want to open this application?" dialog
-defaults write com.apple.LaunchServices LSQuarantine -bool false
-
 # Display ASCII control characters using caret notation
 defaults write NSGlobalDomain NSTextShowsControlCharacters -bool true
 
@@ -86,7 +105,7 @@ defaults write com.apple.helpviewer DevMode -bool true
 
 # Reveal IP address, hostname, OS version, etc. when clicking the clock
 # in the login window
-sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName 2>/dev/null || true
+run_optional sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
 ###############################################################################
 # Menu Bar Items                                                              #
@@ -223,28 +242,28 @@ defaults write NSGlobalDomain AppleFontSmoothing -int 1
 
 # Energy saving settings
 # Enable lid wake on all power sources
-sudo pmset -a lidwake 1 2>/dev/null || true
+run_optional sudo pmset -a lidwake 1
 
 # Restart automatically on power loss
-sudo pmset -a autorestart 1 2>/dev/null || true
+run_optional sudo pmset -a autorestart 1
 
 # Restart automatically if the computer freezes
-sudo systemsetup -setrestartfreeze on 2>/dev/null || true
+run_optional sudo systemsetup -setrestartfreeze on
 
 # Set display sleep to 15 minutes on all power sources
-sudo pmset -a displaysleep 15 2>/dev/null || true
+run_optional sudo pmset -a displaysleep 15
 
 # Never sleep when connected to power adapter
-sudo pmset -c sleep 0 2>/dev/null || true
+run_optional sudo pmset -c sleep 0
 
 # Sleep after 5 minutes on battery power
-sudo pmset -b sleep 5 2>/dev/null || true
+run_optional sudo pmset -b sleep 5
 
 # Set standby delay to 24 hours (86400 seconds)
-sudo pmset -a standbydelay 86400 2>/dev/null || true
+run_optional sudo pmset -a standbydelay 86400
 
 # Disable hibernation (speeds up sleep)
-sudo pmset -a hibernatemode 0 2>/dev/null || true
+run_optional sudo pmset -a hibernatemode 0
 
 ###############################################################################
 # Finder                                                                      #
@@ -320,25 +339,25 @@ defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library 2>/dev/null || true
 
 # Enable snap-to-grid for desktop icons
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+run_optional /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 
 # Enable Desktop Stacks grouped by Kind
 defaults write com.apple.finder DesktopViewSettings -dict GroupBy Kind
 
 # Enable snap-to-grid for standard icon views
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+run_optional /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 
 # Enable snap-to-grid for all icon views
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+run_optional /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 
 # Set icon grid spacing to 100 for desktop
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+run_optional /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
 
 # Set icon grid spacing to 100 for standard views
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+run_optional /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
 
 # Set icon grid spacing to 100 for all icon views
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist 2>/dev/null || true
+run_optional /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
 
 # Expand File Info panes: "General", "Open with", and "Sharing & Permissions"
 defaults write com.apple.finder FXInfoPanesExpanded -dict \
@@ -471,27 +490,27 @@ printf "  → Safari settings\n"
 # The commands will attempt to set preferences but may show warnings.
 
 # Disable universal search (don't send search queries to Apple)
-defaults write com.apple.Safari UniversalSearchEnabled -bool false 2>/dev/null || true
+run_optional defaults write com.apple.Safari UniversalSearchEnabled -bool false
 
 # Suppress Safari search suggestions
-defaults write com.apple.Safari SuppressSearchSuggestions -bool true 2>/dev/null || true
+run_optional defaults write com.apple.Safari SuppressSearchSuggestions -bool true
 
 # Show the full URL in the address bar
-defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true 2>/dev/null || true
+run_optional defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
 
 # Prevent Safari from opening 'safe' files automatically after downloading
-defaults write com.apple.Safari AutoOpenSafeDownloads -bool false 2>/dev/null || true
+run_optional defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
 
 # Enable the Develop menu and the Web Inspector
-defaults write com.apple.Safari IncludeDevelopMenu -bool true 2>/dev/null || true
-defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true 2>/dev/null || true
-defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true 2>/dev/null || true
+run_optional defaults write com.apple.Safari IncludeDevelopMenu -bool true
+run_optional defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+run_optional defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
 
 # Warn about fraudulent websites
-defaults write com.apple.Safari WarnAboutFraudulentWebsites -bool true 2>/dev/null || true
+run_optional defaults write com.apple.Safari WarnAboutFraudulentWebsites -bool true
 
 # Update extensions automatically
-defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true 2>/dev/null || true
+run_optional defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 
 ###############################################################################
 # Mail                                                                        #
@@ -504,23 +523,23 @@ printf "  → Mail settings\n"
 # The commands will attempt to set preferences but may show warnings.
 
 # Copy addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>`
-defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false 2>/dev/null || true
+run_optional defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 
 # Disable send and reply animations
-defaults write com.apple.mail DisableReplyAnimations -bool true 2>/dev/null || true
-defaults write com.apple.mail DisableSendAnimations -bool true 2>/dev/null || true
+run_optional defaults write com.apple.mail DisableReplyAnimations -bool true
+run_optional defaults write com.apple.mail DisableSendAnimations -bool true
 
 # Most recent first in conversations
-defaults write com.apple.mail ConversationViewSortDescending -bool true 2>/dev/null || true
+run_optional defaults write com.apple.mail ConversationViewSortDescending -bool true
 
 # Disable inline attachments (show icons only)
-defaults write com.apple.mail DisableInlineAttachmentViewing -bool true 2>/dev/null || true
+run_optional defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 
 # Compose mail in plain-text
-defaults write com.apple.mail SendFormat Plain 2>/dev/null || true
+run_optional defaults write com.apple.mail SendFormat Plain
 
 # Disable remote content
-defaults write com.apple.mail DisableURLLoading -bool true 2>/dev/null || true
+run_optional defaults write com.apple.mail DisableURLLoading -bool true
 
 ###############################################################################
 # Spotlight                                                                   #
@@ -565,7 +584,7 @@ defaults write com.apple.terminal StringEncodings -array 4
 # Don't display the annoying prompt when quitting iTerm
 # Note: iTerm2 preference will be set if the app is installed.
 # If not installed, this command will succeed but have no effect until the app is installed.
-defaults write com.googlecode.iterm2 PromptOnQuit -bool false 2>/dev/null || true
+run_optional defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 
 ###############################################################################
 # Time Machine                                                                #
@@ -650,8 +669,8 @@ printf "  → Google Chrome settings\n"
 # Expand print dialog by default
 # Note: Chrome preferences will be set if the app is installed.
 # If not installed, these commands will succeed but have no effect until the app is installed.
-defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true 2>/dev/null || true
-defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool true 2>/dev/null || true
+run_optional defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true
+run_optional defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool true
 
 ###############################################################################
 # Transmission                                                                #
@@ -663,46 +682,46 @@ printf "  → Transmission settings\n"
 # If not installed, these commands will succeed but have no effect until the app is installed.
 
 # General settings
-defaults write org.m0k.transmission AutoSize -bool false 2>/dev/null || true
-defaults write org.m0k.transmission AutoStartDownload -bool true 2>/dev/null || true
-defaults write org.m0k.transmission CheckDownload -bool false 2>/dev/null || true
-defaults write org.m0k.transmission CheckQuit -bool false 2>/dev/null || true
-defaults write org.m0k.transmission CheckRemove -bool true 2>/dev/null || true
-defaults write org.m0k.transmission CheckRemoveDownloading -bool true 2>/dev/null || true
-defaults write org.m0k.transmission CheckUpload -bool false 2>/dev/null || true
-defaults write org.m0k.transmission DeleteOriginalTorrent -bool false 2>/dev/null || true
-defaults write org.m0k.transmission DownloadAsk -bool true 2>/dev/null || true
-defaults write org.m0k.transmission DownloadAskManual -bool false 2>/dev/null || true
-defaults write org.m0k.transmission DownloadAskMulti -bool false 2>/dev/null || true
-defaults write org.m0k.transmission DownloadLocationConstant -bool false 2>/dev/null || true
-defaults write org.m0k.transmission MagnetOpenAsk -bool false 2>/dev/null || true
-defaults write org.m0k.transmission PlayDownloadSound -bool false 2>/dev/null || true
-defaults write org.m0k.transmission RandomPort -bool false 2>/dev/null || true
-defaults write org.m0k.transmission SleepPrevent -bool true 2>/dev/null || true
-defaults write org.m0k.transmission SmallView -bool true 2>/dev/null || true
-defaults write org.m0k.transmission SUEnableAutomaticChecks -bool false 2>/dev/null || true
-defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool false 2>/dev/null || true
-defaults write org.m0k.transmission WarningDonate -bool false 2>/dev/null || true
-defaults write org.m0k.transmission WarningLegal -bool false 2>/dev/null || true
+run_optional defaults write org.m0k.transmission AutoSize -bool false
+run_optional defaults write org.m0k.transmission AutoStartDownload -bool true
+run_optional defaults write org.m0k.transmission CheckDownload -bool false
+run_optional defaults write org.m0k.transmission CheckQuit -bool false
+run_optional defaults write org.m0k.transmission CheckRemove -bool true
+run_optional defaults write org.m0k.transmission CheckRemoveDownloading -bool true
+run_optional defaults write org.m0k.transmission CheckUpload -bool false
+run_optional defaults write org.m0k.transmission DeleteOriginalTorrent -bool false
+run_optional defaults write org.m0k.transmission DownloadAsk -bool true
+run_optional defaults write org.m0k.transmission DownloadAskManual -bool false
+run_optional defaults write org.m0k.transmission DownloadAskMulti -bool false
+run_optional defaults write org.m0k.transmission DownloadLocationConstant -bool false
+run_optional defaults write org.m0k.transmission MagnetOpenAsk -bool false
+run_optional defaults write org.m0k.transmission PlayDownloadSound -bool false
+run_optional defaults write org.m0k.transmission RandomPort -bool false
+run_optional defaults write org.m0k.transmission SleepPrevent -bool true
+run_optional defaults write org.m0k.transmission SmallView -bool true
+run_optional defaults write org.m0k.transmission SUEnableAutomaticChecks -bool false
+run_optional defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool false
+run_optional defaults write org.m0k.transmission WarningDonate -bool false
+run_optional defaults write org.m0k.transmission WarningLegal -bool false
 
 # Display settings
-defaults write org.m0k.transmission DisplayProgressBarAvailable -bool true 2>/dev/null || true
+run_optional defaults write org.m0k.transmission DisplayProgressBarAvailable -bool true
 
 # Security settings
-defaults write org.m0k.transmission EncryptionRequire -bool true 2>/dev/null || true
+run_optional defaults write org.m0k.transmission EncryptionRequire -bool true
 
 # Blocklist settings
-defaults write org.m0k.transmission BlocklistAutoUpdate -bool true 2>/dev/null || true
-defaults write org.m0k.transmission BlocklistURL -string \
-  "https://github.com/Naunter/BT_BlockLists/raw/master/bt_blocklists.gz" 2>/dev/null || true
+run_optional defaults write org.m0k.transmission BlocklistAutoUpdate -bool true
+run_optional defaults write org.m0k.transmission BlocklistURL -string \
+  "https://github.com/Naunter/BT_BlockLists/raw/master/bt_blocklists.gz"
 
 # Connection limits
-defaults write org.m0k.transmission PeersTorrent -int 10 2>/dev/null || true
-defaults write org.m0k.transmission PeersTotal -int 200 2>/dev/null || true
+run_optional defaults write org.m0k.transmission PeersTorrent -int 10
+run_optional defaults write org.m0k.transmission PeersTotal -int 200
 
 # Speed limits
-defaults write org.m0k.transmission SpeedLimitDownloadLimit -int 2000 2>/dev/null || true
-defaults write org.m0k.transmission SpeedLimitUploadLimit -int 1000 2>/dev/null || true
+run_optional defaults write org.m0k.transmission SpeedLimitDownloadLimit -int 2000
+run_optional defaults write org.m0k.transmission SpeedLimitUploadLimit -int 1000
 
 ###############################################################################
 # Networking                                                                  #
@@ -710,24 +729,23 @@ defaults write org.m0k.transmission SpeedLimitUploadLimit -int 1000 2>/dev/null 
 
 printf "  → Networking settings\n"
 
-# Configure network services
-if networksetup -listallnetworkservices | grep -q "Ethernet"; then
-  networksetup -setdhcp "Ethernet" 2>/dev/null || true
-fi
-
 # Configure Proton VPN
 # Note: Proton VPN preferences will be set if the app is installed.
 # If not installed, these commands will succeed but have no effect until the app is installed.
-defaults write ch.protonvpn.mac AutoConnect -bool true 2>/dev/null || true
-defaults write ch.protonvpn.mac StartMinimized -bool true 2>/dev/null || true
-defaults write ch.protonvpn.mac StartOnBoot -bool true 2>/dev/null || true
-defaults write ch.protonvpn.mac VpnAcceleratorEnabled -bool true 2>/dev/null || true
+run_optional defaults write ch.protonvpn.mac AutoConnect -bool true
+run_optional defaults write ch.protonvpn.mac StartMinimized -bool true
+run_optional defaults write ch.protonvpn.mac StartOnBoot -bool true
+run_optional defaults write ch.protonvpn.mac VpnAcceleratorEnabled -bool true
 
 ###############################################################################
 # Kill/Restart affected applications                                          #
 ###############################################################################
 
-printf "\n✓ macOS preferences applied successfully!\n\n"
+if ((${#optional_failures[@]})); then
+  printf '\n⚠️  %s optional settings could not be applied; see warnings above.\n\n' "${#optional_failures[@]}" >&2
+else
+  printf '\n✓ macOS preferences applied successfully!\n\n'
+fi
 printf "⚠️  Restarting affected applications...\n"
 
 for app in "Activity Monitor" \
@@ -752,5 +770,6 @@ done
 printf "\n✓ Done!\n\n"
 printf "📝 Notes:\n"
 printf "   • Some changes require logout/restart to take effect\n"
-printf "   • Backup saved to: ~/Desktop/macos-defaults-%s.txt\n" "$now"
+printf '   • Defaults snapshot: %s\n' "$backup_file"
+printf '   • Power settings snapshot: %s\n' "$power_backup_file"
 printf "   • Run 'task mac:restart:all' to restart Dock, Finder, and SystemUIServer\n\n"
