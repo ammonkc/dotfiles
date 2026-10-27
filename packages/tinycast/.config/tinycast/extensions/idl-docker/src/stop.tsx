@@ -17,7 +17,7 @@ import {
   getAllegroDomain,
 } from "./lib/worktrees";
 
-const LIVE_OUTPUT_LINE_LIMIT = 12;
+const OUTPUT_LINE_LIMIT = 12;
 
 function OutputView({ worktree }: { worktree: string }) {
   const [output, setOutput] = useState<string[]>([]);
@@ -61,9 +61,10 @@ function OutputView({ worktree }: { worktree: string }) {
 
   const statusIcon = isRunning ? "⏳" : success ? "✅" : "❌";
   const statusText = isRunning ? "Stopping..." : success ? "Stopped" : "Failed";
-  const visibleOutput = output.slice(-LIVE_OUTPUT_LINE_LIMIT);
+  const visibleOutput = output.slice(-OUTPUT_LINE_LIMIT);
 
   const markdown = `
+${isRunning ? "> Tinycast displays Docker output when the command finishes.\n" : ""}
 \`\`\`
 ${visibleOutput.join("\n")}
 \`\`\`
@@ -87,10 +88,10 @@ ${visibleOutput.join("\n")}
             }
           />
           <Detail.Metadata.Label title="Lines" text={String(output.length)} />
-          {output.length > LIVE_OUTPUT_LINE_LIMIT && (
+          {output.length > OUTPUT_LINE_LIMIT && (
             <Detail.Metadata.Label
-              title="Live View"
-              text={`Last ${LIVE_OUTPUT_LINE_LIMIT} lines`}
+              title="Output Shown"
+              text={`Last ${OUTPUT_LINE_LIMIT} lines`}
             />
           )}
         </Detail.Metadata>

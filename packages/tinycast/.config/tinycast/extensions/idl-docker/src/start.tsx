@@ -10,7 +10,6 @@ import {
 } from "@raycast/api";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { startContainersStream } from "./lib/docker";
-import { ProfileForm } from "./lib/profile-form";
 import {
   listWorktrees,
   getDefaultWorktree,
@@ -18,7 +17,7 @@ import {
   getAllegroDomain,
 } from "./lib/worktrees";
 
-const LIVE_OUTPUT_LINE_LIMIT = 12;
+const OUTPUT_LINE_LIMIT = 12;
 
 function OutputView({
   worktree,
@@ -68,9 +67,10 @@ function OutputView({
 
   const statusIcon = isRunning ? "⏳" : success ? "✅" : "❌";
   const statusText = isRunning ? "Starting..." : success ? "Started" : "Failed";
-  const visibleOutput = output.slice(-LIVE_OUTPUT_LINE_LIMIT);
+  const visibleOutput = output.slice(-OUTPUT_LINE_LIMIT);
 
   const markdown = `
+${isRunning ? "> Tinycast displays Docker output when the command finishes.\n" : ""}
 \`\`\`
 ${visibleOutput.join("\n")}
 \`\`\`
@@ -100,10 +100,10 @@ ${visibleOutput.join("\n")}
             }
           />
           <Detail.Metadata.Label title="Lines" text={String(output.length)} />
-          {output.length > LIVE_OUTPUT_LINE_LIMIT && (
+          {output.length > OUTPUT_LINE_LIMIT && (
             <Detail.Metadata.Label
-              title="Live View"
-              text={`Last ${LIVE_OUTPUT_LINE_LIMIT} lines`}
+              title="Output Shown"
+              text={`Last ${OUTPUT_LINE_LIMIT} lines`}
             />
           )}
         </Detail.Metadata>
@@ -184,15 +184,10 @@ export default function StartCommand() {
                 icon={Icon.Play}
                 onAction={() => handleStart(worktree)}
               />
-              <Action.Push
-                title="Start With Profiles"
+              <Action
+                title="Start With Queue"
                 icon={Icon.Plus}
-                target={
-                  <ProfileForm
-                    actionTitle="Start Containers"
-                    onSubmit={(profiles) => handleStart(worktree, profiles)}
-                  />
-                }
+                onAction={() => handleStart(worktree, ["queue"])}
               />
             </ActionPanel>
           }
