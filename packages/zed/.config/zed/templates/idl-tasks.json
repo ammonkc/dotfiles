@@ -1,0 +1,249 @@
+[
+  {
+    "label": "idl-up",
+    "command": "idl-up \"$(basename \"$ZED_WORKTREE_ROOT\")\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success"
+  },
+  {
+    "label": "idl-up --build",
+    "command": "idl-up --build \"$(basename \"$ZED_WORKTREE_ROOT\")\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success"
+  },
+  {
+    "label": "idl-up --profile queue",
+    "command": "idl-up --profile queue \"$(basename \"$ZED_WORKTREE_ROOT\")\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success"
+  },
+  {
+    "label": "idl-down",
+    "command": "idl-down --profile queue \"$(basename \"$ZED_WORKTREE_ROOT\")\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success"
+  },
+  {
+    "label": "idl shell",
+    "command": "docker compose exec indirect-lending bash",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "use_new_terminal": true
+  },
+  {
+    "label": "start queue workers",
+    "command": "docker compose --profile queue up -d",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "stop queue workers",
+    "command": "docker compose --profile queue down",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "composer install",
+    "command": "docker compose exec -T indirect-lending composer install",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "use_new_terminal": true
+  },
+  {
+    "label": "composer update",
+    "command": "docker compose exec -T indirect-lending composer update",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "use_new_terminal": true
+  },
+  {
+    "label": "npm install",
+    "command": "docker compose exec -T indirect-lending sh -c \"npm install --legacy-peer-deps && npm run dev-build\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "use_new_terminal": true
+  },
+  {
+    "label": "migrate db",
+    "command": "docker compose exec -T indirect-lending sh -c \"php artisan migrate\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": true
+  },
+  {
+    "label": "migrate db fresh",
+    "command": "docker compose exec -T indirect-lending sh -c \"php artisan migrate:fresh-all --seed\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": true
+  },
+  {
+    "label": "pint: Format Current File",
+    "command": "vendor/bin/pint \"$ZED_RELATIVE_FILE\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "phpstan: Analyze Current File",
+    "command": "vendor/bin/phpstan analyse --configuration=phpstan.neon \"$ZED_RELATIVE_FILE\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "rector: Current File",
+    "command": "vendor/bin/rector process \"$ZED_RELATIVE_FILE\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "rector: Current File --dry-run",
+    "command": "vendor/bin/rector process \"$ZED_RELATIVE_FILE\" --dry-run",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "rector: Changed Files",
+    "command": "vendor/bin/rector process $(git diff --name-only --diff-filter=d HEAD | grep '\\.php$')",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "rector: Changed Files --dry-run",
+    "command": "vendor/bin/rector process $(git diff --name-only --diff-filter=d HEAD | grep '\\.php$') --dry-run",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "Test: Method (Docker)",
+    "command": "docker compose exec -T indirect-lending php artisan test -vvv --testbox --colors=always --filter=\"$ZED_SYMBOL\"",
+    "tags": ["phpunit-test"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "never",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "Test: File (docker)",
+    "command": "docker compose exec -T indirect-lending php artisan test -vvv --testbox --colors=always \"$ZED_RELATIVE_FILE\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "never",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "Test: Full parallel (docker)",
+    "command": "docker compose exec -T indirect-lending php -d xdebug.mode=off -d memory_limit=-1 -d max_execution_time=0 vendor/bin/pest --parallel -vvv --compact --colors=always --passthru-php=\"'-d' 'memory_limit=-1' '-d' 'max_execution_time=0' '-d' 'xdebug.mode=off'\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "never",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "Test: Full parallel/bail (docker)",
+    "command": "docker compose exec -T indirect-lending php -d xdebug.mode=off -d memory_limit=-1 -d max_execution_time=0 vendor/bin/pest --parallel -vvv --compact --colors=always --bail --passthru-php=\"'-d' 'memory_limit=-1' '-d' 'max_execution_time=0' '-d' 'xdebug.mode=off'\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "never",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "Test: Full parallel/coverage (PCOV)",
+    "command": "docker compose exec -T indirect-lending sh -lc \"mkdir -p .dev/phpunit/coverage && php -d memory_limit=-1 -d max_execution_time=0 -d xdebug.mode=off -d pcov.enabled=1 -d pcov.directory=/var/www/html vendor/bin/pest --parallel -vvv --compact --colors=always --coverage-clover=.dev/phpunit/coverage/clover.xml --passthru-php=\\\"'-d' 'memory_limit=-1' '-d' 'max_execution_time=0' '-d' 'xdebug.mode=off' '-d' 'pcov.enabled=1' '-d' 'pcov.directory=/var/www/html'\\\"\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "never",
+    "allow_concurrent_runs": false
+  }
+]

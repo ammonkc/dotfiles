@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Copy the IDL Zed tasks template into one IDL worktree.
+# Usage: idl-worktree-setup [WORKTREE_PATH]
+
+set -euo pipefail
+
+worktree_input="${1:-${ZED_WORKTREE_ROOT:-}}"
+if [[ -z "$worktree_input" || ! -d "$worktree_input" ]]; then
+  echo "Pass an existing IDL worktree path (or run from Zed)." >&2
+  exit 1
+fi
+
+base_dir="${IDL_WORKTREES_DIR:-$HOME/Developer/code/indirect}"
+if [[ ! -d "$base_dir" ]]; then
+  echo "IDL worktrees directory not found: $base_dir" >&2
+  exit 1
+fi
+
+worktree="$(cd "$worktree_input" && pwd -P)"
+base_dir="$(cd "$base_dir" && pwd -P)"
+if [[ "${worktree%/*}" != "$base_dir" ]]; then
+  echo "Not a worktree directly under $base_dir: $worktree" >&2
+  exit 1
+fi
+
+git_root="$(git -C "$worktree" rev-parse --show-toplevel 2>/dev/null)" || {
+  echo "Not a Git worktree: $worktree" >&2
+  exit 1
+}
+if [[ "$(cd "$git_root" && pwd -P)" != "$worktree" ]]; then
+  echo "Not a Git worktree root: $worktree" >&2
+  exit 1
+fi
+
+template="${IDL_ZED_TASKS_TEMPLATE:-$HOME/.config/zed/templates/idl-tasks.json}"
+if [[ ! -f "$template" ]]; then
+  echo "IDL Zed tasks template not found: $template" >&2
+  echo "Install the zed dotfiles package first." >&2
+  exit 1
+fi
+
+tasks_dir="$worktree/.zed"
+if [[ -L "$tasks_dir" ]]; then
+  echo "Refusing to write through a symlinked .zed directory: $tasks_dir" >&2
+  exit 1
+fi
+mkdir -p "$tasks_dir"
+target="$tasks_dir/tasks.json"
+
+if [[ -f "$target" ]] && cmp -s "$template" "$target"; then
+  echo "IDL Zed tasks already current: $target"
+  exit 0
+fi
+
+temp="$(mktemp "$tasks_dir/.tasks.json.XXXXXX")"
+trap '[[ ! -e "$temp" ]] || rm -f "$temp"' EXIT
+cp -p "$template" "$temp"
+
+if [[ -e "$target" || -L "$target" ]]; then
+  backup="$(mktemp "$target.backup.XXXXXX")"
+  cp -p "$target" "$backup"
+  echo "Saved previous tasks: $backup"
+fi
+
+mv -f "$temp" "$target"
+echo "Installed IDL Zed tasks: $target"

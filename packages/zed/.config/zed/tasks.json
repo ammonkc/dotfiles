@@ -1,6 +1,7 @@
 // Zed tasks — https://zed.dev/docs/tasks
 // create_worktree runs the same agnostic setup script you'd use from a terminal.
 // Args are optional hints; empty expansions are ignored by the script.
+// Run "setup IDL worktree tasks" manually in an IDL worktree to copy the current IDL task template.
 [
   {
     "label": "docker-up",
@@ -30,5 +31,17 @@
     "reveal": "no_focus",
     "hide": "on_success",
     "allow_concurrent_runs": true
+  },
+  {
+    "label": "setup IDL worktree tasks",
+    "command": "idl-worktree-setup",
+    "args": ["$ZED_WORKTREE_ROOT"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "env": {
+      "FASTFETCH_STARTUP": "false"
+    },
+    "reveal": "always",
+    "hide": "on_success",
+    "allow_concurrent_runs": false
   }
 ]
