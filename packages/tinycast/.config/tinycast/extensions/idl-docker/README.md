@@ -14,6 +14,12 @@ Both extension commands call `~/.local/bin/idl-up` and `~/.local/bin/idl-down`; 
 
 Tinycast currently reads Raycast script titles and argument prompts, but ignores icon headers and dropdown choices. Enter values such as Docker task names as text when prompted.
 
+## Script command confirmations
+
+Tinycast imports Raycast `compact` and `fullOutput` modes with **Show output** enabled, which opens an output window instead of showing a brief success message. In Tinycast **Settings > Commands**, edit an imported command and turn **Show output** off and **Show confirmation** on to show a brief message after it succeeds. Tinycast uses the script's last stdout line for that message. Leave **Show output** on for commands whose full logs you need to read; a run with an output window does not also show a confirmation.
+
+Changing a script's `@raycast.mode` header or importing the folder again does not change settings on an already imported command. Edit that command in Tinycast. Failures are reported separately by Tinycast.
+
 ## Commands
 
 - **Start Containers**: choose a worktree; optionally add profiles such as `queue, worker`.
