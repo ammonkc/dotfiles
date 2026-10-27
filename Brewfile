@@ -120,7 +120,9 @@ if OS.mac?
 
     # Code Editors
     cask 'agentasticai/tap/dev' # Native macOS code editor
+    cask 'calyx'               # Terminal for running and supervising coding agents
     cask 'claude-code'         # Terminal-based AI coding assistant
+    cask 'cmux'                # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
     cask 'codex'               # OpenAI's coding agent that runs in your terminal
     cask 'opencode-desktop'    # AI coding agent desktop client
     cask 'stablyai/orca/orca'  # IDE for orchestrating AI coding agents across terminals and worktrees
