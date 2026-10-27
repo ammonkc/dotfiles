@@ -119,6 +119,7 @@ dotfiles git:status         # Git status of dotfiles repo
 dotfiles git:pull           # Pull latest changes
 dotfiles git:push           # Push changes
 dotfiles dev:status         # Show dirty repositories and worktrees under ~/Developer
+dotfiles dev:handoff        # Print a Markdown summary of the current worktree
 
 # Utilities
 dotfiles backup:list        # List backups
@@ -132,6 +133,22 @@ Development directories created by `dotfiles dev:setup` are
 `~/Developer/{code,documentation,repos,scripts,worktrees}`. The `scripts/`
 directory is for your own scripts; the dotfiles command wrappers remain under
 `~/.local/bin`.
+
+`git-worktree-setup` uses a `.worktree-copy` file in the primary checkout.
+List one repository-relative file or directory per line, with `#` for comments.
+Only those paths are copied into a new worktree, and existing files are kept.
+Without a manifest, nothing is
+copied. Use `git-worktree-setup -n` to preview a copy, or `--all` to explicitly
+copy every ignored and untracked file as before. The Zed worktree creation hook
+uses the same script.
+
+From a project worktree, `dotfiles dev:handoff` prints a Markdown handoff.
+Set `SUMMARY`, `CHECKS`, and `NEXT` to record details the Git history cannot
+provide, or `REPO` to select another worktree. For example:
+
+```bash
+dotfiles dev:handoff SUMMARY='Implemented feature' CHECKS='task test passed' NEXT='Review PR' > /tmp/worktree-handoff.md
+```
 
 ## 🎨 Customization
 

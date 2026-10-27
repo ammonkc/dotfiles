@@ -195,6 +195,24 @@ tasks:
       Shows dirty repositories without fetching or pulling.
     cmd: bash "{{.ROOT_DIR}}/scripts/develop-status.sh" "{{.DEV_DIR}}"
 
+  handoff:
+    desc: Print a Markdown handoff for a Git worktree
+    summary: |
+      Summarize branch, base commit, changed files, and uncommitted work.
+      Defaults to the directory where you invoked Task, including through the
+      dotfiles wrapper. Set REPO to choose another worktree.
+      Supply SUMMARY, CHECKS, NEXT, or BASE to add handoff details.
+      Example: dotfiles dev:handoff CHECKS="task test passed" NEXT="Review PR"
+    vars:
+      REPO: '{{.REPO | default .USER_WORKING_DIR}}'
+    env:
+      HANDOFF_REPO: '{{.REPO}}'
+      HANDOFF_SUMMARY: '{{.SUMMARY | default ""}}'
+      HANDOFF_CHECKS: '{{.CHECKS | default ""}}'
+      HANDOFF_NEXT: '{{.NEXT | default ""}}'
+      HANDOFF_BASE: '{{.BASE | default ""}}'
+    cmd: bash "{{.ROOT_DIR}}/scripts/develop-handoff.sh" "$HANDOFF_REPO"
+
   # ============================================================================
   # Internal Tasks
   # ============================================================================

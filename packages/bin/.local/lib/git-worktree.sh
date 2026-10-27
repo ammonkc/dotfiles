@@ -132,9 +132,10 @@ _gwt_resolve_paths() {
 }
 
 # Copy null-delimited relative paths from SRC to DEST via rsync (or cp fallback)
-# Usage: _gwt_copy_paths SRC DEST DRY_RUN VERBOSE  (paths on stdin, NUL-separated)
+# Usage: _gwt_copy_paths SRC DEST DRY_RUN VERBOSE [NO_CLOBBER]
+# Paths arrive on stdin, NUL-separated.
 _gwt_copy_paths() {
-  local src="$1" dest="$2" dry_run="$3" verbose="$4"
+  local src="$1" dest="$2" dry_run="$3" verbose="$4" no_clobber="${5:-false}"
   local -a paths=()
 
   local path
@@ -153,7 +154,11 @@ _gwt_copy_paths() {
     return 0
   fi
 
-  local -a rsync_flags=(-a)
+  # --files-from disables the recursion normally implied by -a.
+  local -a rsync_flags=(-a -r)
+  if [[ "$no_clobber" == true ]]; then
+    rsync_flags+=(--ignore-existing)
+  fi
   if [[ "$verbose" == true ]]; then
     rsync_flags+=(--progress -v)
   fi
@@ -162,8 +167,21 @@ _gwt_copy_paths() {
     printf '%s\0' "${paths[@]}" | rsync "${rsync_flags[@]}" --from0 --files-from=- "$src/" "$dest/"
   else
     for path in "${paths[@]}"; do
-      mkdir -p "$dest/$(dirname "$path")"
-      cp -a "$src/$path" "$dest/$path"
+      if [[ -d "$src/$path" ]]; then
+        mkdir -p "$dest/$path"
+        if [[ "$no_clobber" == true ]]; then
+          cp -an "$src/$path/." "$dest/$path/"
+        else
+          cp -a "$src/$path/." "$dest/$path/"
+        fi
+      else
+        mkdir -p "$dest/$(dirname "$path")"
+        if [[ "$no_clobber" == true ]]; then
+          cp -an "$src/$path" "$dest/$path"
+        else
+          cp -a "$src/$path" "$dest/$path"
+        fi
+      fi
     done
   fi
 }
