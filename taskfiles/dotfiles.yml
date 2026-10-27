@@ -220,9 +220,12 @@ tasks:
   tinycast:extension:
     desc: Build the IDL Docker extension for import into Tinycast
     summary: |
-      Installs dependencies and builds a local command bundle.
+      Installs dependencies and builds a command bundle in the checkout running this task.
+      After deploying dotfiles, run `dotfiles dot:tinycast:extension` to build it
+      under ~/.dotfiles. Builds from a development checkout stay in that checkout.
+      The output is not stowed to ~/.config/tinycast/extensions/idl-docker.
       In Tinycast Settings > Extensions, enable extensions and choose Add from folder.
-      Select the build directory printed by this task.
+      Select the absolute build directory printed by this task.
     vars:
       EXTENSION_DIR: '{{.ROOT_DIR}}/packages/tinycast/.config/tinycast/extensions/idl-docker'
     preconditions:
@@ -233,7 +236,7 @@ tasks:
     cmds:
       - cd "{{.EXTENSION_DIR}}" && npm ci
       - cd "{{.EXTENSION_DIR}}" && npm run build
-      - echo "In Tinycast Settings > Extensions > Add from folder, select {{.EXTENSION_DIR}}/build"
+      - 'echo "Tinycast import folder (from this checkout): {{.EXTENSION_DIR}}/build"'
 
   # ============================================================================
   # Health Check / Doctor Tasks

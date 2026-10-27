@@ -4,9 +4,9 @@ This Raycast API extension runs in Tinycast. It lists IDL worktrees and starts o
 
 ## Setup
 
-1. Stow the Tinycast script commands with `task dot:restow PACKAGE=tinycast` (or run the normal dotfiles install task). Stow excludes the extension source and dependencies.
-2. Build the extension with `task dot:tinycast:extension`. This installs dependencies and writes a bundle to `build/` in this directory.
-3. In Tinycast **Settings > Extensions**, enable extensions, choose **Add from folder**, and select this directory's `build/` folder. Tinycast copies the bundle into its library. Rebuild and add the folder again after source changes.
+1. Commit and push changes from `~/Developer/repos/ammonkc/dotfiles`, then update the deployed checkout at `~/.dotfiles` and run `dotfiles dot:install` to stow the Tinycast script commands. Stow excludes the extension source and dependencies.
+2. Run `dotfiles dot:tinycast:extension`. The `dotfiles` wrapper runs Task in `~/.dotfiles`, so the bundle is built at `~/.dotfiles/packages/tinycast/.config/tinycast/extensions/idl-docker/build/`. The task prints the absolute path. When developing before deployment, `task dot:tinycast:extension` in the development checkout builds a separate bundle there.
+3. In Tinycast **Settings > Extensions**, enable extensions, choose **Add from folder**, and select the build folder printed by the task. Tinycast copies the bundle into its Application Support directory. `~/.config/tinycast/extensions/idl-docker/build/` is not the build location. Rebuild and add the folder again after source changes.
 4. Set **Worktrees Directory** to the parent of your IDL worktrees. The default is `~/Developer/code/indirect`; **Default Worktree** is `main`; **Allegro Domain** defaults to `indirect.test`.
 5. In Tinycast **Settings > Commands**, enable custom commands, choose **Import Raycast Scripts**, and select `~/.config/tinycast/script-commands`. Repeat the import after adding new scripts.
 
