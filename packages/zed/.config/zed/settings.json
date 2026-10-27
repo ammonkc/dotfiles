@@ -109,6 +109,20 @@
   },
   "auto_signature_help": true,
   "languages": {
+    "JSON": {
+      "formatter": "prettier",
+      "format_on_save": "on",
+    },
+    "XML": {
+      "formatter": {
+        "external": {
+          "command": "/usr/bin/xmllint",
+          "arguments": ["--format", "-"],
+        },
+      },
+      // xmllint adds an XML declaration to documents that do not have one.
+      "format_on_save": "off",
+    },
     "PHP": {
       "indent_guides": {
         "background_coloring": "disabled",
