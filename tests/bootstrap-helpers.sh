@@ -13,7 +13,7 @@ test "$(grep -c '^# managed$' "$target")" -eq 1
 test "$(grep -c '^TOKEN=second$' "$target")" -eq 1
 ! grep -q 'TOKEN=first' "$target"
 grep -q '^KEEP=1$' "$target"
-test "$(stat -f %Lp "$target" 2>/dev/null || stat -c %a "$target")" = 600
+test "$(stat -c %a "$target" 2>/dev/null || stat -f %Lp "$target")" = 600
 
 # Older work setup appended this setting inside the personal secrets section.
 # Refreshing that section must move it ahead of the marker and keep it once.
