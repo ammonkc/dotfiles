@@ -1,7 +1,7 @@
 # Dotfiles project guidance
 
 Work on dotfiles in `~/Developer/repos/ammonkc/dotfiles`. Commit and push there,
-then update `~/.dotfiles` for deployment. Stow links home configs from the
+then it is deployed to `~/.dotfiles` via update script and tasks. Stow links home configs from the
 deployed checkout. Do not edit `~/.dotfiles` as a substitute for development.
 
 ## Structure
