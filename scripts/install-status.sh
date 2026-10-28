@@ -1,7 +1,6 @@
 #!/bin/bash
 # Read-only, rerunnable checklist for a fresh machine.
 set -u
-checkout="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 pending=0
 check() {
   if eval "$2" >/dev/null 2>&1; then

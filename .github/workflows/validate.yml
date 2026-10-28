@@ -6,8 +6,8 @@ jobs:
   static:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: arduino/setup-task@v2
+      - uses: actions/checkout@v7
+      - uses: arduino/setup-task@v3
       - name: Install validation tools
         run: sudo apt-get update && sudo apt-get install -y stow shellcheck jq zsh rsync
       - name: Shell and Taskfile checks
