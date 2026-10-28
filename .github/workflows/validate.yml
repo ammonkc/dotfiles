@@ -44,6 +44,13 @@ jobs:
           npm run lint
           npm test
           npm run build
+      - name: Tinycast Obsidian Implementation Prompts
+        working-directory: packages/tinycast/.config/tinycast/extensions/obsidian-prompts
+        run: |
+          npm ci --no-audit --no-fund
+          npm run lint
+          npm test
+          npm run build
       - name: Shared Raycast Developer Utilities source
         run: test "$(realpath packages/raycast/extensions/developer-utilities)" = "$(realpath packages/tinycast/.config/tinycast/extensions/developer-utilities)"
       - name: Tinycast IDL Docker

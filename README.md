@@ -110,7 +110,7 @@ dotfiles mac:op:setup       # Setup 1Password SSH agent
 dotfiles dev:setup          # Setup development directories
 dotfiles dev:list           # List development projects
 dotfiles dev:clone REPO=url # Clone repo to organized location
-dotfiles dot:tinycast:extensions # Build both Tinycast extensions for import
+dotfiles dot:tinycast:extensions # Build all Tinycast extensions for import
 dotfiles dot:raycast:extension   # Run Raycast IDL Docker (keep task running)
 dotfiles dot:raycast:utilities   # Run Developer Utilities in Raycast (keep running)
 

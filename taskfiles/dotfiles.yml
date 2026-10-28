@@ -286,11 +286,28 @@ tasks:
       - cd "{{.EXTENSION_DIR}}" && npm run build
       - 'echo "Tinycast import folder (from this checkout): {{.EXTENSION_DIR}}/build"'
 
+  tinycast:prompts:
+    desc: Build Obsidian Implementation Prompts for Tinycast
+    summary: |
+      Builds a searchable list of captured implementation prompts, newest first.
+      Import the printed build folder in Tinycast Settings > Extensions.
+      The extension detects the open Obsidian vault; set Vault Path to override it.
+    vars:
+      EXTENSION_DIR: '{{.ROOT_DIR}}/packages/tinycast/.config/tinycast/extensions/obsidian-prompts'
+    preconditions:
+      - sh: command -v npm >/dev/null 2>&1
+        msg: "npm is not installed. Install Node.js first."
+    cmds:
+      - cd "{{.EXTENSION_DIR}}" && npm ci
+      - cd "{{.EXTENSION_DIR}}" && npm run build
+      - 'echo "Tinycast import folder (from this checkout): {{.EXTENSION_DIR}}/build"'
+
   tinycast:extensions:
-    desc: Build both Tinycast extensions for import
+    desc: Build all Tinycast extensions for import
     cmds:
       - task: tinycast:extension
       - task: tinycast:utilities
+      - task: tinycast:prompts
 
   # ============================================================================
   # Health Check / Doctor Tasks
