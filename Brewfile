@@ -144,6 +144,7 @@ if OS.mac?
     cask 'dockdoor'            # Window peeking utility app
     cask 'clop'                # Image, video and clipboard optimiser
     cask 'easydmg'             # One click DMG installs
+    cask 'finetune'            # Per-application volume mixer, equalizer, and audio router
     cask 'fluidvoice'          # Offline voice-to-text dictation app with AI enhancement
     cask 'lab421/tap/forel'    # File-automation app that watches folders and runs rules
     cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
@@ -163,14 +164,19 @@ if OS.mac?
     cask 'keycastr'            # Open-source keystroke visualiser
     cask 'latest'              # Utility that shows the latest app updates
     cask 'leader-key'          # Keyboard Application launcher
+    cask 'macpacker'           # Archive manager
+    cask 'macusb'              # Tool to create bootable USB installers
     cask 'monitorcontrol'      # Tool to control external monitor brightness & volume
     cask 'moom'                # Utility to move and zoom windows—on one display
     cask 'orbstack'            # Replacement for Docker Desktop
     cask 'omnidisksweeper'     # Finds large, unwanted files and deletes them
     cask 'paste'               # Limitless clipboard
+    cask 'momenbasel/pesty/pesty' # Free, open-source clipboard manager inspired by Paste
     cask 'pika'                # Colour picker for colours onscreen
+    cask 'puremac'             # Open-source application manager and system cleaner
     cask 'raycast'             # Control your tools with a few keystrokes
     cask 'sequel-ace'          # MySQL/MariaDB database management
+    cask 'saffsanity/sill/sill' # Streams windows to an iPhone or iPad with touch, Pencil and keyboard control
     cask 'slack'               # Team communication and collaboration software
     cask 'subler'              # Mux and tag mp4 files
     cask 'tableplus'           # Native GUI tool for relational databases
