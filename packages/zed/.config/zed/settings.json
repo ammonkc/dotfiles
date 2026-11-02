@@ -142,7 +142,7 @@
       },
       "language_servers": ["intelephense", "laravel", "!phpactor", "!phptools", "!phpcs"],
       // Optional: configure auto-format on save
-      "format_on_save": "on",
+      "format_on_save": "off",
     },
     "Markdown": {
       "soft_wrap": "editor_width",

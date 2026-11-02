@@ -1,4 +1,4 @@
-        # Taps
+# Taps
 tap 'shivammathur/php'
 tap 'shivammathur/extensions'
 
@@ -175,6 +175,7 @@ if OS.mac?
     cask 'pika'                # Colour picker for colours onscreen
     cask 'puremac'             # Open-source application manager and system cleaner
     cask 'raycast'             # Control your tools with a few keystrokes
+    cask 'repobar'             # Menu bar dashboard for GitHub repository health
     cask 'sequel-ace'          # MySQL/MariaDB database management
     cask 'saffsanity/sill/sill' # Streams windows to an iPhone or iPad with touch, Pencil and keyboard control
     cask 'slack'               # Team communication and collaboration software
