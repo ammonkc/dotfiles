@@ -146,6 +146,7 @@ if OS.mac?
     cask 'easydmg'             # One click DMG installs
     cask 'finetune'            # Per-application volume mixer, equalizer, and audio router
     cask 'fluidvoice'          # Offline voice-to-text dictation app with AI enhancement
+    cask 'dufu1991/tap/foldgit' # Native, lightweight Git client with grouped repositories and worktrees
     cask 'lab421/tap/forel'    # File-automation app that watches folders and runs rules
     cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
     cask 'github'              # GitHub Desktop
@@ -170,10 +171,12 @@ if OS.mac?
     cask 'moom'                # Utility to move and zoom windows—on one display
     cask 'orbstack'            # Replacement for Docker Desktop
     cask 'omnidisksweeper'     # Finds large, unwanted files and deletes them
+    cask 'opendisk'            # Disk space analyser
     cask 'paste'               # Limitless clipboard
     cask 'momenbasel/pesty/pesty' # Free, open-source clipboard manager inspired by Paste
     cask 'pika'                # Colour picker for colours onscreen
     cask 'puremac'             # Open-source application manager and system cleaner
+    cask 'purge'               # Clears caches and junk files by moving them to the Trash
     cask 'raycast'             # Control your tools with a few keystrokes
     cask 'repobar'             # Menu bar dashboard for GitHub repository health
     cask 'sequel-ace'          # MySQL/MariaDB database management
