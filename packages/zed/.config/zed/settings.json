@@ -108,6 +108,14 @@
     "show": "never",
   },
   "auto_signature_help": true,
+  "lsp": {
+    "covhl": {
+      "binary": {
+        "path": "/Users/ammon.casey/Developer/repos/ammonkc/zed-test-coverage-highlight/server/dist/covhl",
+        "arguments": []
+      }
+    }
+  },
   "languages": {
     "JSON": {
       "formatter": "prettier",
