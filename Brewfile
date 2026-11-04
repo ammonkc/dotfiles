@@ -182,6 +182,7 @@ if OS.mac?
     cask 'sequel-ace'          # MySQL/MariaDB database management
     cask 'saffsanity/sill/sill' # Streams windows to an iPhone or iPad with touch, Pencil and keyboard control
     cask 'slack'               # Team communication and collaboration software
+    cask 'stats'               # System monitor for the menu bar
     cask 'subler'              # Mux and tag mp4 files
     cask 'tableplus'           # Native GUI tool for relational databases
     cask 'tailscale-app'       # Mesh VPN based on WireGuard
