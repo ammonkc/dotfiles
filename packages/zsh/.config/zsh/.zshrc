@@ -17,11 +17,11 @@ zstyle ':zim:git-info' verbose 'yes'
 ZIM_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}/zim
 ZIM_CONFIG_FILE=${XDG_CONFIG_HOME:-${HOME}/.config}/zimrc
 # Install missing modules and update ${ZIM_HOME}/init.zsh if missing or outdated.
-if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE} ]]; then
+if [[ -f ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh && ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE} ]]; then
   source ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh init
 fi
 # Initialize modules.
-source ${ZIM_HOME}/init.zsh
+[[ -f ${ZIM_HOME}/init.zsh ]] && source ${ZIM_HOME}/init.zsh
 
 # ----------------------------
 # ---- Setup vi Mode ---------

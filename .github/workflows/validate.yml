@@ -2,74 +2,97 @@ name: Validate dotfiles
 on:
   push:
   pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  static:
+  lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.24'
+          cache: false
+      - name: Install lint tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck zsh
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+      - uses: arduino/setup-task@v3
+        with:
+          repo-token: ${{ github.token }}
+      - run: task lint
+      - run: actionlint
+      - run: task --list
+  dotfiles:
+    name: ${{ matrix.suite }} (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15]
+        suite: [shell, stow, config]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: tests/requirements.txt
+      - uses: arduino/setup-task@v3
+        with:
+          repo-token: ${{ github.token }}
+      - name: Install Linux validation tools
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y stow jq zsh rsync ripgrep coreutils
+          sudo locale-gen en_US.UTF-8
+      - name: Install macOS validation tools
+        if: runner.os == 'macOS'
+        run: |
+          test "$(uname -m)" = arm64
+          brew install stow jq zsh rsync ripgrep coreutils
+          echo "$(brew --prefix coreutils)/libexec/gnubin" >> "$GITHUB_PATH"
+      - run: python3 -m pip install -r tests/requirements.txt
+      - run: task test:${{ matrix.suite }}
+  extensions:
+    name: Extension (${{ matrix.extension }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        extension:
+          - packages/tinycast/.config/tinycast/extensions/developer-utilities
+          - packages/tinycast/.config/tinycast/extensions/obsidian-prompts
+          - packages/tinycast/.config/tinycast/extensions/idl-docker
+          - packages/raycast/extensions/idl-docker
+    defaults:
+      run:
+        working-directory: ${{ matrix.extension }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - uses: arduino/setup-task@v3
-      - name: Install validation tools
-        run: sudo apt-get update && sudo apt-get install -y stow shellcheck jq zsh rsync
-      - name: Shell and Taskfile checks
-        run: |
-          bash -n bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/macos.sh scripts/macos-preview.sh scripts/dotfiles-plan.sh scripts/dotfiles-verify.sh scripts/system-check.sh scripts/develop-status.sh scripts/develop-handoff.sh scripts/secret-block.sh scripts/install-status.sh packages/bin/.local/bin/idl-up packages/bin/.local/bin/idl-down packages/bin/.local/bin/idl-worktree-setup packages/bin/.local/bin/git-worktree-setup packages/bin/.local/lib/git-worktree.sh packages/tinycast/.config/tinycast/script-commands/idl-up.sh packages/tinycast/.config/tinycast/script-commands/idl-down.sh packages/raycast/.config/raycast/script-commands/idl-up.sh packages/raycast/.config/raycast/script-commands/idl-down.sh tests/bootstrap-helpers.sh tests/architecture.sh tests/macos-defaults.sh tests/task-gaps.sh tests/develop-handoff.sh tests/worktree-compat.sh tests/idl-tinycast-wrappers.sh tests/idl-profiles.sh tests/stow-extension-ignore.sh tests/idl-zed-worktree-setup.sh
-          shellcheck -S warning bin/install scripts/bootstrap.sh scripts/download-installer.sh scripts/secret-block.sh scripts/install-status.sh
-          task --list >/dev/null
-          bash tests/bootstrap-helpers.sh
-          bash tests/architecture.sh
-          bash tests/macos-defaults.sh
-          bash tests/task-gaps.sh
-          bash tests/develop-handoff.sh
-          bash tests/neovim-failure.sh
-          zsh -n packages/zsh/.config/zsh/functions/set_poshcontext
-          bash tests/posh-context.sh
-          bash tests/worktree-compat.sh
-          bash tests/idl-tinycast-wrappers.sh
-          bash tests/idl-profiles.sh
-          bash tests/stow-extension-ignore.sh
-          bash tests/idl-zed-worktree-setup.sh
-      - name: Stow dry run
-        run: |
-          target="$(mktemp -d)"
-          trap 'rm -rf "$target"' EXIT
-          mkdir -p "$target/.config" "$target/.local"
-          for package in packages/*; do
-            test -d "$package" || continue
-            stow -n --no-folding -d packages -t "$target" "$(basename "$package")"
-          done
-      - name: Tinycast Developer Utilities
-        working-directory: packages/tinycast/.config/tinycast/extensions/developer-utilities
-        run: |
-          npm ci --no-audit --no-fund
-          npm run lint
-          npm test
-          npm run build
-      - name: Tinycast Obsidian Implementation Prompts
-        working-directory: packages/tinycast/.config/tinycast/extensions/obsidian-prompts
-        run: |
-          npm ci --no-audit --no-fund
-          npm run lint
-          npm test
-          npm run build
-      - name: Shared Raycast Developer Utilities source
-        run: test "$(realpath packages/raycast/extensions/developer-utilities)" = "$(realpath packages/tinycast/.config/tinycast/extensions/developer-utilities)"
-      - name: Tinycast IDL Docker
-        working-directory: packages/tinycast/.config/tinycast/extensions/idl-docker
-        run: |
-          npm ci --no-audit --no-fund
-          npm run lint
-          npm run build
-      - name: Raycast IDL Docker
-        working-directory: packages/raycast/extensions/idl-docker
-        run: |
-          npm install --no-audit --no-fund
-          npm run lint
-          npm run build
+          cache: npm
+          cache-dependency-path: ${{ matrix.extension }}/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
   window-edges:
-    runs-on: macos-14
+    runs-on: macos-15
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: packages/tinycast/.config/tinycast/extensions/window-edges
@@ -78,6 +101,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: packages/tinycast/.config/tinycast/extensions/window-edges/package-lock.json
+      - run: test "$(uname -m)" = arm64
       - run: npm ci --no-audit --no-fund
       - run: npm run lint
       - run: npm test

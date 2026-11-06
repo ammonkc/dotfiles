@@ -63,7 +63,8 @@
   "scripts": {
     "build": "ray build -e dist -o build --non-interactive",
     "fix-lint": "eslint src --fix && prettier --write src",
-    "lint": "eslint src && prettier --check src"
+    "lint": "eslint src && prettier --check src",
+    "test": "tsc && node --test test/*.cjs"
   },
   "engines": {
     "node": ">=22.22.2"

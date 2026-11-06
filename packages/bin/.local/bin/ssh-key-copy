@@ -18,7 +18,13 @@ elif [[ -f "$ssh_dir/id_rsa.pub" ]]; then
 else
     echo "No SSH public key found"
     echo "Available keys:"
-    ls -1 "$ssh_dir"/*.pub 2>/dev/null | xargs -I{} basename {} .pub || echo "  (none)"
+    found=false
+    for public_key in "$ssh_dir"/*.pub; do
+        [[ -f "$public_key" ]] || continue
+        basename "$public_key" .pub
+        found=true
+    done
+    "$found" || echo "  (none)"
     exit 1
 fi
 

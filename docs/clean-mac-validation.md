@@ -11,4 +11,4 @@ Run this check in a disposable Apple Silicon macOS VM or fresh test account befo
 7. Check `task doctor`, a fresh shell, launcher script commands, and the Tinycast extension import workflow separately.
 8. Review `task mac:preview:defaults` against `scripts/macos.sh`. If applying preferences in the disposable account, confirm that both Desktop snapshots were created, optional failures are listed, and Ethernet settings and Launch Services quarantine remain untouched.
 
-The Linux path remains a secondary, manually checked setup. CI runs syntax, helper failure-path, and Stow checks; it does not install Homebrew or access 1Password.
+The Linux installation path remains a secondary, manually checked setup. CI runs isolated shell, Stow, installation lifecycle, and configuration tests on Ubuntu and Apple Silicon macOS, plus extension lint, tests, and builds. It does not run the bootstrap, install the Homebrew bundle, or access 1Password. See [Automated testing](testing.md) for local commands and coverage.

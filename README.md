@@ -46,7 +46,10 @@ For an interactive menu of secondary setup steps on macOS, run `dotfiles system:
 
 ### **Linux** (Debian/Ubuntu or Arch)
 
-Should work, but is not really tested at this time.
+Linux has automated helper, Stow, and configuration coverage; full installation still requires manual validation.
+
+For development, run `task lint` and `task test` in this checkout. See
+[Automated testing](docs/testing.md) for dependencies, focused suites, and extension checks.
 
 **What gets installed:**
 - Homebrew (macOS) or native package managers (Linux)

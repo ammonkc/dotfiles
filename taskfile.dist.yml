@@ -54,6 +54,26 @@ includes:
     taskfile: ./taskfiles/system.yml
 
 tasks:
+  test:
+    desc: Run all isolated dotfiles test suites
+    cmd: /bin/bash "{{.ROOT_DIR}}/scripts/test.sh"
+
+  test:shell:
+    desc: Run isolated shell helper tests
+    cmd: /bin/bash "{{.ROOT_DIR}}/scripts/test.sh" shell
+
+  test:stow:
+    desc: Run isolated Stow and installation tests
+    cmd: /bin/bash "{{.ROOT_DIR}}/scripts/test.sh" stow
+
+  test:config:
+    desc: Validate application configs and isolated Zsh startup
+    cmd: /bin/bash "{{.ROOT_DIR}}/scripts/test.sh" config
+
+  lint:
+    desc: Check shell syntax and ShellCheck warnings
+    cmd: python3 "{{.ROOT_DIR}}/scripts/check-shells.py" --lint
+
   default:
     cmd: task -l
     silent: true
