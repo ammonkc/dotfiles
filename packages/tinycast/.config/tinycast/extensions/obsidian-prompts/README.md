@@ -1,5 +1,11 @@
 # Obsidian Implementation Prompts for Tinycast
 
+Build tooling requires Node.js 22.22.2 or newer.
+
+TypeScript stays on 6.0, the latest series supported by Raycast's ESLint config.
+A scoped npm override upgrades tooling dependencies on minimatch 10 to patched
+minimatch 11 (GHSA-g3hv-75wg-m249); remove it when upstream dependencies migrate.
+
 Search implementation prompts captured by `ammonkc/claude-fiyah`'s
 `obsidian-capture` mod. Notes appear newest first by their `created` date
 (MM/DD/YYYY or ISO), with filename date and filesystem creation time as fallbacks.

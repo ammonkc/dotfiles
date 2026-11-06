@@ -36,20 +36,26 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.64.0"
+    "@raycast/api": "^2.11.1"
   },
   "devDependencies": {
-    "@raycast/eslint-config": "^1.0.8",
-    "@types/node": "20.10.0",
-    "@types/react": "19.0.10",
-    "eslint": "^8.54.0",
-    "prettier": "^3.1.0",
-    "typescript": "^5.3.2"
+    "@raycast/eslint-config": "^2.2.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3"
   },
   "scripts": {
     "build:native": "mkdir -p assets && swiftc -O -target arm64-apple-macosx13.0 native/WindowEdges.swift -o assets/window-edges",
     "build": "npm run build:native && ray build -e dist -o build --non-interactive",
-    "lint": "eslint src --ext .ts && prettier --check src",
+    "lint": "eslint src && prettier --check src",
     "test": "tsc && npm run build:native && assets/window-edges --test"
+  },
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "overrides": {
+    "minimatch@^10.0.0": "^11.0.5"
   }
 }

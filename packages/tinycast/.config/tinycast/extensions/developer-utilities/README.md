@@ -1,5 +1,11 @@
 # Developer Utilities for Tinycast and Raycast
 
+Build tooling requires Node.js 22.22.2 or newer.
+
+TypeScript stays on 6.0, the latest series supported by Raycast's ESLint config.
+A scoped npm override upgrades tooling dependencies on minimatch 10 to patched
+minimatch 11 (GHSA-g3hv-75wg-m249); remove it when upstream dependencies migrate.
+
 This Raycast API extension is shared by both launchers. The Raycast path
 `packages/raycast/extensions/developer-utilities` links to this source tree,
 so command and test changes apply to both.
