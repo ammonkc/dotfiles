@@ -302,12 +302,28 @@ tasks:
       - cd "{{.EXTENSION_DIR}}" && npm run build
       - 'echo "Tinycast import folder (from this checkout): {{.EXTENSION_DIR}}/build"'
 
+  tinycast:window-edges:
+    desc: Build Window Edges for Tinycast (Apple Silicon macOS)
+    summary: |
+      Builds four commands that move the focused window to a usable screen edge.
+      Import the printed build folder in Tinycast Settings > Extensions.
+    vars:
+      EXTENSION_DIR: '{{.ROOT_DIR}}/packages/tinycast/.config/tinycast/extensions/window-edges'
+    preconditions:
+      - sh: command -v npm >/dev/null 2>&1 && command -v swiftc >/dev/null 2>&1
+        msg: "Install Node.js and Xcode Command Line Tools first."
+    cmds:
+      - cd "{{.EXTENSION_DIR}}" && npm ci
+      - cd "{{.EXTENSION_DIR}}" && npm run build
+      - 'echo "Tinycast import folder (from this checkout): {{.EXTENSION_DIR}}/build"'
+
   tinycast:extensions:
     desc: Build all Tinycast extensions for import
     cmds:
       - task: tinycast:extension
       - task: tinycast:utilities
       - task: tinycast:prompts
+      - task: tinycast:window-edges
 
   # ============================================================================
   # Health Check / Doctor Tasks

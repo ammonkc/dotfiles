@@ -1,0 +1,55 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "window-edges",
+  "title": "Window Edges",
+  "description": "Move the focused window to a display edge without resizing",
+  "icon": "extension-icon.png",
+  "author": "ammonkc",
+  "categories": [
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "move-left",
+      "title": "Move Window to Left Edge",
+      "description": "Move to the usable left screen edge, preserving size and the other axis",
+      "mode": "no-view"
+    },
+    {
+      "name": "move-right",
+      "title": "Move Window to Right Edge",
+      "description": "Move to the usable right screen edge, preserving size and the other axis",
+      "mode": "no-view"
+    },
+    {
+      "name": "move-top",
+      "title": "Move Window to Top Edge",
+      "description": "Move to the usable top screen edge, preserving size and the other axis",
+      "mode": "no-view"
+    },
+    {
+      "name": "move-bottom",
+      "title": "Move Window to Bottom Edge",
+      "description": "Move to the usable bottom screen edge, preserving size and the other axis",
+      "mode": "no-view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.64.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.8",
+    "@types/node": "20.10.0",
+    "@types/react": "19.0.10",
+    "eslint": "^8.54.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.2"
+  },
+  "scripts": {
+    "build:native": "mkdir -p assets && swiftc -O -target arm64-apple-macosx13.0 native/WindowEdges.swift -o assets/window-edges",
+    "build": "npm run build:native && ray build -e dist -o build --non-interactive",
+    "lint": "eslint src --ext .ts && prettier --check src",
+    "test": "tsc && npm run build:native && assets/window-edges --test"
+  }
+}
