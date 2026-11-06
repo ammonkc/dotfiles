@@ -26,6 +26,8 @@ jobs:
           sudo apt-get install -y shellcheck zsh
           go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
       - uses: arduino/setup-task@v3
+        with:
+          repo-token: ${{ github.token }}
       - run: task lint
       - run: actionlint
       - run: task --list
@@ -46,6 +48,8 @@ jobs:
           cache: pip
           cache-dependency-path: tests/requirements.txt
       - uses: arduino/setup-task@v3
+        with:
+          repo-token: ${{ github.token }}
       - name: Install Linux validation tools
         if: runner.os == 'Linux'
         run: |
