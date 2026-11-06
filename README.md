@@ -110,6 +110,7 @@ dotfiles mac:op:setup       # Setup 1Password SSH agent
 dotfiles dev:setup          # Setup development directories
 dotfiles dev:list           # List development projects
 dotfiles dev:clone REPO=url # Clone repo to organized location
+# Tinycast extension builds require Node.js 22.22.2 or newer.
 dotfiles dot:tinycast:extensions # Build all Tinycast extensions for import
 dotfiles dot:tinycast:window-edges # Build size-preserving edge movements (macOS)
 dotfiles dot:raycast:extension   # Run Raycast IDL Docker (keep task running)
