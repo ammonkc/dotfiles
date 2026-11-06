@@ -50,13 +50,14 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y stow jq zsh rsync ripgrep
+          sudo apt-get install -y stow jq zsh rsync ripgrep coreutils
           sudo locale-gen en_US.UTF-8
       - name: Install macOS validation tools
         if: runner.os == 'macOS'
         run: |
           test "$(uname -m)" = arm64
-          brew install stow jq zsh rsync ripgrep
+          brew install stow jq zsh rsync ripgrep coreutils
+          echo "$(brew --prefix coreutils)/libexec/gnubin" >> "$GITHUB_PATH"
       - run: python3 -m pip install -r tests/requirements.txt
       - run: task test:${{ matrix.suite }}
   extensions:

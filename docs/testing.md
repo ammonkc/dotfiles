@@ -8,7 +8,10 @@ tests its native Swift helper on Apple Silicon.
 
 ## Running checks locally
 
-Install Task, Stow, jq, Zsh, rsync, ripgrep, ShellCheck, and Python 3.11 or newer.
+Install Task, Stow, jq, Zsh, rsync, ripgrep, ShellCheck, GNU coreutils, and Python
+3.11 or newer. On macOS, expose GNU `timeout` with
+`export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"` after installing
+coreutils. The Neovim failure-path suite needs this same installation dependency.
 Use a temporary virtual environment for the configuration parsers:
 
 ```sh
