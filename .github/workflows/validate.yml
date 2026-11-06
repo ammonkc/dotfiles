@@ -65,3 +65,17 @@ jobs:
           npm install --no-audit --no-fund
           npm run lint
           npm run build
+  window-edges:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: packages/tinycast/.config/tinycast/extensions/window-edges
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
