@@ -138,60 +138,10 @@ tasks:
     vars:
       PACKAGE: '{{.PACKAGE}}'
       PACKAGES_DIR: '{{.PACKAGES_DIR}}'
-      STOW_FLAGS: '{{.STOW_FLAGS}}'
-      # Get list of conflicting files by simulating stow
-      CONFLICTS:
-        sh: |
-          {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
-          cd {{.PACKAGES_DIR}} && stow -n {{.STOW_FLAGS}} -t $HOME "{{.PACKAGE}}" 2>&1 | grep "existing target is" | awk '{print $NF}' | tr -d "'" || true
-    status:
-      # Skip entirely if no conflicts found
-      - test -z "{{.CONFLICTS}}"
     cmds:
-      - task: check_conflicts
-        vars:
-          PACKAGE: '{{.PACKAGE}}'
-          CONFLICTS: '{{.CONFLICTS}}'
-      - for:
-          var: CONFLICTS
-          split: '\n'
-        task: backup_file
-        vars:
-          FILE_PATH: '{{.ITEM}}'
-          PACKAGE: '{{.PACKAGE}}'
-
-  backup_file:
-    desc: Backup a single file to the backup directory
-    internal: true
-    silent: true
-    vars:
-      FILE_PATH: '{{.FILE_PATH}}'
-      PACKAGE: '{{.PACKAGE}}'
-      SOURCE: '$HOME/{{.FILE_PATH}}'
-      DEST_DIR: '{{.BACKUP_DIR}}/{{.PACKAGE}}'
-    status:
-      # Skip if it's a symlink (already managed by stow)
-      - test -L "$HOME/{{.FILE_PATH}}"
-      # Skip if file doesn't exist
-      - test ! -e "$HOME/{{.FILE_PATH}}"
-    cmds:
-      - mkdir -p "{{.DEST_DIR}}/$(dirname '{{.FILE_PATH}}')"
-      - cp -a "$HOME/{{.FILE_PATH}}" "{{.DEST_DIR}}/{{.FILE_PATH}}"
-      - rm -rf "$HOME/{{.FILE_PATH}}"
-
-  check_conflicts:
-    desc: Check for stow conflicts and warn if found
-    internal: true
-    silent: true
-    vars:
-      PACKAGE: '{{.PACKAGE}}'
-      CONFLICTS: '{{.CONFLICTS}}'
-    preconditions:
-      - sh: 'test -z "{{.CONFLICTS}}"'
-        msg: |
-          ⚠️  Backing up existing files for {{.PACKAGE}}...
-    cmds:
-      - 'true'  # No-op when no conflicts
+      - |
+        {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
+        /bin/bash "{{.ROOT_DIR}}/scripts/backup-stow-conflicts.sh" "{{.PACKAGES_DIR}}" "{{.PACKAGE}}" "$HOME" "{{.BACKUP_DIR}}/{{.PACKAGE}}"
 
   restore_latest_package:
     desc: Restore the latest backup for a specific package (if it exists)

@@ -127,7 +127,10 @@ _gwt_resolve_paths() {
     return 1
   fi
 
+  # Exported to callers sourcing this library.
+  # shellcheck disable=SC2034
   GWT_SRC="$src"
+  # shellcheck disable=SC2034
   GWT_DEST="$dest"
 }
 
