@@ -174,6 +174,7 @@ if OS.mac?
     cask 'opendisk'            # Disk space analyser
     cask 'paste'               # Limitless clipboard
     cask 'momenbasel/pesty/pesty' # Free, open-source clipboard manager inspired by Paste
+    cask 'peel'                # App uninstaller and disk space cleaner
     cask 'pika'                # Colour picker for colours onscreen
     cask 'puremac'             # Open-source application manager and system cleaner
     cask 'purge'               # Clears caches and junk files by moving them to the Trash
