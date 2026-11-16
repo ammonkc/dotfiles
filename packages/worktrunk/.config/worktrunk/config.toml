@@ -1,6 +1,16 @@
 # Group worktrees by remote repository name, even when the checkout is renamed.
 worktree-path = "~/Developer/worktrees/{{ remote_repo }}/{{ branch | sanitize }}"
 
+# Copy only explicitly selected ignored files; complete before startup commands.
+pre-start = "wt step copy-ignored --require-include"
+
+# Keep branches when removing worktrees, matching git worktree remove.
+[remove]
+delete-branch = false
+
+[projects."github.com/ncino/indirect-lending-application"]
+pre-start = '"$HOME/.local/bin/idl-worktree-setup" {{ worktree_path }}'
+
 # # User Configuration
 #
 # Create with `wt config create`. Values shown are defaults unless noted otherwise.

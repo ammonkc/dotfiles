@@ -1,5 +1,5 @@
 // Zed tasks — https://zed.dev/docs/tasks
-// create_worktree runs the same agnostic setup script you'd use from a terminal.
+// create_worktree preserves manifest setup and copies explicitly selected ignored files.
 // Args are optional hints; empty expansions are ignored by the script.
 // Run "setup IDL worktree tasks" manually in an IDL worktree to copy the current IDL task template.
 [
@@ -25,12 +25,36 @@
   },
   {
     "label": "setup new worktree",
-    "command": "git-worktree-setup",
-    "args": ["$ZED_MAIN_GIT_WORKTREE", "$ZED_WORKTREE_ROOT"],
+    "command": "git-worktree-setup \"$ZED_MAIN_GIT_WORKTREE\" \"$ZED_WORKTREE_ROOT\" && wt step copy-ignored --require-include",
+    "cwd": "$ZED_WORKTREE_ROOT",
     "hooks": ["create_worktree"],
     "reveal": "no_focus",
     "hide": "on_success",
     "allow_concurrent_runs": true
+  },
+  {
+    "label": "worktrunk: create worktree and open in Zed",
+    "command": "/bin/bash -c 'read -r -p \"Branch name: \" branch && test -n \"$branch\" && wt switch --create \"$branch\" --no-cd --execute zed -- .'",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "on_success",
+    "allow_concurrent_runs": false
+  },
+  {
+    "label": "worktrunk: list worktrees",
+    "command": "wt",
+    "args": ["list"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "never"
+  },
+  {
+    "label": "worktrunk: open worktree in Zed",
+    "command": "wt",
+    "args": ["switch", "--no-cd", "--execute", "zed", "--", "."],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "hide": "on_success"
   },
   {
     "label": "setup IDL worktree tasks",

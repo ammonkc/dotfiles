@@ -89,3 +89,6 @@ mise.local.toml
 /docs/superpowers/
 /docs/graphify-out/
 /.token-optimizer/
+
+# Personal worktree copy configuration
+/.worktreeinclude
