@@ -22,8 +22,8 @@ deployed checkout. Do not edit `~/.dotfiles` as a substitute for development.
   loading, Stow behavior, and extension builds.
 - Do not run bootstrap, `brew bundle`, Stow against the real home directory,
   or macOS preferences just to validate a code change.
-- `git-worktree-setup` copies only paths listed in a project's `.worktree-copy`
-  by default. `--all` opts into copying all ignored and untracked files.
+- `git-worktree-setup` delegates to Worktrunk and copies only ignored files
+  selected by `.worktreeinclude`. `.worktree-copy` and `--all` are retired.
 - Use `task dev:handoff` to summarize a worktree before passing it to another
   agent. Record checks and next steps explicitly.
 

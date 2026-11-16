@@ -139,13 +139,14 @@ Development directories created by `dotfiles dev:setup` are
 directory is for your own scripts; the dotfiles command wrappers remain under
 `~/.local/bin`.
 
-`git-worktree-setup` uses a `.worktree-copy` file in the primary checkout.
-List one repository-relative file or directory per line, with `#` for comments.
-Only those paths are copied into a new worktree, and existing files are kept.
-Without a manifest, nothing is
-copied. Use `git-worktree-setup -n` to preview a copy, or `--all` to explicitly
-copy every ignored and untracked file as before. The Zed worktree creation hook
-uses the same script.
+`git-worktree-setup` delegates to Worktrunk's `wt step copy-ignored --require-include`.
+Select ignored files with gitignore-style patterns in the primary checkout's
+local `.worktreeinclude` (for example, `.env`, `vendor/`, and `node_modules/`).
+Existing destination files are kept; without an include file, nothing is copied.
+On APFS, Worktrunk uses copy-on-write clones where supported. Use
+`git-worktree-setup -n` to preview copying. Both the Zed creation hook and the
+Worktrunk user hook call this helper. `.worktree-copy` and `--all` are retired;
+non-ignored untracked files are no longer copied by automatic setup.
 
 From a project worktree, `dotfiles dev:handoff` prints a Markdown handoff.
 Set `SUMMARY`, `CHECKS`, and `NEXT` to record details the Git history cannot

@@ -16,6 +16,7 @@ export IDL_WORKTREES_DIR="$HOME/Developer/worktrees/indirect-lending-application
 export IDL_ZED_TASKS_TEMPLATE="$root/packages/zed/.config/zed/templates/idl-tasks.json"
 mkdir -p "$IDL_REPO_DIR" "$HOME/.local/bin"
 ln -s "$root/packages/bin/.local/bin/idl-worktree-setup" "$HOME/.local/bin/idl-worktree-setup"
+ln -s "$root/packages/bin/.local/bin/git-worktree-setup" "$HOME/.local/bin/git-worktree-setup"
 git -C "$IDL_REPO_DIR" init -q -b main
 git -C "$IDL_REPO_DIR" config core.excludesfile "$root/packages/git/.config/git/ignore"
 git -C "$IDL_REPO_DIR" remote add origin https://github.com/ncino/indirect-lending-application.git

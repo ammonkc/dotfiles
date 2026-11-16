@@ -26,7 +26,7 @@ _gwt_abspath() {
 _gwt_primary_worktree() {
   local start="${1:-.}"
   local primary
-  primary="$(git -C "$start" worktree list --porcelain 2>/dev/null | awk '/^worktree / { print $2; exit }')"
+  primary="$(git -C "$start" worktree list --porcelain 2>/dev/null | awk '/^worktree / { print substr($0, 10); exit }')"
   [[ -n "$primary" ]] || return 1
   _gwt_abspath "$primary"
 }

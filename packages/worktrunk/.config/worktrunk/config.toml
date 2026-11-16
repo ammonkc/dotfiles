@@ -2,7 +2,7 @@
 worktree-path = "~/Developer/worktrees/{{ remote_repo }}/{{ branch | sanitize }}"
 
 # Copy only explicitly selected ignored files; complete before startup commands.
-pre-start = "wt step copy-ignored --require-include"
+pre-start = '"$HOME/.local/bin/git-worktree-setup" {{ worktree_path }}'
 
 # Keep branches when removing worktrees, matching git worktree remove.
 [remove]

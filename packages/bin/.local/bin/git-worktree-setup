@@ -1,48 +1,32 @@
 #!/usr/bin/env bash
-# Set up a new git worktree using paths listed in the primary's .worktree-copy.
-# Usage: git-worktree-setup [-n] [-v] [--all] [SOURCE] [DEST]
-#        git-worktree-setup [-n] [-v] [--all] DEST
-#        git-worktree-setup                  # from inside the new worktree
+# Set up a worktree with Worktrunk's APFS-aware ignored-file copying.
+# Usage: git-worktree-setup [-n] [-v] [SOURCE] [DEST]
+#        git-worktree-setup [-n] [-v] DEST
+#        git-worktree-setup              # from inside the new worktree
 #
-# Agnostic: works with git CLI, Zed, Cursor, VS Code, terminals, etc.
-#   git worktree add ../feature-x feature/x
-#   cd ../feature-x && git-worktree-setup
-#   # or from anywhere:
-#   git-worktree-setup /path/to/main /path/to/feature-x
-#   git-worktree-setup /path/to/feature-x
-#
-# Options:
-#   -n, --dry-run   Show what would be copied
-#   -v, --verbose   Verbose copy output
-#   --all           Copy all ignored and untracked files (previous behavior)
-#   -h, --help      Show help
+# Select ignored files using .worktreeinclude in the source checkout.
+# Without an include file, nothing is copied. Existing destination files are kept.
+# .worktree-copy and --all are retired; non-ignored untracked files are not copied.
 
 set -euo pipefail
 
-DRY_RUN=false
-VERBOSE=false
-COPY_ALL=false
-PASS_ARGS=()
-
-usage() {
-  sed -n '2,17p' "$0" | sed 's/^# \?//'
-  exit 0
-}
-
+copy_args=(step copy-ignored --require-include)
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -n | --dry-run) DRY_RUN=true; PASS_ARGS+=(-n); shift ;;
-    -v | --verbose) VERBOSE=true; PASS_ARGS+=(-v); shift ;;
-    --all) COPY_ALL=true; shift ;;
-    -h | --help) usage ;;
-    -*)
-      echo "Unknown option: $1" >&2
-      exit 1
-      ;;
+    -n | --dry-run) copy_args+=(--dry-run); shift ;;
+    -v | --verbose) copy_args+=(--verbose); shift ;;
+    -h | --help) sed -n '2,9p' "$0" | sed 's/^# \?//'; exit 0 ;;
+    --all)
+      echo "--all is retired; select ignored files with .worktreeinclude." >&2
+      exit 1 ;;
+    -*) echo "Unknown option: $1" >&2; exit 1 ;;
     *) break ;;
   esac
 done
-
+if ! command -v wt >/dev/null 2>&1; then
+  echo "Worktrunk (wt) is required for git-worktree-setup." >&2
+  exit 1
+fi
 # Resolve through symlinks so ../lib works when invoked via ~/.local/bin/*
 SOURCE="${BASH_SOURCE[0]}"
 while [[ -L "$SOURCE" ]]; do
@@ -56,60 +40,24 @@ source "$SCRIPT_DIR/../lib/git-worktree.sh"
 
 _gwt_resolve_paths "$@" || exit 1
 
-echo "🌲 Setting up worktree"
-echo "   source: $GWT_SRC"
-echo "   dest:   $GWT_DEST"
-$DRY_RUN && echo "   mode:   dry-run"
-$VERBOSE && echo "   mode:   verbose"
-echo
-
-if $COPY_ALL; then
-  echo "   copy:   all ignored and untracked files"
-  "$SCRIPT_DIR/git-worktree-copy-ignored" ${PASS_ARGS[@]+"${PASS_ARGS[@]}"} "$GWT_SRC" "$GWT_DEST"
-  "$SCRIPT_DIR/git-worktree-copy-untracked" ${PASS_ARGS[@]+"${PASS_ARGS[@]}"} "$GWT_SRC" "$GWT_DEST"
-else
-  manifest="$GWT_SRC/.worktree-copy"
-  if [[ ! -f "$manifest" ]]; then
-    echo "ℹ️  No .worktree-copy manifest in the primary worktree; nothing to copy"
-    exit 0
-  fi
-
-  paths=()
-  while IFS= read -r path || [[ -n "$path" ]]; do
-    path="${path%$'\r'}"
-    [[ -z "$path" || "$path" == \#* ]] && continue
-    case "$path" in
-      /*|.|..|../*|*/../*|*/..|./*|*/./*|*/.|.git|.git/*|*/.git|*/.git/*)
-        echo "Invalid .worktree-copy path: $path" >&2
-        exit 1
-        ;;
-    esac
-    if [[ ! -e "$GWT_SRC/$path" ]]; then
-      echo "Missing .worktree-copy path: $path" >&2
-      exit 1
-    fi
-    part=""
-    IFS=/ read -ra components <<< "$path"
-    for component in "${components[@]}"; do
-      part="${part:+$part/}$component"
-      if [[ -L "$GWT_SRC/$part" ]]; then
-        echo "Symlink paths are not supported in .worktree-copy: $path" >&2
-        exit 1
-      fi
-      if [[ -L "$GWT_DEST/$part" ]]; then
-        echo "Refusing to copy through a destination symlink: $path" >&2
-        exit 1
-      fi
-    done
-    paths+=("$path")
-  done < "$manifest"
-
-  if ((${#paths[@]} == 0)); then
-    echo "ℹ️  .worktree-copy contains no paths; nothing to copy"
-    exit 0
-  fi
-  printf '%s\0' "${paths[@]}" | _gwt_copy_paths "$GWT_SRC" "$GWT_DEST" "$DRY_RUN" "$VERBOSE" true
+source_common="$(git -C "$GWT_SRC" rev-parse --path-format=absolute --git-common-dir)"
+dest_common="$(git -C "$GWT_DEST" rev-parse --path-format=absolute --git-common-dir)"
+if [[ "$source_common" != "$dest_common" ]]; then
+  echo "Source and destination must belong to the same repository." >&2
+  exit 1
+fi
+if [[ -f "$GWT_SRC/.worktree-copy" ]]; then
+  echo ".worktree-copy is retired; migrate ignored-file patterns to .worktreeinclude." >&2
+  exit 1
 fi
 
-echo
-echo "✅ Worktree setup complete"
+# Worktrunk defaults to the primary checkout, including a detached primary.
+primary="$(_gwt_primary_worktree "$GWT_DEST")"
+if [[ "$GWT_SRC" != "$primary" ]]; then
+  branch="$(git -C "$GWT_SRC" symbolic-ref --quiet --short HEAD)" || {
+    echo "An alternate source must have a checked-out branch." >&2
+    exit 1
+  }
+  copy_args+=(--from "$branch")
+fi
+exec wt -C "$GWT_DEST" "${copy_args[@]}"
