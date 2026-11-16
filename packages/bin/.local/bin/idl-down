@@ -3,11 +3,12 @@
 # Stop IDL Docker containers
 # Usage: idl-down [--profile NAME ...] [worktree] [domain]
 #        worktree - current BASE_DIR worktree if cwd is inside one, else 'main'
-#        BASE_DIR can be overridden with IDL_WORKTREES_DIR
+#        Directories can be overridden with IDL_WORKTREES_DIR and IDL_REPO_DIR
 #        domain   - defaults to 'allegro.test'
 #
 
 BASE_DIR="${IDL_WORKTREES_DIR:-$HOME/Developer/worktrees/indirect-lending-application}"
+REPO_DIR="${IDL_REPO_DIR:-$HOME/Developer/code/indirect}"
 POSITIONAL=()
 COMPOSE_PROFILES=(--profile sftp --profile queue)
 
@@ -85,7 +86,11 @@ get_worktrees() {
     fi
 }
 
-PROJECT_DIR="$BASE_DIR/$WORKTREE"
+if [[ "$WORKTREE" == main ]]; then
+    PROJECT_DIR="$REPO_DIR"
+else
+    PROJECT_DIR="$BASE_DIR/$WORKTREE"
+fi
 
 # Validate worktree exists
 if [[ ! -d "$PROJECT_DIR" ]]; then

@@ -33,6 +33,14 @@
       "default": "~/Developer/worktrees/indirect-lending-application"
     },
     {
+      "name": "repoDir",
+      "title": "Repository Directory",
+      "description": "Primary checkout used for main",
+      "type": "textfield",
+      "required": false,
+      "default": "~/Developer/code/indirect"
+    },
+    {
       "name": "defaultWorktree",
       "title": "Default Worktree",
       "description": "Default worktree to use",

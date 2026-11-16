@@ -11,16 +11,18 @@ if [[ -z "$worktree_input" || ! -d "$worktree_input" ]]; then
 fi
 
 base_dir="${IDL_WORKTREES_DIR:-$HOME/Developer/worktrees/indirect-lending-application}"
-if [[ ! -d "$base_dir" ]]; then
-  echo "IDL worktrees directory not found: $base_dir" >&2
-  exit 1
-fi
-
+repo_dir="${IDL_REPO_DIR:-$HOME/Developer/code/indirect}"
 worktree="$(cd "$worktree_input" && pwd -P)"
-base_dir="$(cd "$base_dir" && pwd -P)"
-if [[ "${worktree%/*}" != "$base_dir" ]]; then
-  echo "Not a worktree directly under $base_dir: $worktree" >&2
-  exit 1
+repo_real="$(cd "$repo_dir" 2>/dev/null && pwd -P)" || repo_real=""
+if [[ "$worktree" != "$repo_real" ]]; then
+  base_real="$(cd "$base_dir" 2>/dev/null && pwd -P)" || {
+    echo "IDL worktrees directory not found: $base_dir" >&2
+    exit 1
+  }
+  if [[ "${worktree%/*}" != "$base_real" ]]; then
+    echo "Not the IDL repository or a worktree directly under $base_dir: $worktree" >&2
+    exit 1
+  fi
 fi
 
 git_root="$(git -C "$worktree" rev-parse --show-toplevel 2>/dev/null)" || {

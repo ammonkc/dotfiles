@@ -3,16 +3,18 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
 scratch="$(mktemp -d)"
+scratch="$(cd "$scratch" && pwd -P)"
 trap 'rm -rf "$scratch"' EXIT
-mkdir -p "$scratch/bin" "$scratch/worktrees/main"
+mkdir -p "$scratch/bin" "$scratch/repo checkout/src" "$scratch/worktrees/feature branch/src"
 cat > "$scratch/bin/docker" <<'EOF'
 #!/bin/bash
 printf '%s\n' "$@" > "$IDL_DOCKER_ARGS_FILE"
+pwd -P > "$IDL_DOCKER_ARGS_FILE.cwd"
 EOF
 chmod +x "$scratch/bin/docker"
 
 helpers="$root/packages/bin/.local/bin"
-export PATH="$scratch/bin:$PATH" IDL_WORKTREES_DIR="$scratch/worktrees"
+export PATH="$scratch/bin:$PATH" IDL_WORKTREES_DIR="$scratch/worktrees" IDL_REPO_DIR="$scratch/repo checkout"
 export IDL_DOCKER_ARGS_FILE="$scratch/up-args"
 /bin/bash "$helpers/idl-up" --profile queue main example.test > /dev/null
 printf '%s\n' compose -f docker-compose.yaml --profile sftp --profile queue up --detach --remove-orphans > "$scratch/expected-up"
@@ -34,4 +36,13 @@ for helper in idl-up idl-down; do
     fi
 done
 
-printf 'IDL Compose profile checks passed.\n'
+for helper in idl-up idl-down; do
+    for checkout in "$IDL_REPO_DIR" "$IDL_WORKTREES_DIR/feature branch"; do
+        (cd "$checkout/src" && /bin/bash "$helpers/$helper" > /dev/null)
+        test "$(cat "$IDL_DOCKER_ARGS_FILE.cwd")" = "$checkout"
+    done
+    /bin/bash "$helpers/$helper" main > /dev/null
+    test "$(cat "$IDL_DOCKER_ARGS_FILE.cwd")" = "$IDL_REPO_DIR"
+done
+
+printf 'IDL Compose profile and split checkout checks passed.\n'

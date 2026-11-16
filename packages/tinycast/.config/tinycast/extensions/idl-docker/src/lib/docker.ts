@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 import { homedir } from "os";
 import { join } from "path";
 import { StringDecoder } from "string_decoder";
-import { getBaseDir } from "./worktrees";
+import { getBaseDir, getRepoDir } from "./worktrees";
 
 export interface StreamCallbacks {
   onOutput: (line: string) => void;
@@ -43,6 +43,7 @@ function runContainers(
         ...process.env,
         PATH: `${paths.join(":")}:${process.env.PATH || ""}`,
         IDL_WORKTREES_DIR: getBaseDir(),
+        IDL_REPO_DIR: getRepoDir(),
       },
     },
   );

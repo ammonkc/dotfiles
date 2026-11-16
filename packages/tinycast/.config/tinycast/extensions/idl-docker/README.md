@@ -34,3 +34,8 @@ Changing a script's `@raycast.mode` header or importing the folder again does no
 Tinycast shows a running indicator while Docker Compose works and displays its output after the command finishes. The output view shows the last 12 lines; **Copy Output** copies the full result.
 
 The extension and the separate IDL script commands both call the stowed `idl-up` and `idl-down` helpers. IDL Up accepts `--build` in its third argument, for example `queue, --build`. The only Compose profiles are `sftp` and `queue`.
+
+The primary checkout is listed as `main`. Set **Repository Directory** to
+`~/Developer/code/indirect`. Shell helpers accept `IDL_REPO_DIR` to override this
+path and `IDL_WORKTREES_DIR` to override the worktrees directory. Existing
+launcher preferences must be updated manually if they still use the old paths.

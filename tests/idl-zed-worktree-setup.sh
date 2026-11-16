@@ -6,16 +6,19 @@ scratch="$(mktemp -d)"
 trap 'rm -rf "$scratch"' EXIT
 
 base="$scratch/IDL worktrees"
-main="$base/main"
+main="$scratch/repo checkout"
 feature="$base/feature branch"
 mkdir -p "$main"
 git -C "$main" init -q
 git -C "$main" -c user.name=Test -c user.email=test@example.test -c commit.gpgsign=false commit --allow-empty -qm initial
 git -C "$main" worktree add -q -b feature "$feature"
 
-export IDL_WORKTREES_DIR="$base"
+export IDL_WORKTREES_DIR="$base" IDL_REPO_DIR="$main"
 export IDL_ZED_TASKS_TEMPLATE="$root/packages/zed/.config/zed/templates/idl-tasks.json"
 helper="$root/packages/bin/.local/bin/idl-worktree-setup"
+
+"$helper" "$main" > /dev/null
+cmp "$IDL_ZED_TASKS_TEMPLATE" "$main/.zed/tasks.json"
 
 "$helper" "$feature" > /dev/null
 cmp "$IDL_ZED_TASKS_TEMPLATE" "$feature/.zed/tasks.json"

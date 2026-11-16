@@ -27,3 +27,8 @@ Raycast shows Docker output as it arrives and keeps the last 12 lines visible.
 **Copy Output** copies the full result. The separate IDL script commands under
 `~/.config/raycast/script-commands/` use the same stowed helpers and accept
 `queue` and `--build` in the third argument.
+
+The primary checkout is listed as `main`. Set **Repository Directory** to
+`~/Developer/code/indirect`. Shell helpers accept `IDL_REPO_DIR` to override this
+path and `IDL_WORKTREES_DIR` to override the worktrees directory. Existing
+launcher preferences must be updated manually if they still use the old paths.

@@ -10,12 +10,14 @@ test("IDL helpers, preferences, streaming and failure paths", async () => {
   const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "idl-extension-"));
   const home = path.join(scratch, "home with spaces");
   const base = path.join(home, "worktrees");
+  const repo = path.join(home, "repo checkout");
+  fs.mkdirSync(repo, { recursive: true });
   const bin = path.join(home, ".local", "bin");
   fs.mkdirSync(bin, { recursive: true });
   fs.mkdirSync(path.join(base, "feature branch"), { recursive: true });
   fs.mkdirSync(path.join(base, ".hidden"));
   fs.writeFileSync(path.join(base, "not-a-directory"), "file");
-  const preferences = { baseDir: "~/worktrees" };
+  const preferences = { baseDir: "~/worktrees", repoDir: "~/repo checkout" };
   const modules = new Map();
   function load(name) {
     if (modules.has(name)) return modules.get(name);
@@ -35,7 +37,7 @@ test("IDL helpers, preferences, streaming and failure paths", async () => {
   }
   function helper(name, exitCode) {
     fs.writeFileSync(path.join(bin, name), `#!${process.execPath}
-console.log(JSON.stringify({args:process.argv.slice(2),base:process.env.IDL_WORKTREES_DIR,cwd:process.cwd(),path:process.env.PATH}));
+console.log(JSON.stringify({args:process.argv.slice(2),base:process.env.IDL_WORKTREES_DIR,repo:process.env.IDL_REPO_DIR,cwd:process.cwd(),path:process.env.PATH}));
 process.stdout.write('first');
 process.stderr.write('warning');
 const unicode = Buffer.from('λ');
@@ -70,7 +72,10 @@ setTimeout(() => {
   try {
     const worktrees = load("worktrees");
     assert.equal(worktrees.getBaseDir(), base);
-    assert.deepEqual(Array.from(worktrees.listWorktrees()), ["feature branch"]);
+    assert.equal(worktrees.getRepoDir(), repo);
+    assert.equal(worktrees.getWorktreePath("main"), repo);
+    assert.equal(worktrees.worktreeExists("main"), true);
+    assert.deepEqual(Array.from(worktrees.listWorktrees()), ["feature branch", "main"]);
     assert.equal(worktrees.worktreeExists("feature branch"), true);
     assert.equal(worktrees.worktreeExists("not-a-directory"), false);
     assert.equal(worktrees.worktreeExists("missing"), false);
@@ -85,6 +90,7 @@ setTimeout(() => {
       const metadata = JSON.parse(success.lines.find((line) => line.startsWith("{")));
       assert.deepEqual(metadata.args, [options.worktree, options.domain, "--profile", "queue"]);
       assert.equal(metadata.base, base);
+      assert.equal(metadata.repo, repo);
       assert.equal(metadata.cwd, process.cwd());
       assert.equal(metadata.path.split(":")[0], bin);
       for (const line of ["first line", "warning line", "λ", "last"]) assert.ok(success.lines.includes(line), line);

@@ -5,6 +5,7 @@ import { homedir } from "os";
 
 interface Preferences {
   baseDir: string;
+  repoDir?: string;
   defaultWorktree: string;
   allegroDomain: string;
 }
@@ -27,6 +28,11 @@ export function getBaseDir(): string {
   return expandPath(baseDir);
 }
 
+export function getRepoDir(): string {
+  const { repoDir } = getPreferenceValues<Preferences>();
+  return expandPath(repoDir || "~/Developer/code/indirect");
+}
+
 /**
  * Get the default worktree from preferences
  */
@@ -47,25 +53,29 @@ export function getAllegroDomain(): string {
  * List all available worktrees (directories in the base directory)
  */
 export function listWorktrees(): string[] {
-  const baseDir = getBaseDir();
-
+  const worktrees = new Set<string>();
+  if (worktreeExists("main")) worktrees.add("main");
   try {
-    const entries = readdirSync(baseDir, { withFileTypes: true });
-    return entries
-      .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
-      .map((entry) => entry.name)
-      .sort();
+    for (const entry of readdirSync(getBaseDir(), { withFileTypes: true })) {
+      if (
+        entry.isDirectory() &&
+        !entry.name.startsWith(".") &&
+        entry.name !== "main"
+      ) {
+        worktrees.add(entry.name);
+      }
+    }
   } catch (error) {
     console.error("Failed to list worktrees:", error);
-    return [];
   }
+  return [...worktrees].sort();
 }
 
 /**
  * Get the full path to a worktree
  */
 export function getWorktreePath(worktree: string): string {
-  return join(getBaseDir(), worktree);
+  return worktree === "main" ? getRepoDir() : join(getBaseDir(), worktree);
 }
 
 /**

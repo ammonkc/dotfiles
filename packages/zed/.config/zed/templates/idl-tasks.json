@@ -1,7 +1,7 @@
 [
   {
     "label": "idl-up",
-    "command": "idl-up \"$(basename \"$ZED_WORKTREE_ROOT\")\"",
+    "command": "idl-up",
     "cwd": "$ZED_WORKTREE_ROOT",
     "env": {
       "FASTFETCH_STARTUP": "false"
@@ -11,7 +11,7 @@
   },
   {
     "label": "idl-up --build",
-    "command": "idl-up --build \"$(basename \"$ZED_WORKTREE_ROOT\")\"",
+    "command": "idl-up --build",
     "cwd": "$ZED_WORKTREE_ROOT",
     "env": {
       "FASTFETCH_STARTUP": "false"
@@ -21,7 +21,7 @@
   },
   {
     "label": "idl-up --profile queue",
-    "command": "idl-up --profile queue \"$(basename \"$ZED_WORKTREE_ROOT\")\"",
+    "command": "idl-up --profile queue",
     "cwd": "$ZED_WORKTREE_ROOT",
     "env": {
       "FASTFETCH_STARTUP": "false"
@@ -31,7 +31,7 @@
   },
   {
     "label": "idl-down",
-    "command": "idl-down --profile queue \"$(basename \"$ZED_WORKTREE_ROOT\")\"",
+    "command": "idl-down --profile queue",
     "cwd": "$ZED_WORKTREE_ROOT",
     "env": {
       "FASTFETCH_STARTUP": "false"
