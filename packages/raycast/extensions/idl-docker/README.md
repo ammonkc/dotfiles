@@ -13,7 +13,7 @@ Keep that task running while using the local extension.
 `npm run build` compiles into this checkout's ignored `build/` directory.
 
 Set **Worktrees Directory** to the parent of your IDL worktrees. The default is
-`~/Developer/code/indirect`; **Default Worktree** is `main`; **Allegro Domain**
+`~/Developer/worktrees/indirect-lending-application`; **Default Worktree** is `main`; **Allegro Domain**
 defaults to `indirect.test`.
 
 ## Commands

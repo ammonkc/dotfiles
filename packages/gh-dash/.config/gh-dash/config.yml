@@ -64,8 +64,7 @@ keybindings:
       command: >
         tmux new-window -c {{.RepoPath}} 'nvim -c ":silent Octo pr edit {{.PrNumber}}"'
 repoPaths:
-  allegro.test/*: ~/Developer/code/allegro.test
-  indirect.test/*: ~/Developer/code/indirect.test/main
+  indirect.test/*: ~/Developer/code/indirect
 theme:
   ui:
     table:

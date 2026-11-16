@@ -10,7 +10,7 @@ if [[ -z "$worktree_input" || ! -d "$worktree_input" ]]; then
   exit 1
 fi
 
-base_dir="${IDL_WORKTREES_DIR:-$HOME/Developer/code/indirect}"
+base_dir="${IDL_WORKTREES_DIR:-$HOME/Developer/worktrees/indirect-lending-application}"
 if [[ ! -d "$base_dir" ]]; then
   echo "IDL worktrees directory not found: $base_dir" >&2
   exit 1

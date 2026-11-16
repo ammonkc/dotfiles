@@ -7,7 +7,7 @@
 #        domain   - defaults to 'allegro.test'
 #
 
-BASE_DIR="${IDL_WORKTREES_DIR:-$HOME/Developer/code/indirect}"
+BASE_DIR="${IDL_WORKTREES_DIR:-$HOME/Developer/worktrees/indirect-lending-application}"
 POSITIONAL=()
 COMPOSE_PROFILES=(--profile sftp --profile queue)
 
@@ -42,7 +42,7 @@ while [[ $# -gt 0 ]]; do
 Usage: idl-down [--profile NAME ...] [worktree] [domain]
 
   --profile     Accept sftp or queue (both are already enabled for down)
-  worktree      Defaults to cwd under ~/Developer/code/indirect, else main
+  worktree      Defaults to cwd under ~/Developer/worktrees/indirect-lending-application, else main
   domain        Defaults to allegro.test
 EOF
             exit 0

@@ -30,7 +30,7 @@
       "description": "Base directory containing git worktrees",
       "type": "textfield",
       "required": true,
-      "default": "~/Developer/code/indirect"
+      "default": "~/Developer/worktrees/indirect-lending-application"
     },
     {
       "name": "defaultWorktree",
