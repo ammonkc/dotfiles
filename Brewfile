@@ -154,6 +154,7 @@ if OS.mac?
     cask 'google-chrome'       # Google Chrome browser
     cask 'hammerspoon'         # Desktop automation application
     cask 'handbrake-app'       # Open-source video transcoder available for Linux, Mac, and Windows
+    cask 'herdr-app'           # Desktop app for terminals and coding agents
     cask 'homebrew-app'        # Homebrew's official GUI
     cask 'hovrly'              # Display and convert timezones time in different cities
     cask 'iina'                # Free and open-source media player
