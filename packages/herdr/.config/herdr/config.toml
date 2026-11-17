@@ -1,0 +1,3 @@
+# Herdr appends its repository name and branch slug to this parent directory.
+[worktrees]
+directory = "~/Developer/worktrees"
