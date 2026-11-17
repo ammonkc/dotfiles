@@ -1,0 +1,10 @@
+{
+  "worktree": {
+    "directory": "~/Developer/worktrees"
+  },
+  "plugins": [
+    {
+      "package": "./plugins/worktrunk"
+    }
+  ]
+}

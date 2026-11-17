@@ -148,6 +148,16 @@ On APFS, Worktrunk uses copy-on-write clones where supported. Use
 Worktrunk user hook call this helper. `.worktree-copy` and `--all` are retired;
 non-ignored untracked files are no longer copied by automatic setup.
 
+Agent worktrees use the same layout through `agent-worktree`. After deploying and
+stowing the bin, claude, codex, opencode, and worktrunk packages, run
+`dotfiles dot:agents:worktrees` to install OpenCode's local strategy and merge
+Claude and OpenCode's worktree settings. Existing settings are preserved and
+private backups are created. Restart those tools afterward. Claude's isolation
+hook and OpenCode's native worktree strategy use Worktrunk; Codex's global
+AGENTS.md directs agent-created worktrees through the same helper. Codex's native
+managed-worktree UI is not overridden. Orca's parent directory is configured in
+its app settings.
+
 From a project worktree, `dotfiles dev:handoff` prints a Markdown handoff.
 Set `SUMMARY`, `CHECKS`, and `NEXT` to record details the Git history cannot
 provide, or `REPO` to select another worktree. For example:

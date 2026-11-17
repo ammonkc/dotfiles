@@ -209,6 +209,23 @@ tasks:
       - chmod 700 "$HOME/.ssh"
       - echo "✓ Created {{.DEST_FILE}} - please customize it"
 
+  agents:worktrees:
+    desc: Configure Claude Code and OpenCode to use shared agent worktrees
+    summary: |
+      Run after stowing bin, claude, codex, opencode, and worktrunk.
+      Installs the local OpenCode strategy dependencies, then merges safe fragments
+      into user settings while preserving unrelated configuration and secrets.
+      Changed settings get private backups. Existing creation hooks are not replaced.
+      Codex reads the global AGENTS.md convention; its native managed UI is unchanged.
+    preconditions:
+      - sh: command -v python3 >/dev/null 2>&1 && command -v npm >/dev/null 2>&1
+        msg: Python 3 and npm are required.
+      - sh: test -f "$HOME/.claude/worktree-settings.json" && test -f "$HOME/.config/opencode/worktree-settings.json"
+        msg: Stow the claude and opencode packages first.
+    cmds:
+      - npm ci --ignore-scripts --prefix "$HOME/.config/opencode/plugins/worktrunk"
+      - python3 "{{.ROOT_DIR}}/scripts/agent-worktree-configure.py"
+
   # ============================================================================
   # Launcher Extension Tasks
   # ============================================================================

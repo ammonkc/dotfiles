@@ -1,0 +1,10 @@
+{
+  "name": "dotfiles-worktrunk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./index.mjs",
+  "dependencies": {
+    "@opencode/plugin": "2.3.0"
+  }
+}

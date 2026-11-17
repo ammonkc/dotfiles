@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""Create and manage agent worktrees through Worktrunk without shell interpolation."""
+import argparse
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+
+def run(args):
+    return subprocess.check_output(args, text=True).strip()
+
+
+def parent(repo):
+    name = json.loads(run(["wt", "-C", repo, "step", "eval", "--format=json", "{{ remote_repo }}"]))["result"]
+    if not name:
+        name = Path(run(["git", "-C", repo, "rev-parse", "--show-toplevel"])).name
+    if name in (".", "..") or not name or "/" in name or "\\" in name:
+        raise ValueError("Repository name is not a safe directory component")
+    return Path.home() / "Developer/worktrees" / name
+
+
+def create(repo, tool, name, base="@"):
+    branch = f"{tool}/{name}"
+    subprocess.run(["git", "check-ref-format", "--branch", branch], check=True, stdout=subprocess.DEVNULL)
+    directory = parent(repo) / branch.replace("/", "-").replace("\\", "-")
+    # Worktrunk rejects existing branches and occupied paths rather than reusing another agent's checkout.
+    result = subprocess.run([
+        "wt", "-C", repo, "switch", "--create", branch, "--base", base,
+        "--path", str(directory), "--no-cd", "--format=json",
+    ], check=True, text=True, stdout=subprocess.PIPE)
+    metadata = json.loads(result.stdout)
+    if not directory.is_dir():
+        raise ValueError("Worktrunk did not create the requested worktree")
+    return {"directory": str(directory.resolve()), "branch": branch, "worktrunk": metadata}
+
+
+def remove(directory, tool, force=False):
+    directory = Path(directory).resolve(strict=True)
+    repo = str(directory)
+    top = Path(run(["git", "-C", repo, "rev-parse", "--show-toplevel"])).resolve()
+    branch = run(["git", "-C", repo, "symbolic-ref", "--quiet", "--short", "HEAD"])
+    if directory != top or directory.parent != parent(repo).resolve() or not branch.startswith(f"{tool}/"):
+        raise ValueError("Refusing to remove a directory outside this tool's standard worktree layout")
+    args = ["wt", "-C", repo, "remove", "--foreground", "--no-delete-branch", str(directory)]
+    if force:
+        args.append("--force")
+    subprocess.run(args, check=True, stdout=sys.stderr)
+
+
+def inventory(repo, tool):
+    raw = subprocess.check_output(["git", "-C", repo, "worktree", "list", "--porcelain", "-z"])
+    trees = []
+    for record in raw.decode().split("\0\0"):
+        fields = dict(line.split(" ", 1) for line in record.split("\0") if " " in line)
+        directory = fields.get("worktree")
+        if not directory:
+            continue
+        branch = fields.get("branch", "")
+        if not trees:
+            trees.append({"directory": directory, "type": "root"})
+        elif branch.startswith(f"refs/heads/{tool}/") and Path(directory).parent.resolve() == parent(repo).resolve():
+            trees.append({"directory": directory, "type": "worktree"})
+    return trees
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="action", required=True)
+    for action in ("create", "remove", "list"):
+        cmd = sub.add_parser(action)
+        cmd.add_argument("--tool", choices=["claude", "codex", "opencode"], required=True)
+        if action == "remove":
+            cmd.add_argument("directory")
+            cmd.add_argument("--force", action="store_true")
+        else:
+            cmd.add_argument("--repo", default=os.getcwd())
+        if action == "create":
+            cmd.add_argument("name")
+            cmd.add_argument("--base", default="@")
+            cmd.add_argument("--json", action="store_true")
+    sub.add_parser("claude-create")
+    sub.add_parser("claude-remove")
+    args = parser.parse_args()
+    if args.action == "claude-create":
+        event = json.load(sys.stdin)
+        print(create(event["cwd"], "claude", event["name"])["directory"])
+    elif args.action == "claude-remove":
+        event = json.load(sys.stdin)
+        remove(event["worktree_path"], "claude")
+    elif args.action == "create":
+        result = create(args.repo, args.tool, args.name, args.base)
+        print(json.dumps(result) if args.json else result["directory"])
+    elif args.action == "remove":
+        remove(args.directory, args.tool, args.force)
+    else:
+        print(json.dumps(inventory(args.repo, args.tool)))
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (ValueError, KeyError, OSError, subprocess.CalledProcessError) as error:
+        print(f"agent-worktree: {error}", file=sys.stderr)
+        sys.exit(1)
