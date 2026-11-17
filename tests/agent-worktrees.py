@@ -15,11 +15,16 @@ CONFIGURE = ROOT / "scripts/agent-worktree-configure.py"
 class SettingsTests(unittest.TestCase):
     def test_merge_preserves_private_settings_is_idempotent_and_refuses_conflicts(self):
         with tempfile.TemporaryDirectory() as scratch:
-            home = Path(scratch)
+            home = Path(scratch).resolve()
             claude = home / ".claude"
             opencode = home / ".config/opencode"
             claude.mkdir(parents=True)
             opencode.mkdir(parents=True)
+            package_dir = home / "Developer/repos/ammonkc/claude-fiyah/opencode/worktrunk"
+            package_dir.mkdir(parents=True)
+            (package_dir / "package.json").write_text(json.dumps({"name": "@ammonkc/opencode-worktrunk"}))
+            (package_dir / "package-lock.json").write_text("{}")
+            (package_dir / "index.mjs").write_text("// fixture package")
             for target, source in [
                 (claude, ROOT / "packages/claude/.claude"),
                 (opencode, ROOT / "packages/opencode/.config/opencode"),
@@ -27,20 +32,46 @@ class SettingsTests(unittest.TestCase):
                 shutil.copyfile(source / "worktree-settings.json", target / "worktree-settings.json")
             private = {"env": {"TEST_PRIVATE_VALUE": "fixture-only"}, "hooks": {"Stop": []}}
             (claude / "settings.json").write_text(json.dumps(private))
-            (opencode / "opencode.json").write_text(json.dumps({"providers": {"fixture": {}}, "plugins": ["existing-plugin"]}))
+            (opencode / "opencode.json").write_text(json.dumps({"providers": {"fixture": {}}, "plugins": [
+                "existing-plugin",
+                {"package": "./plugins/worktrunk", "options": {"helperPath": "/custom/helper"}},
+                {"package": str(opencode / "plugins/worktrunk")},
+            ]}))
             command = ["python3", str(CONFIGURE), "--home", str(home)]
+            # Missing external sources must leave both private settings untouched.
+            (package_dir / "index.mjs").unlink()
+            before_claude = (claude / "settings.json").read_bytes()
+            before_opencode = (opencode / "opencode.json").read_bytes()
+            missing = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.assertNotEqual(missing.returncode, 0)
+            self.assertEqual((claude / "settings.json").read_bytes(), before_claude)
+            self.assertEqual((opencode / "opencode.json").read_bytes(), before_opencode)
+            (package_dir / "index.mjs").write_text("// fixture package")
             subprocess.run(command, check=True, stdout=subprocess.DEVNULL)
             actual = json.loads((claude / "settings.json").read_text())
             self.assertEqual(actual["env"], private["env"])
             self.assertIn("Stop", actual["hooks"])
             self.assertIn("WorktreeCreate", actual["hooks"])
-            self.assertEqual(json.loads((opencode / "opencode.json").read_text())["plugins"][0], "existing-plugin")
+            installed = json.loads((opencode / "opencode.json").read_text())
+            self.assertEqual(installed["providers"], {"fixture": {}})
+            self.assertEqual(installed["plugins"], ["existing-plugin", {
+                "package": str(package_dir), "options": {"helperPath": "/custom/helper"},
+            }])
             backups = list(home.rglob("*.backup.*"))
             self.assertEqual(len(backups), 2)
             for path in backups + [claude / "settings.json", opencode / "opencode.json"]:
                 self.assertEqual(path.stat().st_mode & 0o077, 0)
             subprocess.run(command, check=True, stdout=subprocess.DEVNULL)
             self.assertEqual(list(home.rglob("*.backup.*")), backups)
+            override = home / "review worktree/opencode/worktrunk"
+            shutil.copytree(package_dir, override)
+            subprocess.run([*command, "--opencode-plugin-dir", str(override)], check=True, stdout=subprocess.DEVNULL)
+            plugins = json.loads((opencode / "opencode.json").read_text())["plugins"]
+            self.assertEqual(plugins, ["existing-plugin", {
+                "package": str(override), "options": {"helperPath": "/custom/helper"},
+            }])
+            subprocess.run(command, check=True, stdout=subprocess.DEVNULL)
+            self.assertEqual(json.loads((opencode / "opencode.json").read_text())["plugins"], installed["plugins"])
             actual["hooks"]["WorktreeCreate"] = [{"hooks": [{"command": "another-creator"}]}]
             (claude / "settings.json").write_text(json.dumps(actual))
             before = (opencode / "opencode.json").read_bytes()
@@ -119,9 +150,7 @@ class CreationTests(unittest.TestCase):
                 else:
                     self.assertEqual(invalid.returncode, 0)
                     self.assertEqual(Path(invalid.stdout.strip()).name, "codex-bad;name")
-            if os.environ.get("AGENT_OPENCODE_TEST_PLUGIN"):
-                subprocess.run(["node", "--test", str(ROOT / "tests/agent-worktrees-plugin.mjs")], check=True,
-                               env={**env, "AGENT_PLUGIN_PATH": os.environ["AGENT_OPENCODE_TEST_PLUGIN"], "AGENT_TEST_REPO": str(repo)})
+
 
 
 if __name__ == "__main__":

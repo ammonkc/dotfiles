@@ -150,7 +150,8 @@ non-ignored untracked files are no longer copied by automatic setup.
 
 Agent worktrees use the same layout through `agent-worktree`. After deploying and
 stowing the bin, claude, codex, opencode, and worktrunk packages, run
-`dotfiles dot:agents:worktrees` to install OpenCode's local strategy and merge
+`dotfiles dot:agents:worktrees` to install OpenCode's strategy from the primary
+claude-fiyah checkout (`opencode/worktrunk/`) and merge
 Claude and OpenCode's worktree settings. Existing settings are preserved and
 private backups are created. Restart those tools afterward. Claude's isolation
 hook and OpenCode's native worktree strategy use Worktrunk; Codex's global

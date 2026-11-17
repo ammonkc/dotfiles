@@ -4,7 +4,7 @@
   },
   "plugins": [
     {
-      "package": "./plugins/worktrunk"
+      "package": "~/Developer/repos/ammonkc/claude-fiyah/opencode/worktrunk"
     }
   ]
 }
