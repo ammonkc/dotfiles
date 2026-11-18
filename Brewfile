@@ -188,6 +188,7 @@ if OS.mac?
     cask 'stats'               # System monitor for the menu bar
     cask 'subler'              # Mux and tag mp4 files
     cask 'tableplus'           # Native GUI tool for relational databases
+    cask 'tablepro'            # Native database client for many database types
     cask 'tailscale-app'       # Mesh VPN based on WireGuard
     cask 'abue-ammar/tinycast/tinycast' # Tiny, fully native launcher, hotkeys, and clipboard history
     cask 'transmit'            # File transfer application
