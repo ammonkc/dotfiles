@@ -341,8 +341,8 @@ chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library 2>/dev/nul
 # Enable snap-to-grid for desktop icons
 run_optional /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 
-# Enable Desktop Stacks grouped by Kind
-defaults write com.apple.finder DesktopViewSettings -dict GroupBy Kind
+# Enable Desktop Stacks grouped by Kind (merged, so the icon grid settings survive)
+defaults write com.apple.finder DesktopViewSettings -dict-add GroupBy Kind
 
 # Enable snap-to-grid for standard icon views
 run_optional /usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
