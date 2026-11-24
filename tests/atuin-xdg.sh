@@ -36,6 +36,16 @@ if [ -n "$atuin_bin" ]; then
   grep -qF "client config: \"$home/.config/atuin/config.toml\"" <<< "$info"
   grep -qF "client db path: $home/.local/share/atuin/data/history.db" <<< "$info"
   grep -qF "key path: $home/.local/share/atuin/data/key" <<< "$info"
+  # The configured theme must load: atuin reads themes from $ATUIN_HOME/themes, not the config dir.
+  if [ ! -e "$home/.local/share/atuin/themes/catppuccin-mocha-mauve.toml" ]; then
+    echo "the configured theme is not stowed under ~/.local/share/atuin/themes" >&2
+    exit 1
+  fi
+  if grep -q 'could not load theme' <<< "$info"; then
+    echo "atuin cannot load the configured theme:" >&2
+    grep 'could not load theme' <<< "$info" >&2
+    exit 1
+  fi
   # Exercise the database and key creation paths, then look for the default home.
   run 'atuin history list; atuin search --limit 1 < /dev/null' >/dev/null 2>&1 || true
   test -f "$home/.local/share/atuin/data/history.db"

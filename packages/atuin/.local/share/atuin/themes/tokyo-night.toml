@@ -1,4 +1,4 @@
-# Drop this into ~/.config/atuin/themes/tokyo-night.toml, then reference it in atuin.conf
+# Drop this into ~/.local/share/atuin/themes/tokyo-night.toml, then reference it in atuin.conf
 #
 # See https://docs.atuin.sh/guide/theming/
 [theme]

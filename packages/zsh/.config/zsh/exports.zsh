@@ -107,8 +107,9 @@ export HTTPIE_CONFIG_DIR="$XDG_CONFIG_HOME/httpie"
 # atuin (shell history). Current atuin keeps everything in ~/.atuin unless told otherwise, and
 # only falls back to the XDG locations for files that already exist there. ATUIN_HOME moves the
 # data (history, key, logs) to $XDG_DATA_HOME/atuin/data, and ATUIN_CONFIG_DIR keeps config.toml
-# in the stowed ~/.config/atuin. With ATUIN_HOME set, atuin no longer falls back to the old
-# ~/.local/share/atuin/history.db: move existing data into $XDG_DATA_HOME/atuin/data first.
+# in the stowed ~/.config/atuin. Themes are read from $ATUIN_HOME/themes, so the atuin package
+# stows them under ~/.local/share/atuin/themes. With ATUIN_HOME set, atuin no longer falls back to
+# the old ~/.local/share/atuin/history.db: move existing data into $XDG_DATA_HOME/atuin/data first.
 export ATUIN_HOME="$XDG_DATA_HOME/atuin"
 export ATUIN_CONFIG_DIR="$XDG_CONFIG_HOME/atuin"
 
