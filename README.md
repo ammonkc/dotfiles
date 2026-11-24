@@ -191,7 +191,9 @@ dotfiles dev:handoff SUMMARY='Implemented feature' CHECKS='task test passed' NEX
 4. **Sign In to 1Password**
     - **Enable Touch ID:** Settings > Security and turn on Touch ID
     - **Enable CLI integration:** Developer > Settings and select "Integrate with 1Password CLI"
-    - **Run** `dotfiles system:post-install` after `op signin`
+    - **Check the CLI sees your account:** `op account list` should print your account. With the integration on you do not need `op signin`.
+    - **Run** `dotfiles system:post-install`
+    - **If `op` says "No accounts configured for use with 1Password CLI"** although the integration is on, run `op --debug account list 2>&1 | head -40`. A line such as `read file: open .../Group Containers/2BUA8C4S2C.com.1password/.../settings.json: operation not permitted` means macOS is blocking your terminal from reading 1Password's data. Add the terminal app under System Settings > Privacy & Security > Full Disk Access, quit and reopen it, then run `op account list` again. This was confirmed on macOS 27.2.1 with Ghostty. If it still fails, run `op account add` and then `eval "$(op signin)"` in the same terminal.
 5. **[Optional] Enable 1Password SSH agent:** In 1Password, Settings → Developer → Enable SSH agent; then run `dotfiles mac:op:setup`. Run `dotfiles mac:github:force_ssh` if GitHub HTTPS URLs should use SSH.
 6. **[Optional] Set up work accounts:** Sign into the business accounts in 1Password, then run `dotfiles system:work-setup`.
    You can use `dotfiles system:guided-setup` to choose these optional steps from a terminal menu.
