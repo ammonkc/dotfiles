@@ -47,8 +47,10 @@ STUB
     XDG_STATE_HOME="$home/.local/state" GH_CONFIG_DIR="$home/.config/gh" PATH="$scratch/bin:$PATH" \
     task -d "$root" system:post-install > "$scratch/out.txt" 2>&1 || { cat "$scratch/out.txt" >&2; exit 1; }
   grep -q 'Post-installation complete' "$scratch/out.txt"
+  # GNU stat (first on PATH in CI) takes -c; BSD stat takes -f.
+  mode() { stat -c %a "$1" 2>/dev/null || stat -f %Lp "$1"; }
   for file in .gitconfig.local .env.local; do
-    test "$(stat -f %Lp "$home/$file")" = 600
+    test "$(mode "$home/$file")" = 600
   done
   # Signing is switched on only once a key exists, in the generated 1Password block.
   grep -q 'signingkey = ssh-ed25519 AAAATESTKEY test' "$home/.gitconfig.local"
