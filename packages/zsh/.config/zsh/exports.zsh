@@ -42,8 +42,6 @@ export SHELL_SESSION_DIR="$XDG_STATE_HOME/zsh/sessions"
 # Prefer the 1Password agent when its socket is available; keep the system agent otherwise.
 [[ -S $HOME/.1password/agent.sock ]] && export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
 
-# Cursor
-export CURSOR_CONFIG_DIR="$XDG_CONFIG_HOME/cursor"
 
 # wget
 export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
