@@ -3,6 +3,10 @@ version: 3
 
 vars:
   DOTFILES: "{{.ROOT_DIR}}"
+  # Third-party taps used by Brewfile.core and Brewfile. Current Homebrew refuses to load
+  # formulae from untrusted taps, so these are trusted before every bundle. When a Brewfile
+  # adds a tap, add it here too: tests/brew-trust-taps.sh fails if one is missing.
+  TRUSTED_TAPS: modem-dev/tap shivammathur/php shivammathur/extensions
 
 tasks:
   # ============================================================================
@@ -18,6 +22,27 @@ tasks:
     cmds:
       - task: install:homebrew
       - task: install:gnu_stow
+
+  trust:taps:
+    platforms: [darwin]
+    silent: true
+    desc: Trust the third-party Homebrew taps used by the Brewfiles
+    summary: |
+      Taps and trusts each tap in TRUSTED_TAPS so brew bundle may load their formulae.
+      Runs automatically before every bundle. Skipped on Homebrew versions without brew trust.
+    cmds:
+      - |
+        set -e
+        export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
+        brew_bin="${BREW_BIN:-brew}"
+        if ! "$brew_bin" trust --help >/dev/null 2>&1; then
+          echo "brew trust is not available; skipping tap trust"
+          exit 0
+        fi
+        for tap in {{.TRUSTED_TAPS}}; do
+          "$brew_bin" tap "$tap"
+          "$brew_bin" trust --tap "$tap"
+        done
 
   upgrade:
     platforms: [darwin]
@@ -62,6 +87,7 @@ tasks:
     dir: "/{{.DOTFILES}}"
     silent: true
     cmds:
+      - task: trust:taps
       - |
         set -e
         export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
@@ -114,6 +140,7 @@ tasks:
     deps:
       - install:homebrew
     cmds:
+      - task: trust:taps
       - |
         set -e
         export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
