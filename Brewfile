@@ -45,6 +45,7 @@ brew 'lazydocker'                   # Lazier way to manage everything docker
 brew 'lazygit'                      # Simple terminal UI for git commands
 brew 'luarocks'                     # Package manager for the Lua programming language
 brew 'mise'                         # Polyglot runtime manager (asdf rust clone)
+brew 'mole'                         # Deep clean and optimize your Mac
 brew 'neovim'                       # Ambitious Vim-fork focused on extensibility and agility
 brew 'oh-my-posh'                   # Prompt theme engine for any shell
 brew 'optipng'                      # PNG file optimizer
@@ -157,6 +158,7 @@ if OS.mac?
     cask 'keycastr'                     # Open-source keystroke visualiser
     cask 'latest'                       # Utility that shows the latest app updates
     cask 'macpacker'                    # Archive manager
+    cask 'macshot'                      # Screenshot and screen recording tool
     cask 'macusb'                       # Tool to create bootable USB installers
     cask 'monitorcontrol'               # Tool to control external monitor brightness & volume
     cask 'orbstack'                     # Replacement for Docker Desktop
