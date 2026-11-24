@@ -1,2 +1,21 @@
-^/README.*
 ^/\.gitignore$
+
+# Preserve Stow's defaults when using a package-local ignore list.
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.hg
+\.git
+\.gitignore
+\.gitmodules
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING
+# Never link Finder metadata.
+\.DS_Store

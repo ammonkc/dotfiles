@@ -1,1 +1,6 @@
 .qodo
+.DS_Store
+*.log
+.task/
+node_modules/
+dist/
