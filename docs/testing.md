@@ -32,7 +32,7 @@ matrix: `task test:shell`, `task test:stow`, and `task test:config`.
 Shell syntax checks discover tracked and nonignored new scripts, including
 extensionless helpers and Zsh functions. Every file is checked separately;
 ShellCheck covers Bash and POSIX shell files. Zsh uses its own syntax parser.
-CI also validates the workflow with actionlint 1.7.7.
+CI also validates the workflow with actionlint 1.7.12.
 
 The task reference suite (`tests/task-references.sh`) resolves every `task:`
 reference through nested includes, so a missing leading colon or a stray shell

@@ -19,13 +19,13 @@ jobs:
           python-version: '3.13'
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
-          go-version: '1.24'
+          go-version: '1.25'
           cache: false
       - name: Install lint tools
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck zsh
-          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
       - uses: arduino/setup-task@c0bc642852239c2689f73f4ea6459c29405f3c52 # v3
         with:
           repo-token: ${{ github.token }}
