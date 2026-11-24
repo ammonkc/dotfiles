@@ -74,6 +74,11 @@ PY
 # Read-only tasks must at least render. Template or namespace errors fail here.
 for name in clean:all clean:backups clean:packages git:sync docker:ps docker:images develop:list; do
   task --dry "$name" >/dev/null 2>"${TMPDIR:-/tmp}/task-dry.$$.err" || {
+    # An unmet precondition (for example no backups on a clean runner) means the task and
+    # everything it references resolved; only the machine state is missing.
+    if grep -q 'precondition not met' "${TMPDIR:-/tmp}/task-dry.$$.err"; then
+      continue
+    fi
     echo "task --dry $name failed:" >&2
     cat "${TMPDIR:-/tmp}/task-dry.$$.err" >&2
     rm -f "${TMPDIR:-/tmp}/task-dry.$$.err"
