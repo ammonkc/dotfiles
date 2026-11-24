@@ -14,13 +14,21 @@ if [[ -z "$1" ]]; then
 fi
 
 cmd="$1"
-tmpfile="/tmp/man-$cmd.pdf"
+tmpfile="$(mktemp -d)/man-$cmd.pdf"
 
 if ! man -w "$cmd" >/dev/null 2>&1; then
     echo "No manual entry for $cmd"
     exit 1
 fi
 
-man -t "$cmd" | pstopdf -i -o "$tmpfile"
+# pstopdf was removed from macOS; render with mandoc or Ghostscript instead.
+if command -v mandoc >/dev/null 2>&1; then
+    mandoc -T pdf "$(man -w "$cmd")" > "$tmpfile"
+elif command -v ps2pdf >/dev/null 2>&1; then
+    man -t "$cmd" | ps2pdf - "$tmpfile"
+else
+    echo "Install mandoc or ghostscript (ps2pdf) to render manuals as PDF"
+    exit 1
+fi
 open "$tmpfile"
 
