@@ -118,11 +118,6 @@ dotfiles mac:op:setup       # Setup 1Password SSH agent
 dotfiles dev:setup          # Setup development directories
 dotfiles dev:list           # List development projects
 dotfiles dev:clone REPO=url # Clone repo to organized location
-# Tinycast extension builds require Node.js 22.22.2 or newer.
-dotfiles dot:tinycast:extensions # Build all Tinycast extensions for import
-dotfiles dot:tinycast:window-edges # Build size-preserving edge movements (macOS)
-dotfiles dot:raycast:extension   # Run Raycast IDL Docker (keep task running)
-dotfiles dot:raycast:utilities   # Run Developer Utilities in Raycast (keep running)
 
 # Git Operations
 dotfiles git:status         # Git status of dotfiles repo
@@ -199,6 +194,11 @@ dotfiles dev:handoff SUMMARY='Implemented feature' CHECKS='task test passed' NEX
    You can use `dotfiles system:guided-setup` to choose these optional steps from a terminal menu.
 7. **Customize local configs:** Edit files in `~/.*.local`
 8. **Setup Developer folders:** Included in `dotfiles system:post-install`
+9. **[Optional] Install Tinycast extensions:** They live in [ammonkc/tinycast-extensions](https://github.com/ammonkc/tinycast-extensions). In Tinycast, open Settings > Extensions > Install New > Install from GitHub and paste a link. Installing needs Node.js 22.22.2 or newer and a package manager on the PATH. Updating means reinstalling from the same link.
+    - `https://github.com/ammonkc/tinycast-extensions/tree/main/developer-utilities`
+    - `https://github.com/ammonkc/tinycast-extensions/tree/main/idl-docker`
+    - `https://github.com/ammonkc/tinycast-extensions/tree/main/obsidian-prompts`
+    - `https://github.com/ammonkc/tinycast-extensions/tree/main/window-edges`
 
 **Quick verification:**
 ```bash

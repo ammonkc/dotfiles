@@ -1,6 +1,3 @@
-# The extension source is built from this checkout, not stowed into ~/extensions.
-^/extensions$
-
 # Preserve Stow's defaults when using a package-local ignore list.
 RCS
 .+,v

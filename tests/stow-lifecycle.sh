@@ -30,8 +30,6 @@ for directory, _, files in os.walk(target):
         if link.is_symlink():
             assert link.resolve().is_relative_to(packages.resolve()), f'Foreign link: {link}'
 PY
-test ! -e "$target/extensions"
-test ! -e "$target/.config/tinycast/extensions"
 stow --restow --no-folding --dir="$root/packages" --target="$target" "${packages[@]}"
 find "$target" -type l | sort > "$scratch/after"
 cmp "$scratch/before" "$scratch/after"
