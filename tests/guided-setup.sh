@@ -6,7 +6,7 @@ scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
 
 # Resolve the real task list before the stub shadows `task`.
-task_list=$(task -d "$root" --list-all 2>/dev/null)
+task_list=$(task -d "$root" --color=false --list-all 2>/dev/null | sed $'s/\033\[[0-9;]*m//g')
 [[ -n "$task_list" ]] || { echo 'FAIL: could not list tasks' >&2; exit 1; }
 
 export HOME="$scratch/home"
