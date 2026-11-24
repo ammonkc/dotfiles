@@ -94,8 +94,11 @@ tasks:
   guided-setup:
     desc: Choose optional post-install steps with Gum
     summary: |
-      Interactive menu for personal and work setup, the 1Password SSH agent,
-      GitHub SSH URLs, macOS preferences, and the optional Homebrew bundle.
+      Interactive menu for GitHub sign in, personal and work setup, the
+      1Password SSH agent, GitHub SSH URLs, Neovim and mise tools, the optional
+      Homebrew bundle, macOS preferences, Tinycast extension links, and a final
+      installation check. Steps with a read-only check show a done or pending
+      marker, and the cursor starts on the first pending step.
       Requires a terminal and Gum. The individual tasks remain available for
       scripts and unattended setup.
     platforms: [darwin]
