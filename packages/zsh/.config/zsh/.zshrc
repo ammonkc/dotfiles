@@ -1,10 +1,7 @@
 # ----------------------------
 # ---- Core setup ------------
 # ----------------------------
-if (( $+commands[brew] )); then
-  # If you're using macOS, you'll want this enabled
-  eval "$(brew shellenv)"
-fi
+# Homebrew's environment is set up once in .zprofile.
 
 # ----------------------------
 #  - zimfw zsh plugin manager
@@ -77,7 +74,7 @@ fi
 
 # Init atuin (disable default up-arrow binding, we'll set it manually after all plugins load)
 if (( $+commands[atuin] )); then
-  eval "$(atuin init zsh --disable-up-arrow)"
+  cached-eval atuin "atuin init zsh --disable-up-arrow"
 fi
 
 # Init thefuck with caching

@@ -4,7 +4,8 @@
 if (( $+commands[delta] )); then
     git diff "$@" | delta
 elif (( $+commands[diff-so-fancy] )); then
-    git diff "$@" | diff-so-fancy
+    # `command` bypasses this function, which has the same name as the binary.
+    git diff "$@" | command diff-so-fancy
 else
     git diff --color "$@"
 fi
