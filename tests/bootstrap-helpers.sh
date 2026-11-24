@@ -58,4 +58,10 @@ if bash "$root/scripts/download-installer.sh" https://example.com/install.sh; th
   echo 'Downloader accepted an unapproved URL' >&2
   exit 1
 fi
+# The taskfile.dev installer takes the release tag positionally and has no -v flag.
+if grep -Eq 'taskfile\.dev/install\.sh.* -v( |$)' "$root/bin/install"; then
+  echo 'bin/install passes unsupported -v to the Task installer' >&2
+  exit 1
+fi
+grep -Eq 'taskfile\.dev/install\.sh .*[[:space:]]v[0-9]+\.[0-9]+\.[0-9]+[[:space:]]' "$root/bin/install"
 printf 'Bootstrap helper checks passed.\n'
