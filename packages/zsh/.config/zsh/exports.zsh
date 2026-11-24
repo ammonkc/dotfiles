@@ -104,8 +104,13 @@ export HTTPIE_CONFIG_DIR="$XDG_CONFIG_HOME/httpie"
 # export MISE_DATA_DIR="$XDG_DATA_HOME/mise"
 # export MISE_CACHE_DIR="$XDG_CACHE_HOME/mise"
 
-# atuin (shell history) - Native XDG support
-# export ATUIN_CONFIG_DIR="$XDG_CONFIG_HOME/atuin"
+# atuin (shell history). Current atuin keeps everything in ~/.atuin unless told otherwise, and
+# only falls back to the XDG locations for files that already exist there. ATUIN_HOME moves the
+# data (history, key, logs) to $XDG_DATA_HOME/atuin/data, and ATUIN_CONFIG_DIR keeps config.toml
+# in the stowed ~/.config/atuin. With ATUIN_HOME set, atuin no longer falls back to the old
+# ~/.local/share/atuin/history.db: move existing data into $XDG_DATA_HOME/atuin/data first.
+export ATUIN_HOME="$XDG_DATA_HOME/atuin"
+export ATUIN_CONFIG_DIR="$XDG_CONFIG_HOME/atuin"
 
 # zoxide (cd replacement) - Uses XDG by default
 # export _ZO_DATA_DIR="$XDG_DATA_HOME/zoxide"
