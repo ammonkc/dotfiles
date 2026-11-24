@@ -17,7 +17,6 @@ local tools = {
   "nginx-language-server",
   "php-debug-adapter",
   "phpstan",
-  "pint",
   "prettierd",
   "pyright",
   "rustywind",
@@ -26,6 +25,13 @@ local tools = {
   "stylua",
   "tailwindcss-language-server",
 }
+
+-- Mason installs pint (Laravel's PHP formatter) with Composer. Composer is only in the full
+-- Homebrew bundle, so skip pint when it is missing; a core install then still finishes with
+-- every other tool installed, and the next restore adds pint once Composer exists.
+if vim.fn.executable("composer") == 1 then
+  table.insert(tools, "pint")
+end
 
 return {
   -- Mason package manager

@@ -34,7 +34,10 @@ tasks:
       - sh: test -f "{{.LAZY_LOCK}}"
         msg: "lazy-lock.json not found at {{.LAZY_LOCK}}"
     status:
-      - test -d "{{.NVIM_DATA}}/lazy/lazy.nvim" && test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_TOOLS_HASH}}"
+      # pint is only requested when Composer exists, so it is also missing-work once Composer appears.
+      - |
+        {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
+        test -d "{{.NVIM_DATA}}/lazy/lazy.nvim" && test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_TOOLS_HASH}}" && { ! command -v "${COMPOSER_BIN:-composer}" >/dev/null 2>&1 || test -e "{{.NVIM_DATA}}/mason/bin/pint"; }
     cmds:
       - |
         set -e

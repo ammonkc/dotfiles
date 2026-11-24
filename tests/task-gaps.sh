@@ -37,10 +37,25 @@ for tool in mise nvim ya; do
 done
 chmod +x "$scratch/bin"/*
 export PATH="$scratch/bin:$PATH"
+# Neovim installs pint only when Composer exists; hide any real Composer from this fixture.
+export COMPOSER_BIN="$scratch/absent/composer"
 bash "$root/scripts/system-check.sh" "$root" > "$scratch/check.out"
 grep -q 'checks passed' "$scratch/check.out"
 task -d "$root" system:check > "$scratch/task-check.out"
 grep -q 'checks passed' "$scratch/task-check.out"
+# Once Composer exists, a missing Mason pint is pending work; installing pint clears it.
+printf '#!/bin/sh\nexit 0\n' > "$scratch/bin/composer"
+chmod +x "$scratch/bin/composer"
+if COMPOSER_BIN="$scratch/bin/composer" bash "$root/scripts/system-check.sh" "$root" > "$scratch/pint.out" 2>&1; then
+  printf 'system:check accepted a missing pint with Composer installed\n' >&2
+  exit 1
+fi
+grep -q 'Mason pint is missing' "$scratch/pint.out"
+mkdir -p "$HOME/.local/share/nvim/mason/bin"
+: > "$HOME/.local/share/nvim/mason/bin/pint"
+COMPOSER_BIN="$scratch/bin/composer" bash "$root/scripts/system-check.sh" "$root" > "$scratch/pint-ok.out"
+grep -q 'checks passed' "$scratch/pint-ok.out"
+rm "$HOME/.local/share/nvim/mason/bin/pint"
 printf 'stale\n' > "$HOME/.local/share/nvim/.lazy-tools-hash"
 if bash "$root/scripts/system-check.sh" "$root" > "$scratch/stale.out" 2>&1; then
   printf 'system:check accepted a stale Neovim tools marker\n' >&2

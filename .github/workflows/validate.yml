@@ -126,3 +126,11 @@ jobs:
         run: |
           test "$(uname -m)" = arm64
           ./bin/install
+      - name: Check that the Neovim restore finished
+        run: |
+          # nvim:restore is non-fatal in the installer, so a failed parser or Mason step would
+          # otherwise leave this job green. Both markers must match the lockfile.
+          hash="$(shasum -a 256 "$HOME/.config/nvim/lazy-lock.json" | cut -d' ' -f1)"
+          for marker in .lazy-restore-hash .lazy-tools-hash; do
+            test "$(cat "$HOME/.local/share/nvim/$marker")" = "$hash"
+          done
