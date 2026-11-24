@@ -2,7 +2,7 @@
 [core]
   quotepath = false
   excludesfile = ~/.config/git/ignore
-  editor = /opt/homebrew/bin/nvim
+  editor = nvim
   autocrlf = input
   pager = hunk pager
 [init]
@@ -12,7 +12,7 @@
 [pull]
 	ff = only
 [push]
-  default = tracking
+  default = upstream
 [merge]
 	conflictStyle = zdiff3
 [rebase]
@@ -29,7 +29,6 @@
   # do not warn about missing whitespace at EOF
   whitespace = nowarn
 [commit]
-  gpgsign = true
 	cleanup = scissors
   template = ~/.config/git/gitmessage
 [transfer]
@@ -202,7 +201,7 @@
     # clean up all
     forget = "!git fetch -p origin && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
 
-    delete-merged-branches = "!f() { git checkout --quiet master && git branch --merged | grep --invert-match '\\*' | xargs -n 1 git branch --delete; git checkout --quiet @{-1}; }; f"
+    delete-merged-branches = "!f() { b=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||'); b=${b:-main}; git checkout --quiet \"$b\" && git branch --merged | grep --invert-match '\\*' | xargs -n 1 git branch --delete; git checkout --quiet @{-1}; }; f"
     # diff = diff --ignore-space-at-eol -b -w --ignore-blank-lines
     d = "!git diff --ignore-space-at-eol -b -w --ignore-blank-lines -- ':!**/package-lock.json' ':!**/yarn.lock'"
 
