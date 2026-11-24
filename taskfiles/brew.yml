@@ -3,10 +3,12 @@ version: 3
 
 vars:
   DOTFILES: "{{.ROOT_DIR}}"
-  # Third-party taps used by Brewfile.core and Brewfile. Current Homebrew refuses to load
-  # formulae from untrusted taps, so these are trusted before every bundle. When a Brewfile
-  # adds a tap, add it here too: tests/brew-trust-taps.sh fails if one is missing.
-  TRUSTED_TAPS: modem-dev/tap shivammathur/php shivammathur/extensions
+  # Third-party taps. Current Homebrew refuses to load formulae from untrusted taps, so the
+  # taps a Brewfile uses are trusted before it is bundled. Core installs only touch the core
+  # taps; the full profile and brew:retry add the rest. When a Brewfile adds a tap, add it
+  # here too: tests/brew-trust-taps.sh fails if one is missing.
+  TRUSTED_TAPS_CORE: modem-dev/tap
+  TRUSTED_TAPS_FULL: abue-ammar/tinycast driceroland/tap dufu1991/tap lab421/tap momenbasel/pesty saffsanity/sill shivammathur/extensions shivammathur/php stablyai/orca tweakphp/tap xykong/tap
 
 tasks:
   # ============================================================================
@@ -28,8 +30,13 @@ tasks:
     silent: true
     desc: Trust the third-party Homebrew taps used by the Brewfiles
     summary: |
-      Taps and trusts each tap in TRUSTED_TAPS so brew bundle may load their formulae.
-      Runs automatically before every bundle. Skipped on Homebrew versions without brew trust.
+      Taps and trusts the taps brew bundle needs so it may load their formulae. The core taps
+      are always trusted; the full taps are added unless PROFILE (default: DOTFILES_PROFILE,
+      then full) is core. A tap that cannot be added or trusted is reported and skipped, and
+      brew bundle then reports the packages that need it. Skipped on Homebrew versions without
+      brew trust.
+    vars:
+      PROFILE: '{{.PROFILE | default (env "DOTFILES_PROFILE") | default "full"}}'
     cmds:
       - |
         set -e
@@ -39,9 +46,14 @@ tasks:
           echo "brew trust is not available; skipping tap trust"
           exit 0
         fi
-        for tap in {{.TRUSTED_TAPS}}; do
-          "$brew_bin" tap "$tap"
-          "$brew_bin" trust --tap "$tap"
+        taps="{{.TRUSTED_TAPS_CORE}}"
+        if [ "{{.PROFILE}}" != core ]; then
+          taps="$taps {{.TRUSTED_TAPS_FULL}}"
+        fi
+        for tap in $taps; do
+          if ! "$brew_bin" tap "$tap" || ! "$brew_bin" trust --tap "$tap"; then
+            echo "Warning: could not tap and trust $tap; formulae and casks from it may fail to install" >&2
+          fi
         done
 
   upgrade:
@@ -88,6 +100,8 @@ tasks:
     silent: true
     cmds:
       - task: trust:taps
+        vars:
+          PROFILE: full
       - |
         set -e
         export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
