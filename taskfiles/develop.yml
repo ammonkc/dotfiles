@@ -139,11 +139,18 @@ tasks:
       # Extract org/username from repo URL or shorthand
       DETECTED_ORG:
         sh: |
-          [ -n "{{.ORG}}" ] && echo "{{.ORG}}" || \
-          echo "{{.REPO}}" | sed -E 's|^([^/]+)/.*|\1|; t; s|.*[:/]([^/]+)/[^/]+.*|\1|; t; s|.*|{{.GIT_USER}}|'
+          if [ -n "{{.ORG}}" ]; then echo "{{.ORG}}"; exit 0; fi
+          r="{{.REPO}}"; r="${r%/}"; r="${r%.git}"
+          case "$r" in
+            *://*|*@*:*) org="${r%/*}"; org="${org##*[:/]}" ;;
+            */*) org="${r%%/*}" ;;
+            *) org="" ;;
+          esac
+          if [ -n "$org" ]; then echo "$org"; else echo "{{.GIT_USER}}"; fi
       # Extract repo name from URL or shorthand
       REPO_NAME:
-        sh: echo "{{.REPO}}" | sed -E 's|^[^/]+/([^/]+)$|\1|; t; s|.*[:/][^/]+/([^/]+)(\.git)?$|\1|' | sed 's/\.git$//'
+        sh: |
+          r="{{.REPO}}"; r="${r%/}"; r="${r%.git}"; echo "${r##*/}"
       TARGET_DIR: '{{.REPOS_DIR}}/{{.DETECTED_ORG}}/{{.REPO_NAME}}'
     preconditions:
       - sh: test -n "{{.REPO}}"
@@ -286,7 +293,7 @@ tasks:
         fi
       - for:
           var: CODE_PROJECTS
-          split: '\n'
+          split: "\n"
         cmd: echo "  - {{.ITEM}}"
       - echo ""
 
@@ -310,7 +317,7 @@ tasks:
         fi
       - for:
           var: DOC_ENTRIES
-          split: '\n'
+          split: "\n"
         cmd: echo "  - {{.ITEM}}"
       - echo ""
 
@@ -334,7 +341,7 @@ tasks:
         fi
       - for:
           var: SCRIPT_ENTRIES
-          split: '\n'
+          split: "\n"
         cmd: echo "  - {{.ITEM}}"
       - echo ""
 
@@ -358,7 +365,7 @@ tasks:
         fi
       - for:
           var: ORGS
-          split: '\n'
+          split: "\n"
         task: list:org
         vars:
           ORG_NAME: '{{.ITEM}}'
@@ -378,7 +385,7 @@ tasks:
       - echo "  {{.ORG_NAME}}/ ({{.REPO_COUNT}} repos)"
       - for:
           var: REPOS
-          split: '\n'
+          split: "\n"
         task: list:repo
         vars:
           REPO_NAME: '{{.ITEM}}'
@@ -411,7 +418,7 @@ tasks:
         fi
       - for:
           var: WORKTREE_PROJECTS
-          split: '\n'
+          split: "\n"
         task: list:worktree_project
         vars:
           PROJECT_NAME: '{{.ITEM}}'
@@ -430,5 +437,5 @@ tasks:
       - echo "  {{.PROJECT_NAME}}/ ({{.TREE_COUNT}} worktrees)"
       - for:
           var: TREES
-          split: '\n'
+          split: "\n"
         cmd: echo "    - {{.ITEM}}"

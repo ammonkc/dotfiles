@@ -13,7 +13,7 @@ tasks:
     cmds:
       - echo "🐳 Docker Status"
       - echo ""
-      - docker version --format 'Docker {{.Server.Version}} ({{.Server.Os}}/{{.Server.Arch}})'
+      - docker version --format 'Docker {{"{{.Server.Version}}"}} ({{"{{.Server.Os}}"}}/{{"{{.Server.Arch}}"}})'
       - echo ""
       - docker system df
 
@@ -23,7 +23,7 @@ tasks:
       Removes:
       - All stopped containers
       - All unused networks
-      - All dangling images
+      - All images not used by a container (not only dangling ones)
       - All build cache
 
       Does NOT remove volumes by default (use prune:all for that)
@@ -89,12 +89,12 @@ tasks:
   ps:
     desc: List all containers (running and stopped)
     cmds:
-      - docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+      - docker ps -a --format "table {{"{{.Names}}"}}\t{{"{{.Status}}"}}\t{{"{{.Ports}}"}}"
 
   images:
     desc: List all images
     cmds:
-      - docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.CreatedSince}}"
+      - docker images --format "table {{"{{.Repository}}"}}\t{{"{{.Tag}}"}}\t{{"{{.Size}}"}}\t{{"{{.CreatedSince}}"}}"
 
   volumes:
     desc: List all volumes
@@ -137,7 +137,8 @@ tasks:
         fi
 
   rm:all:
-    desc: Remove all stopped containers
+    desc: Remove all containers (running ones fail to remove unless stopped first)
+    prompt: This will delete all containers. Continue?
     cmds:
       - |
         STOPPED=$(docker ps -aq)

@@ -49,7 +49,7 @@ tasks:
     platforms: [darwin]
     vars:
       PREVIEW_FILE:
-        sh: mktemp /tmp/macos-defaults-preview.XXXXXX.md
+        sh: mktemp "${TMPDIR:-/tmp}/macos-defaults-preview.XXXXXX"
     preconditions:
       - sh: test -f "{{.MACOS_SCRIPT}}"
         msg: "macOS defaults script not found at {{.MACOS_SCRIPT}}"

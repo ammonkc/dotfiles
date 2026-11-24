@@ -56,7 +56,7 @@ tasks:
     dir: '{{.DOTFILES_DIR}}'
     cmds:
       - task: pull
-      - task: dot:install
+      - task: :dot:install
 
   push:
     desc: Push dotfiles changes to remote
@@ -83,7 +83,7 @@ tasks:
       vars: [MESSAGE]
     cmds:
       - git add -A
-      - git commit -m "{{.MESSAGE}}"
+      - git commit -m {{shellQuote .MESSAGE}}
       - echo "✓ Changes committed"
 
   log:
