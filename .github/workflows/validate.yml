@@ -1,6 +1,7 @@
 name: Validate dotfiles
 on:
   push:
+    branches: [main]
   pull_request:
 permissions:
   contents: read
@@ -12,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: '1.24'
           cache: false
@@ -25,7 +26,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y shellcheck zsh
           go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
-      - uses: arduino/setup-task@v3
+      - uses: arduino/setup-task@c0bc642852239c2689f73f4ea6459c29405f3c52 # v3
         with:
           repo-token: ${{ github.token }}
       - run: task lint
@@ -41,13 +42,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.13'
           cache: pip
           cache-dependency-path: tests/requirements.txt
-      - uses: arduino/setup-task@v3
+      - uses: arduino/setup-task@c0bc642852239c2689f73f4ea6459c29405f3c52 # v3
         with:
           repo-token: ${{ github.token }}
       - name: Install Linux validation tools
@@ -80,8 +81,8 @@ jobs:
       run:
         working-directory: ${{ matrix.extension }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 22
           cache: npm
@@ -97,8 +98,8 @@ jobs:
       run:
         working-directory: packages/tinycast/.config/tinycast/extensions/window-edges
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 22
           cache: npm
@@ -108,3 +109,20 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+  core-install:
+    name: Core install smoke (macos-15)
+    # Slow and network heavy, so run it on main only, not on every pull request.
+    if: github.event_name == 'push'
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Run the core profile installer with the default BSD toolchain
+        env:
+          DOTFILES_PROFILE: core
+          NONINTERACTIVE: '1'
+          # Casks are GUI apps that need an interactive session; skip them on the runner.
+          HOMEBREW_BUNDLE_CASK_SKIP: 1password 1password-cli
+        run: |
+          test "$(uname -m)" = arm64
+          ./bin/install
