@@ -14,14 +14,6 @@ vars:
   DOTFILES_DIR: '{{.ROOT_DIR}}'
   PACKAGES_DIR: '{{.DOTFILES_DIR}}/packages'
   STOW_FLAGS: '--restow --no-folding'
-  # Apple Silicon Homebrew prefix; Linux uses its native PATH.
-  BREW_PREFIX:
-    sh: |
-      if [[ "$(uname)" == "Darwin" ]]; then
-        echo "/opt/homebrew"
-      else
-        echo ""
-      fi
   # Dynamically get list of all package directories
   PACKAGES:
     sh: cd {{.PACKAGES_DIR}} && find . -maxdepth 1 -type d ! -name ".*" -exec basename {} \; | sort

@@ -48,7 +48,7 @@ if [[ -n $HOMEBREW_PREFIX ]]; then
   _ensure_first_path "$HOMEBREW_PREFIX/bin"
   _ensure_first_path "$HOMEBREW_PREFIX/sbin"
 fi
-[[ -d /opt/homebrew/opt/fzf/bin ]] && _ensure_first_path "/opt/homebrew/opt/fzf/bin"
+[[ -n $HOMEBREW_PREFIX && -d $HOMEBREW_PREFIX/opt/fzf/bin ]] && _ensure_first_path "$HOMEBREW_PREFIX/opt/fzf/bin"
 _ensure_first_path "$XDG_BIN_DIR"
 
 

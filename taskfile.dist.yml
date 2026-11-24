@@ -53,6 +53,11 @@ includes:
   system:
     taskfile: ./taskfiles/system.yml
 
+vars:
+  # Apple Silicon Homebrew prefix, defined once for every included taskfile.
+  # Linux uses its native PATH, so the prefix is empty there.
+  BREW_PREFIX: '{{if eq OS "darwin"}}/opt/homebrew{{end}}'
+
 tasks:
   test:
     desc: Run all isolated dotfiles test suites

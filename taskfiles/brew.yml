@@ -3,7 +3,6 @@ version: 3
 
 vars:
   DOTFILES: "{{.ROOT_DIR}}"
-  BREW_PREFIX: /opt/homebrew
 
 tasks:
   # ============================================================================
