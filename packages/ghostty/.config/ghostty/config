@@ -2,7 +2,7 @@
 # Configs
 #---------------------------------------------------
 theme                             = Molokai
-font-family                       = MesloLGS NF Regular
+font-family                       = MesloLGS Nerd Font Regular
 font-size                         = 12
 adjust-cell-height                = 5%
 background                        = #17242f

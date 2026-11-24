@@ -98,7 +98,7 @@
     },
   },
   "terminal": {
-    "font_family": "MesloLGS NF",
+    "font_family": "MesloLGS Nerd Font",
     "font_size": 13,
     "minimum_contrast": 0,
     "default_height": 560,
@@ -111,7 +111,7 @@
   "lsp": {
     "covhl": {
       "binary": {
-        "path": "/Users/ammon.casey/Developer/repos/ammonkc/zed-test-coverage-highlight/server/dist/covhl",
+        "path": "~/Developer/repos/ammonkc/zed-test-coverage-highlight/server/dist/covhl",
         "arguments": []
       }
     }
@@ -160,7 +160,8 @@
   "agent_servers": {
     "opencode": {
       "type": "custom",
-      "command": "/opt/homebrew/bin/opencode acp"
+      "command": "/opt/homebrew/bin/opencode",
+      "args": ["acp"]
     },
     "codex-acp": {
       "type": "registry"

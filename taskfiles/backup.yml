@@ -8,14 +8,6 @@ vars:
   BACKUP_BASE: '${XDG_DATA_HOME:-$HOME/.local/share}/dotfiles/backups'
   BACKUP_DIR:
     sh: echo "{{.BACKUP_BASE}}/$(date +%Y%m%d-%H%M%S)"
-  # Apple Silicon Homebrew prefix; Linux uses its native PATH.
-  BREW_PREFIX:
-    sh: |
-      if [[ "$(uname)" == "Darwin" ]]; then
-        echo "/opt/homebrew"
-      else
-        echo ""
-      fi
   # Get list of all backup timestamps (sorted newest first)
   BACKUP_TIMESTAMPS:
     sh: find "{{.BACKUP_BASE}}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | xargs -n1 basename 2>/dev/null | sort -r || true

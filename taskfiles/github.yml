@@ -271,34 +271,34 @@ tasks:
         KEY_NAME=""
 
         # Priority 1: OP_ITEM parameter (1Password item name)
-        if [ -n "{{.OP_ITEM}}" ]; then
+        if [ -n {{shellQuote .OP_ITEM}} ]; then
           if ! command -v op >/dev/null 2>&1; then
             echo "❌ 1Password CLI not installed (required for OP_ITEM)"
             echo "   Run: brew install --cask 1password-cli"
             exit 1
           fi
-          PUBLIC_KEY=$(op item get "{{.OP_ITEM}}" --account "{{.OP_ACCOUNT}}" --fields label="public key" 2>/dev/null) || {
-            echo "❌ Failed to get '{{.OP_ITEM}}' from 1Password account '{{.OP_ACCOUNT}}'"
+          PUBLIC_KEY=$(op item get {{shellQuote .OP_ITEM}} --account {{shellQuote .OP_ACCOUNT}} --fields label="public key" 2>/dev/null) || {
+            echo "❌ Failed to get the 1Password item from account"
             exit 1
           }
-          KEY_NAME="1Password {{.OP_ITEM}}"
+          KEY_NAME="1Password "{{shellQuote .OP_ITEM}}
 
         # Priority 2: KEY parameter with op:// reference
-        elif [ -n "{{.KEY}}" ] && echo "{{.KEY}}" | grep -q "^op://"; then
+        elif [ -n {{shellQuote .KEY}} ] && echo {{shellQuote .KEY}} | grep -q "^op://"; then
           if ! command -v op >/dev/null 2>&1; then
             echo "❌ 1Password CLI not installed (required for op:// references)"
             exit 1
           fi
-          PUBLIC_KEY=$(op read "{{.KEY}}" 2>/dev/null) || {
-            echo "❌ Failed to read 1Password reference: {{.KEY}}"
+          PUBLIC_KEY=$(op read {{shellQuote .KEY}} 2>/dev/null) || {
+            echo "❌ Failed to read 1Password reference"
             exit 1
           }
           KEY_NAME="1Password"
 
         # Priority 3: KEY parameter as local file path
-        elif [ -n "{{.KEY}}" ]; then
+        elif [ -n {{shellQuote .KEY}} ]; then
           # Handle if user passed the .pub file directly
-          KEY_PATH="{{.KEY}}"
+          KEY_PATH={{shellQuote .KEY}}
           if echo "$KEY_PATH" | grep -q '\.pub$'; then
             PUB_KEY_PATH="$KEY_PATH"
           else
@@ -338,14 +338,14 @@ tasks:
         fi
 
         # Determine title
-        if [ -n "{{.TITLE}}" ]; then
-          TITLE="{{.TITLE}}"
+        if [ -n {{shellQuote .TITLE}} ]; then
+          TITLE={{shellQuote .TITLE}}
         else
           TITLE="{{.HOSTNAME}} ($KEY_NAME)"
         fi
 
         # Add suffix for signing keys
-        if [ "{{.KEY_TYPE}}" = "signing" ]; then
+        if [ {{shellQuote .KEY_TYPE}} = "signing" ]; then
           DISPLAY_TITLE="$TITLE (signing)"
         else
           DISPLAY_TITLE="$TITLE"
@@ -357,7 +357,7 @@ tasks:
         EXISTING=$(gh ssh-key list 2>/dev/null || true)
 
         # Check if key already exists
-        if [ "{{.KEY_TYPE}}" = "signing" ]; then
+        if [ {{shellQuote .KEY_TYPE}} = "signing" ]; then
           if echo "$EXISTING" | grep signing | grep -qF "$KEY_FINGERPRINT" 2>/dev/null; then
             echo "  → Signing key already in GitHub"
             exit 0
@@ -370,7 +370,7 @@ tasks:
         fi
 
         # Add the key
-        echo "$PUBLIC_KEY" | gh ssh-key add - --title "$DISPLAY_TITLE" --type "{{.KEY_TYPE}}"
+        echo "$PUBLIC_KEY" | gh ssh-key add - --title "$DISPLAY_TITLE" --type {{shellQuote .KEY_TYPE}}
         echo "  ✓ Added {{.KEY_TYPE}} key: $DISPLAY_TITLE"
 
   keys:list:
@@ -418,8 +418,8 @@ tasks:
           GitHub CLI is not authenticated.
           Run: gh auth login
     cmds:
-      - gh ssh-key delete {{.ID}} --yes
-      - echo "✓ Removed key {{.ID}} from GitHub"
+      - gh ssh-key delete {{shellQuote .ID}} --yes
+      - echo "✓ Removed key from GitHub"
 
   # ============================================================================
   # SSH Connection Testing
@@ -500,8 +500,8 @@ tasks:
           Run: brew install gnupg
     cmds:
       - |
-        if [ -n "{{.KEY_ID}}" ]; then
-          GPG_KEY="{{.KEY_ID}}"
+        if [ -n {{shellQuote .KEY_ID}} ]; then
+          GPG_KEY={{shellQuote .KEY_ID}}
         else
           # Get default signing key
           GPG_KEY=$(gpg --list-secret-keys --keyid-format LONG 2>/dev/null | grep sec | head -1 | awk -F'/' '{print $2}' | awk '{print $1}')

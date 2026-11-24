@@ -1,0 +1,22 @@
+# Local override templates are copied to $HOME by dotfiles:install, not stowed.
+^/\.config/tmux/tmux\.local\.conf$
+
+# Preserve Stow's defaults when using a package-local ignore list.
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.hg
+\.git
+\.gitignore
+\.gitmodules
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING
+# Never link Finder metadata.
+\.DS_Store

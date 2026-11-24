@@ -4,14 +4,6 @@ version: 3
 silent: true
 
 vars:
-  # Apple Silicon Homebrew prefix; Linux uses its native PATH.
-  BREW_PREFIX:
-    sh: |
-      if [[ "$(uname)" == "Darwin" ]]; then
-        echo "/opt/homebrew"
-      else
-        echo ""
-      fi
 
 tasks:
   # ============================================================================

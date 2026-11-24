@@ -1,7 +1,10 @@
 # Automated testing
 
 CI runs independent lint, shell, Stow, configuration, and extension jobs. Shell,
-Stow, and configuration suites run on Ubuntu and Apple Silicon macOS. macOS
+Stow, and configuration suites run on Ubuntu and Apple Silicon macOS (the
+`macos-26` runner image, pinned so `macos-latest` cannot change results). Pushes to
+`main` also run a core profile install smoke job on Apple Silicon macOS
+(`DOTFILES_PROFILE=core ./bin/install`, with the 1Password casks skipped). macOS
 suites use `/bin/bash` so helpers retain compatibility with the system Bash 3.2.
 Extension jobs use Node 22 and committed npm lockfiles. Window Edges builds and
 tests its native Swift helper on Apple Silicon.
@@ -29,7 +32,11 @@ matrix: `task test:shell`, `task test:stow`, and `task test:config`.
 Shell syntax checks discover tracked and nonignored new scripts, including
 extensionless helpers and Zsh functions. Every file is checked separately;
 ShellCheck covers Bash and POSIX shell files. Zsh uses its own syntax parser.
-CI also validates the workflow with actionlint 1.7.7.
+CI also validates the workflow with actionlint 1.7.12.
+
+The task reference suite (`tests/task-references.sh`) resolves every `task:`
+reference through nested includes, so a missing leading colon or a stray shell
+fragment fails the build, and dry runs a few read only tasks.
 
 Stow tests create disposable targets, exercise all packages together, and check
 link ownership, exclusions, repeatability, and removal. Installation tests copy

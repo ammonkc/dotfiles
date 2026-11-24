@@ -46,14 +46,16 @@ For an interactive menu of secondary setup steps on macOS, run `dotfiles system:
 
 ### **Linux** (Debian/Ubuntu or Arch)
 
-Linux has automated helper, Stow, and configuration coverage; full installation still requires manual validation.
+Linux support is experimental. Helper scripts, Stow, and configuration have automated coverage, but a full installation has not been validated end to end and there is no Linux CI install job. Expect rough edges.
+
+Run `dotfiles linux:install` to install packages from the Linuxfile, then `dotfiles linux:doctor` to check the result.
 
 For development, run `task lint` and `task test` in this checkout. See
 [Automated testing](docs/testing.md) for dependencies, focused suites, and extension checks.
 
 **What gets installed:**
 - Homebrew (macOS) or native package managers (Linux)
-- GNU Stow, Zsh, Neovim, Git, modern CLI tools
+- GNU Stow, Neovim, Git, and modern CLI tools (the login shell stays the system `/bin/zsh`)
 - Development runtimes via [mise](https://mise.jdx.dev/) (Node, Python, and other configured tools)
 - Optional: macOS apps via Cask, custom system preferences
 
@@ -93,15 +95,16 @@ dotfiles info               # Show environment information
 
 ```bash
 # Dotfile Management
-dotfiles install            # Install/update dotfiles
-dotfiles list               # List installed packages
-dotfiles restow             # Re-stow all packages
-dotfiles dot:plan            # Preview Stow links and conflicts without changing files
+dotfiles install            # Install base tools, link dotfiles, restore Neovim plugins
+dotfiles dot:list           # List available packages
+dotfiles dot:restow PACKAGE=zsh   # Re-stow one package
+dotfiles dot:plan            # Preview Stow links and conflicts without changing files (run from ~/.dotfiles; a dev checkout reports conflicts)
 dotfiles dot:verify          # Compare development and deployed commits; check managed links
 dotfiles system:check        # Strict, read-only core installation check
 
 # Package Management
-dotfiles brew:update        # Update Homebrew packages (macOS)
+dotfiles brew:upgrade       # Update Homebrew and upgrade installed packages (macOS)
+dotfiles brew:update        # Regenerate the Brewfile from installed packages and commit it (macOS)
 dotfiles mise:update        # Update development tools
 dotfiles nvim:update        # Update Neovim plugins
 
@@ -174,7 +177,7 @@ dotfiles dev:handoff SUMMARY='Implemented feature' CHECKS='task test passed' NEX
 - `~/.zshrc.local` - Personal Zsh config
 - `~/.zshenv.local` - Personal Zsh env config
 - `~/.gitconfig.local` - Git name, email, signing
-- `~/.tmux.local.conf` - Local tumx config
+- `~/.tmux.local.conf` - Local tmux config
 - `~/.config/mise/conf.d/` - Local tool versions
 
 ## 📋 Post-Installation

@@ -30,7 +30,7 @@ for name in sorted(set(names)):
             tomllib.loads(text)
         elif path.suffix in ('.yaml', '.yml'):
             yaml.safe_load(text)
-        elif path.suffix == '.jsonc' or name.startswith(('packages/zed/', 'packages/cursor/', 'packages/vscode/')) or path.name == 'tsconfig.json':
+        elif path.suffix == '.jsonc' or name.startswith('packages/zed/') or path.name == 'tsconfig.json':
             json5.loads(text, allow_duplicate_keys=False)
         else:
             json.loads(text)

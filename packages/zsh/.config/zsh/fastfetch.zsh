@@ -1,7 +1,8 @@
 # -----------------------
 # ---- FastFetch -----
 # -----------------------
-if [[ "${FASTFETCH_STARTUP}" == "true" ]] && (( $+commands[fastfetch] )); then
+# Only banner real terminals; non-TTY shells (scripts, agents, ssh commands) skip the cost.
+if [[ "${FASTFETCH_STARTUP}" == "true" && -t 1 ]] && (( $+commands[fastfetch] )); then
   local logo_type=""
   local logo_source=""
   local logo_pad_left=""

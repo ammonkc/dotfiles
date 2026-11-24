@@ -6,14 +6,6 @@ silent: true
 vars:
   LAZY_LOCK: '${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lazy-lock.json'
   LAZY_LOCK_REPO: 'packages/nvim/.config/nvim/lazy-lock.json'
-  # Apple Silicon Homebrew prefix (needed before shell configuration loads).
-  BREW_PREFIX:
-    sh: |
-      if [[ "$(uname)" == "Darwin" ]]; then
-        echo "/opt/homebrew"
-      else
-        echo ""
-      fi
 
 tasks:
   # ============================================================================
@@ -47,6 +39,10 @@ tasks:
       - |
         set -e
         {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
+        # Mason needs mise's node/npm; shims are not on PATH in non-interactive task shells.
+        export PATH="${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shims:$PATH"
+        # Never block an unattended install on a git credential prompt.
+        export GIT_TERMINAL_PROMPT=0
         NVIM_BIN="${NVIM_BIN:-nvim}"
         LAZY_PATH="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim"
         if [ -d "$LAZY_PATH" ] && [ -n "{{.LAZY_LOCK_HASH}}" ] && [ "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" ]; then
@@ -56,7 +52,7 @@ tasks:
             git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
           fi
 
-          RESTORE_OUTPUT=$("$NVIM_BIN" --headless \
+          RESTORE_OUTPUT=$(timeout 600 "$NVIM_BIN" --headless \
             +'lua if vim.fn.exists(":Lazy") == 0 then io.stderr:write("Lazy command unavailable\\n"); vim.cmd("cq") end' \
             +'Lazy! restore' +'qa' 2>&1) || {
             printf '%s\n' "$RESTORE_OUTPUT" >&2
@@ -84,7 +80,7 @@ tasks:
           fi
         }
         TOOLS_OK=1
-        if ! run_nvim_step timeout 120 "$NVIM_BIN" --headless +'TSUpdateSync' +'qa'; then
+        if ! run_nvim_step timeout 330 "$NVIM_BIN" --headless +'lua require("nvim-treesitter").update():wait(300000)' +'qa'; then
           echo "⚠️  TreeSitter parser update failed or timed out" >&2
           TOOLS_OK=0
         fi
@@ -114,10 +110,12 @@ tasks:
     cmds:
       - |
         set -e
+        export PATH="${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shims:$PATH"
+        export GIT_TERMINAL_PROMPT=0
         echo "📦 Updating Neovim plugins..."
         nvim --headless +'Lazy! sync' +'qa' 2>&1
         if ! nvim --headless +'Lazy! clean' +'qa' 2>&1; then echo "⚠️  Lazy cleanup failed" >&2; fi
-        if ! timeout 120 nvim --headless +'TSUpdateSync' +'qa' 2>&1; then echo "⚠️  TreeSitter update failed" >&2; fi
+        if ! timeout 330 nvim --headless +'lua require("nvim-treesitter").update():wait(300000)' +'qa' 2>&1; then echo "⚠️  TreeSitter update failed" >&2; fi
         if ! timeout 300 nvim --headless \
           +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsUpdate") else vim.cmd("qa") end' \
           2>&1; then echo "⚠️  Mason tool update failed" >&2; fi

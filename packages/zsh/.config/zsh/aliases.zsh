@@ -101,7 +101,7 @@ alias flush="dscacheutil -flushcache"		# Flush Directory Service cache
 
 # ---- PHP -----
 alias cfresh="rm -rf vendor/ composer.lock && composer i"
-alias composer="php -d memory_limit=-1 /opt/homebrew/bin/composer"
+alias composer='php -d memory_limit=-1 "$(whence -p composer)"'
 # PHP version switching: use `phpswitch <version>` function (autoloaded from $ZDOTDIR/functions)
 alias sphp='phpswitch'
 

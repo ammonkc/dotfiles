@@ -38,7 +38,7 @@ commit_changes() {
       return 1
     }
 
-    git commit -m "$COMMIT_MSG" || {
+    git commit -m "$COMMIT_MSG" -- "$FILE_PATH" || {
       echo "Failed to commit changes in $FILE_PATH" >&2
       return 1
     }

@@ -32,22 +32,34 @@ echo -e "${BLUE}Updating system packages and dotfiles...${NC}"
 echo ""
 
 cd "$DOTFILES_DIR"
-# Stash any local changes
+# Auto-stash local changes (apps rewrite their own configs), then restore them after the pull.
+stash_ref=""
 if ! git diff-index --quiet HEAD -- 2>/dev/null; then
   echo -e "${BLUE}⚠️  Local changes detected - auto-stashing for safety${NC}"
-  git stash push -m "Auto-stash before bootstrap pull $(date +%Y-%m-%d-%H%M%S)"
-  echo -e "${BLUE}ℹ️  Your changes are saved in: git stash list${NC}"
+  stash_msg="Auto-stash before update $(date +%Y-%m-%d-%H%M%S)-$$"
+  if git stash push -m "$stash_msg" >/dev/null; then
+    # Identify this run's stash by its unique message, never an older one.
+    stash_ref="$(git stash list | grep -F "$stash_msg" | head -n 1 | cut -d: -f1)"
+  fi
 fi
 
 # Pull latest changes
 echo -e "${BLUE}📥 Updating from remote...${NC}"
-git pull origin $DOTFILES_BRANCH
+if ! git pull --ff-only origin "$DOTFILES_BRANCH"; then
+  if [[ -n "$stash_ref" ]]; then
+    echo -e "${RED}Pull failed. Your changes remain in $stash_ref (git stash pop to restore)${NC}"
+  fi
+  exit 1
+fi
 
-# Inform about stash but don't auto-pop (safer)
-if git stash list | grep -q "Auto-stash before bootstrap"; then
-  echo ""
-  echo -e "${BLUE}ℹ️  Note: Stashed changes can be restored with: git stash pop${NC}"
-  echo -e "${BLUE}ℹ️  Or review with: git stash list${NC}"
+if [[ -n "$stash_ref" ]]; then
+  if git stash pop "$stash_ref" >/dev/null; then
+    echo -e "${BLUE}ℹ️  Restored your local changes${NC}"
+  else
+    echo -e "${RED}Conflict restoring local changes. They are still saved in $stash_ref${NC}"
+    echo -e "${RED}Resolve in $DOTFILES_DIR, then run: git stash drop $stash_ref${NC}"
+    exit 1
+  fi
 fi
 
 task system:update

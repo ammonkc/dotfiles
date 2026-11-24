@@ -31,9 +31,13 @@ typeset -gaU path
 path=(
   $XDG_BIN_DIR
   /usr/local/{,s}bin(N)
-  node_modules/.bin(N)
-  vendor/bin(N)
-  $COMPOSER_BIN_DIR/vendor/bin
+  # Language tool bin dirs (exports.zsh sets the matching homes later).
+  $COMPOSER_BIN_DIR
+  $XDG_DATA_HOME/npm/bin
+  $XDG_DATA_HOME/pnpm
+  $XDG_DATA_HOME/cargo/bin
+  $XDG_DATA_HOME/go/bin
+  $XDG_DATA_HOME/gem/bin
   $path
 )
 
@@ -44,7 +48,7 @@ if [[ -n $HOMEBREW_PREFIX ]]; then
   _ensure_first_path "$HOMEBREW_PREFIX/bin"
   _ensure_first_path "$HOMEBREW_PREFIX/sbin"
 fi
-[[ -d /opt/homebrew/opt/fzf/bin ]] && _ensure_first_path "/opt/homebrew/opt/fzf/bin"
+[[ -n $HOMEBREW_PREFIX && -d $HOMEBREW_PREFIX/opt/fzf/bin ]] && _ensure_first_path "$HOMEBREW_PREFIX/opt/fzf/bin"
 _ensure_first_path "$XDG_BIN_DIR"
 
 

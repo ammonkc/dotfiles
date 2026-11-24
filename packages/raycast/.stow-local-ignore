@@ -18,3 +18,5 @@ _darcs
 ^/README.*
 ^/LICENSE.*
 ^/COPYING
+# Never link Finder metadata.
+\.DS_Store

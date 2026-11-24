@@ -764,6 +764,10 @@ for app in "Activity Monitor" \
   "Terminal" \
   "Transmission" \
   "iCal"; do
+  # Killing Terminal would kill this script when run from Terminal.app.
+  if [[ "${app}" == "Terminal" && "${TERM_PROGRAM:-}" == "Apple_Terminal" ]]; then
+    continue
+  fi
   killall "${app}" &>/dev/null || true
 done
 

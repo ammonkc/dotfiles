@@ -47,8 +47,8 @@ tasks:
 
       Override with: task clean:backups KEEP=10
     cmds:
-      - task: backup:clean
-      - task: backup:clean:empty
+      - task: :backup:clean
+      - task: :backup:clean:empty
       - echo "✓ Old backups cleaned"
 
   packages:
@@ -58,8 +58,8 @@ tasks:
       - macOS: brew cleanup and autoremove
       - Linux: apt autoremove or pacman clean
     cmds:
-      - task: brew:cleanup
-      - task: linux:cleanup
+      - task: :brew:cleanup
+      - task: :linux:cleanup
       - echo "✓ Package manager cleanup complete"
 
   logs:

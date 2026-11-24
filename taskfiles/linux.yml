@@ -290,14 +290,21 @@ tasks:
     cmds:
       - echo "📦 Installing manual tools from GitHub releases..."
       - echo "   (This may take a few minutes, failures will be skipped)"
-      # Call each install task individually with || true to continue on error
-      - task: install:eza || true
-      - task: install:yazi || true
-      - task: install:glow || true
-      - task: install:procs_manual || true
-      - task: install:git_delta || true
-      - task: install:lazygit || true
-      - task: install:lazydocker || true
+      # Call each install task individually; ignore_error lets the list continue after a failure
+      - task: install:eza
+        ignore_error: true
+      - task: install:yazi
+        ignore_error: true
+      - task: install:glow
+        ignore_error: true
+      - task: install:procs_manual
+        ignore_error: true
+      - task: install:git_delta
+        ignore_error: true
+      - task: install:lazygit
+        ignore_error: true
+      - task: install:lazydocker
+        ignore_error: true
       - echo "✓ Manual tools installation complete (check above for any failures)"
 
   install:eza:
@@ -565,9 +572,9 @@ tasks:
     platforms: [linux]
     cmds:
       - echo "🐧 Linux System Information:"
-      - echo "  Distribution{{printf ":" | .}} {{.DISTRO_NAME}}"
-      - echo "  Kernel{{printf ":" | .}} {{.KERNEL_VERSION}}"
-      - echo "  Architecture{{printf ":" | .}} {{.ARCHITECTURE}}"
+      - 'echo "  Distribution: {{.DISTRO_NAME}}"'
+      - 'echo "  Kernel: {{.KERNEL_VERSION}}"'
+      - 'echo "  Architecture: {{.ARCHITECTURE}}"'
       - echo ""
 
   doctor:package_manager:
@@ -590,9 +597,9 @@ tasks:
       - sh: test "{{.PKG_MANAGER}}" = "apt"
         msg: "This task is for apt package manager only"
     cmds:
-      - echo "  Package Manager{{printf ":" | .}} apt-get (Debian/Ubuntu)"
-      - echo "  Installed packages{{printf ":" | .}} {{.INSTALLED_COUNT}}"
-      - echo "  Upgradeable packages{{printf ":" | .}} {{.UPGRADABLE_COUNT}}"
+      - 'echo "  Package Manager: apt-get (Debian/Ubuntu)"'
+      - 'echo "  Installed packages: {{.INSTALLED_COUNT}}"'
+      - 'echo "  Upgradeable packages: {{.UPGRADABLE_COUNT}}"'
 
   doctor:pacman:
     internal: true
@@ -606,9 +613,9 @@ tasks:
       - sh: test "{{.PKG_MANAGER}}" = "pacman"
         msg: "This task is for pacman package manager only"
     cmds:
-      - echo "  Package Manager{{printf ":" | .}} pacman (Arch Linux)"
-      - echo "  Installed packages{{printf ":" | .}} {{.INSTALLED_COUNT}}"
-      - echo "  Explicitly installed{{printf ":" | .}} {{.EXPLICIT_COUNT}}"
+      - 'echo "  Package Manager: pacman (Arch Linux)"'
+      - 'echo "  Installed packages: {{.INSTALLED_COUNT}}"'
+      - 'echo "  Explicitly installed: {{.EXPLICIT_COUNT}}"'
 
   doctor:unknown:
     internal: true
@@ -666,7 +673,7 @@ tasks:
       - sh: test "{{.PKG_MANAGER}}" = "apt"
         msg: "This task is for apt package manager only"
     cmds:
-      - echo "  Broken packages{{printf ":" | .}} {{.BROKEN_COUNT}}"
+      - 'echo "  Broken packages: {{.BROKEN_COUNT}}"'
       - |
         if ! apt-get check >/dev/null 2>&1; then
           echo "  ⚠️  Unmet dependencies detected. Run: sudo apt-get -f install"
@@ -684,7 +691,7 @@ tasks:
       - sh: test "{{.PKG_MANAGER}}" = "pacman"
         msg: "This task is for pacman package manager only"
     cmds:
-      - echo "  Broken package files{{printf ":" | .}} {{.BROKEN_COUNT}}"
+      - 'echo "  Broken package files: {{.BROKEN_COUNT}}"'
 
   doctor:broken_unknown:
     internal: true

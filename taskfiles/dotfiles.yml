@@ -14,14 +14,6 @@ vars:
   DOTFILES_DIR: '{{.ROOT_DIR}}'
   PACKAGES_DIR: '{{.DOTFILES_DIR}}/packages'
   STOW_FLAGS: '--restow --no-folding'
-  # Apple Silicon Homebrew prefix; Linux uses its native PATH.
-  BREW_PREFIX:
-    sh: |
-      if [[ "$(uname)" == "Darwin" ]]; then
-        echo "/opt/homebrew"
-      else
-        echo ""
-      fi
   # Dynamically get list of all package directories
   PACKAGES:
     sh: cd {{.PACKAGES_DIR}} && find . -maxdepth 1 -type d ! -name ".*" -exec basename {} \; | sort
@@ -37,16 +29,20 @@ tasks:
   install:
     desc: Install all dotfiles using GNU Stow
     cmds:
+      - task: warn_dev_checkout
       - task: ensure_dirs
       - task: stow:packages
       - task: copy_local_configs
+      - task: leader_key_config
 
   plan:
     desc: Preview Stow changes and conflicts in your home directory
     summary: |
       Simulates restowing every package against your home directory.
       Shows files that would be linked or conflict without changing them.
-    cmd: bash "{{.ROOT_DIR}}/scripts/dotfiles-plan.sh" "{{.ROOT_DIR}}" "$HOME"
+    cmds:
+      - task: warn_dev_checkout
+      - bash "{{.ROOT_DIR}}/scripts/dotfiles-plan.sh" "{{.ROOT_DIR}}" "$HOME"
 
   verify:
     desc: Check deployed commit and managed Stow links
@@ -91,6 +87,30 @@ tasks:
   # ============================================================================
   # Internal Tasks
   # ============================================================================
+
+  warn_dev_checkout:
+    internal: true
+    silent: true
+    cmds:
+      - |
+        if [ "$(cd "{{.ROOT_DIR}}" && pwd -P)" != "$(cd "$HOME/.dotfiles" 2>/dev/null && pwd -P)" ]; then
+          echo "⚠️  Running from {{.ROOT_DIR}}, not ~/.dotfiles." >&2
+          echo "   Home links are owned by ~/.dotfiles, so this checkout may report conflicts." >&2
+          echo "   Use an isolated target or run from ~/.dotfiles to apply changes." >&2
+        fi
+
+  leader_key_config:
+    internal: true
+    silent: true
+    platforms: [darwin]
+    cmds:
+      - |
+        # Point Leader Key at the stowed config directory unless already set.
+        # Skip when HOME is overridden (tests, isolated targets): defaults would write to the real user domain.
+        real_home="$(dscl . -read "/Users/$(id -un)" NFSHomeDirectory 2>/dev/null | awk '{print $2}')"
+        if [ "$HOME" = "$real_home" ] && ! defaults read com.brnbw.Leader-Key configDir >/dev/null 2>&1; then
+          defaults write com.brnbw.Leader-Key configDir "$HOME/.config/leader-key"
+        fi
 
   ensure_dirs:
     internal: true
@@ -372,16 +392,15 @@ tasks:
     desc: Check stowed symlinks integrity
     internal: true
     silent: true
-    vars:
-      STOWED_COUNT:
-        sh: find ~ -maxdepth 3 -type l -lname "*/.dotfiles/*" 2>/dev/null | wc -l | tr -d ' '
     cmds:
       - echo "🔍 Checking stowed symlinks..."
       - |
-        if [[ "{{.STOWED_COUNT}}" -eq 0 ]]; then
-          echo "⚠️  No dotfiles symlinks found - run 'task dot:install' first"
+        # Simulates Stow for every package, so top-level and deep links are all checked.
+        if bash "{{.ROOT_DIR}}/scripts/dotfiles-verify.sh" "{{.ROOT_DIR}}" --links-only; then
+          echo "✓ Stowed symlinks match every package"
         else
-          echo "✓ Found {{.STOWED_COUNT}} stowed symlink(s)"
+          echo "✗ Stowed symlinks are missing or conflicting - run 'task dot:plan'" >&2
+          exit 1
         fi
 
   doctor:broken_links:
@@ -391,7 +410,7 @@ tasks:
     cmds:
       - echo "🔍 Checking for broken symlinks..."
       - |
-        BROKEN=$(find ~ -maxdepth 3 -type l ! -exec test -e {} \; -print 2>/dev/null | wc -l | tr -d ' ')
+        BROKEN=$({ find ~ -maxdepth 1 -type l ! -exec test -e {} \; -print; find ~/.config ~/.local ~/.claude ~/.codex -maxdepth 6 -type l ! -exec test -e {} \; -print; } 2>/dev/null | wc -l | tr -d ' ')
         if [[ "$BROKEN" -eq 0 ]]; then
           echo "✓ No broken symlinks found"
         else
@@ -427,14 +446,16 @@ tasks:
       - |
         MISSING=0
         while IFS= read -r file; do
-          if [[ ! -f "{{.PACKAGES_DIR}}/$file" ]]; then
-            echo "  ✗ Template missing: $file"
+          # Templates are copied to $HOME as dotfiles by copy_local_configs.
+          if [[ ! -f "$HOME/.$(basename "$file")" ]]; then
+            echo "  ✗ Not installed: $file -> ~/.$(basename "$file")"
             MISSING=$((MISSING + 1))
           fi
-        done < <(cd {{.PACKAGES_DIR}} && find . -type f -name "*.local" | sed 's|^\./||')
+        done < <(cd {{.PACKAGES_DIR}} && find . -type f \( -name "*.local" -o -name "*.local.*" \) | sed 's|^\./||')
 
         if [[ $MISSING -eq 0 ]]; then
-          echo "✓ All template files found"
+          echo "✓ All local override files are installed"
         else
-          echo "⚠️  $MISSING template(s) missing"
+          echo "✗ $MISSING local override file(s) missing - run 'task dot:install'" >&2
+          exit 1
         fi

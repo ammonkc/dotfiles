@@ -30,21 +30,20 @@ export COMPOSER_BIN_DIR=${COMPOSER_BIN_DIR:-$XDG_BIN_DIR/composer}
 export SHORT_HOST="${HOST/.*/}"
 export ZSH_COMPDUMP="$ZSH_CACHE_DIR/zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 
-# Ensure XDG and Zsh directories exist (single mkdir call for efficiency)
-mkdir -p "$XDG_CONFIG_HOME" \
-         "$XDG_CACHE_HOME" \
-         "$XDG_DATA_HOME" \
-         "$XDG_STATE_HOME" \
-         "$XDG_BIN_DIR" \
-         "$ZSH_CACHE_DIR" \
-         "$ZSH_DATA_DIR" \
-         "$ZSH_STATE_DIR" \
-         "$(dirname $ZSH_COMPDUMP)"
-
-# Ensure gnupg directory exists with strict permissions (700)
-# GPG requires this for security - directory must be readable/writable/executable only by owner
-mkdir -p "$XDG_DATA_HOME/gnupg"
-chmod 700 "$XDG_DATA_HOME/gnupg"
+# Ensure XDG and Zsh directories exist. Only spawn mkdir when something is missing.
+() {
+  local dir missing=()
+  for dir in "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME" \
+             "$XDG_BIN_DIR" "$ZSH_CACHE_DIR" "$ZSH_DATA_DIR" "$ZSH_STATE_DIR" "${ZSH_COMPDUMP:h}"; do
+    [[ -d $dir ]] || missing+=("$dir")
+  done
+  (( ${#missing} )) && mkdir -p "${missing[@]}"
+  # GPG requires a private directory (700); set it when creating, never on every start.
+  if [[ ! -d $XDG_DATA_HOME/gnupg ]]; then
+    mkdir -p "$XDG_DATA_HOME/gnupg" && chmod 700 "$XDG_DATA_HOME/gnupg"
+  fi
+  return 0
+}
 
 # Increase file descriptor limit (fixes "too many open files" errors)
 # macOS default is 256, which is too low for modern development tools like Neovim

@@ -6,6 +6,9 @@ Host *
   UseKeychain yes
   AddKeysToAgent yes
   PreferredAuthentications publickey
-  IdentityAgent ~/.1password/agent.sock
   ServerAliveInterval 5
   ExitOnForwardFailure yes
+
+# Use the 1Password agent only when its socket exists, so SSH works before 1Password is set up.
+Match host * exec "test -S %d/.1password/agent.sock"
+  IdentityAgent ~/.1password/agent.sock

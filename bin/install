@@ -27,6 +27,17 @@ case "${DOTFILES_PROFILE:-full}" in
   *) error "DOTFILES_PROFILE must be core or full"; exit 1 ;;
 esac
 
+# When run directly (not via bootstrap.sh), request sudo once so Homebrew and cask
+# installers do not prompt mid-bundle, and keep the credential fresh.
+if [[ "$OSTYPE" == "darwin"* ]] && ! sudo -n true 2>/dev/null && [[ -r /dev/tty ]]; then
+  info "Requesting sudo access for installers..."
+  if sudo -v < /dev/tty; then
+    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+  else
+    warning "Continuing without sudo; some installers may prompt later"
+  fi
+fi
+
 # Ensure gnupg directory exists with strict permissions (700)
 mkdir -p "$GNUPGHOME"
 chmod 700 "$GNUPGHOME"
@@ -35,7 +46,7 @@ chmod 700 "$GNUPGHOME"
 if ! command -v task > /dev/null; then
   info "Installing go-task..."
   mkdir -p "$XDG_BIN_DIR"
-  bash "$DOTFILES_DIR/scripts/download-installer.sh" https://taskfile.dev/install.sh -v 3.54.0 -d -b "$XDG_BIN_DIR" || {
+  bash "$DOTFILES_DIR/scripts/download-installer.sh" https://taskfile.dev/install.sh -d -b "$XDG_BIN_DIR" v3.54.0 || {
     error "Failed to install go-task"
     exit 1
   }

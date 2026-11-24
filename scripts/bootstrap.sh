@@ -25,6 +25,19 @@ if [[ "$OSTYPE" == "darwin"* && "$(uname -m)" != "arm64" ]]; then
   exit 1
 fi
 
+# Check for Xcode Command Line Tools first, so a rerun does not waste a sudo prompt
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  if ! xcode-select -p >/dev/null 2>&1; then
+    error "Xcode Command Line Tools are not installed"
+    info "Installing Xcode Command Line Tools..."
+    xcode-select --install
+    echo ""
+    warning "Please run this script again after Xcode Command Line Tools installation completes"
+    warning "You may need to accept the license agreement in a popup window"
+    exit 1
+  fi
+fi
+
 # Request sudo access upfront (needed for Homebrew installation)
 if [[ "$OSTYPE" == "darwin"* ]]; then
   info "Requesting sudo access for Homebrew installation..."
@@ -81,19 +94,6 @@ fi
 success "Preflight checks passed"
 echo ""
 
-# Check for Xcode Command Line Tools on macOS
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  if ! xcode-select -p >/dev/null 2>&1; then
-    error "Xcode Command Line Tools are not installed"
-    info "Installing Xcode Command Line Tools..."
-    xcode-select --install
-    echo ""
-    warning "Please run this script again after Xcode Command Line Tools installation completes"
-    warning "You may need to accept the license agreement in a popup window"
-    exit 1
-  fi
-fi
-
 # Check for git
 if ! command -v git >/dev/null 2>&1; then
   error "Git is not installed"
@@ -123,6 +123,12 @@ if ! command -v git >/dev/null 2>&1; then
   fi
 fi
 
+if [[ -d "$DOTFILES_DIR" ]] && ! git -C "$DOTFILES_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  error "$DOTFILES_DIR exists but is not a git repository (an interrupted clone?)"
+  error "Move or remove it, then run this script again"
+  exit 1
+fi
+
 if [[ ! -d "$DOTFILES_DIR" ]]; then
   info "Cloning dotfiles repository..."
   git clone "$DOTFILES_REPO" --branch "$DOTFILES_BRANCH" --single-branch "$DOTFILES_DIR" || {
@@ -143,7 +149,7 @@ else
 
   # Pull latest changes
   info "Updating from remote..."
-  git pull origin "$DOTFILES_BRANCH"
+  git pull --ff-only origin "$DOTFILES_BRANCH"
 
   # Inform about stash but don't auto-pop (safer)
   if git stash list | grep -q "Auto-stash before bootstrap"; then
