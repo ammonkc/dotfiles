@@ -121,15 +121,10 @@ if OS.mac?
     brew 'grep'                # GNU grep, egrep and fgrep
 
     # Code Editors
-    cask 'agentasticai/tap/dev' # Native macOS code editor
-    cask 'calyx'                # Terminal for running and supervising coding agents
     cask 'claude-code'          # Terminal-based AI coding assistant
-    cask 'cmux'                 # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
     cask 'codex'                # OpenAI's coding agent that runs in your terminal
     cask 'opencode-desktop'     # AI coding agent desktop client
     cask 'stablyai/orca/orca'   # IDE for orchestrating AI coding agents across terminals and worktrees
-    cask 'supacode'             # Native terminal coding agents command center
-    cask 'visual-studio-code'   # Microsoft Visual Studio Code
     cask 'zed'                  # Agentic code editor
 
     # Apps casks
@@ -141,7 +136,6 @@ if OS.mac?
     cask 'boop'                         # Scriptable scratchpad for developers
     cask 'bruno'                        # Open source IDE for exploring and testing APIs
     cask 'dockdoor'                     # Window peeking utility app
-    cask 'clop'                         # Image, video and clipboard optimiser
     cask 'easydmg'                      # One click DMG installs
     cask 'finetune'                     # Per-application volume mixer, equalizer, and audio router
     cask 'fluidvoice'                   # Offline voice-to-text dictation app with AI enhancement
@@ -150,7 +144,6 @@ if OS.mac?
     cask 'ghostty'                      # Terminal emulator that uses platform-native UI and GPU acceleration
     cask 'github'                       # GitHub Desktop
     cask 'google-chrome'                # Google Chrome browser
-    cask 'hammerspoon'                  # Desktop automation application
     cask 'handbrake-app'                # Open-source video transcoder available for Linux, Mac, and Windows
     cask 'herdr-app'                    # Desktop app for terminals and coding agents
     cask 'homebrew-app'                 # Homebrew's official GUI
@@ -158,17 +151,14 @@ if OS.mac?
     cask 'iina'                         # Free and open-source media player
     cask 'imageoptim'                   # Tool to optimise images to a smaller size
     cask 'istat-menus'                  # System monitoring app
-    cask 'iterm2'                       # Terminal emulator as alternative to Apple's Terminal app
     cask 'jordanbaird-ice'              # Menu bar manager
     cask 'karabiner-elements'           # Keyboard customiser
     cask 'keka'                         # the macOS file archiver
     cask 'keycastr'                     # Open-source keystroke visualiser
     cask 'latest'                       # Utility that shows the latest app updates
-    cask 'leader-key'                   # Keyboard Application launcher
     cask 'macpacker'                    # Archive manager
     cask 'macusb'                       # Tool to create bootable USB installers
     cask 'monitorcontrol'               # Tool to control external monitor brightness & volume
-    cask 'moom'                         # Utility to move and zoom windows—on one display
     cask 'orbstack'                     # Replacement for Docker Desktop
     cask 'omnidisksweeper'              # Finds large, unwanted files and deletes them
     cask 'opendisk'                     # Disk space analyser
@@ -194,7 +184,6 @@ if OS.mac?
     cask 'tweakphp/tap/tweakphp'        # Desktop application with a code editor to tweak your PHP code
     cask 'utm'                          # Virtual machines UI using QEMU
     cask 'vlc'                          # Multimedia player
-    # cask 'zoom'                       # Video communication and virtual meeting platform
 
     # Fonts
     cask 'font-meslo-lg-nerd-font'
