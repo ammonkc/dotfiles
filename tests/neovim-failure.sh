@@ -31,7 +31,7 @@ cat > "$scratch/brew/bin/nvim" <<'EOF'
 #!/bin/sh
 printf '%s\n' "$*" >> "$NVIM_TEST_LOG"
 case "$*" in
-  *TSUpdateSync*)
+  *nvim-treesitter*)
     if [ ! -f "$NVIM_TS_FAILED" ]; then
       touch "$NVIM_TS_FAILED"
       exit 13
@@ -54,7 +54,7 @@ test ! -e "$scratch/data/nvim/.lazy-tools-hash"
 HOME="$scratch/home" XDG_CONFIG_HOME="$scratch/home/.config" XDG_DATA_HOME="$scratch/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore
 test -s "$scratch/data/nvim/.lazy-tools-hash"
 test "$(grep -c 'Lazy! restore' "$NVIM_TEST_LOG")" -eq 1
-test "$(grep -c TSUpdateSync "$NVIM_TEST_LOG")" -eq 2
+test "$(grep -c nvim-treesitter "$NVIM_TEST_LOG")" -eq 2
 before="$(wc -l < "$NVIM_TEST_LOG")"
 HOME="$scratch/home" XDG_CONFIG_HOME="$scratch/home/.config" XDG_DATA_HOME="$scratch/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore
 test "$(wc -l < "$NVIM_TEST_LOG")" -eq "$before"

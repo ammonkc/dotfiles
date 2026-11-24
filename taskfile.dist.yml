@@ -95,8 +95,12 @@ tasks:
     cmds:
       - task: system:install
       - task: mise:install
+      # Editor and yazi plugin setup is retryable, so it must not fail the whole install.
+      # system:check reports stale Neovim markers; rerun task nvim:restore or shell:yazi:install.
       - task: nvim:restore
+        ignore_error: true
       - task: shell:yazi:install
+        ignore_error: true
 
   doctor:
     desc: Run comprehensive health checks on your dotfiles setup
