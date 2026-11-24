@@ -122,79 +122,79 @@ if OS.mac?
 
     # Code Editors
     cask 'agentasticai/tap/dev' # Native macOS code editor
-    cask 'calyx'               # Terminal for running and supervising coding agents
-    cask 'claude-code'         # Terminal-based AI coding assistant
-    cask 'cmux'                # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
-    cask 'codex'               # OpenAI's coding agent that runs in your terminal
-    cask 'opencode-desktop'    # AI coding agent desktop client
-    cask 'stablyai/orca/orca'  # IDE for orchestrating AI coding agents across terminals and worktrees
-    cask 'supacode'            # Native terminal coding agents command center
-    cask 'visual-studio-code'  # Microsoft Visual Studio Code
-    cask 'zed'                 # Agentic code editor
+    cask 'calyx'                # Terminal for running and supervising coding agents
+    cask 'claude-code'          # Terminal-based AI coding assistant
+    cask 'cmux'                 # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
+    cask 'codex'                # OpenAI's coding agent that runs in your terminal
+    cask 'opencode-desktop'     # AI coding agent desktop client
+    cask 'stablyai/orca/orca'   # IDE for orchestrating AI coding agents across terminals and worktrees
+    cask 'supacode'             # Native terminal coding agents command center
+    cask 'visual-studio-code'   # Microsoft Visual Studio Code
+    cask 'zed'                  # Agentic code editor
 
     # Apps casks
-    cask '1password'           # 1Password app
-    cask '1password-cli'       # Command-line interface for 1Password
-    cask 'appcleaner'          # Application uninstaller
-    cask 'bartender'           # Menu bar icon organiser
-    cask 'betterdisplay'       # Display management tool
-    cask 'boop'                # Scriptable scratchpad for developers
-    cask 'bruno'               # Open source IDE for exploring and testing APIs
-    cask 'dockdoor'            # Window peeking utility app
-    cask 'clop'                # Image, video and clipboard optimiser
-    cask 'easydmg'             # One click DMG installs
-    cask 'finetune'            # Per-application volume mixer, equalizer, and audio router
-    cask 'fluidvoice'          # Offline voice-to-text dictation app with AI enhancement
-    cask 'dufu1991/tap/foldgit' # Native, lightweight Git client with grouped repositories and worktrees
-    cask 'lab421/tap/forel'    # File-automation app that watches folders and runs rules
-    cask 'ghostty'             # Terminal emulator that uses platform-native UI and GPU acceleration
-    cask 'github'              # GitHub Desktop
-    cask 'google-chrome'       # Google Chrome browser
-    cask 'hammerspoon'         # Desktop automation application
-    cask 'handbrake-app'       # Open-source video transcoder available for Linux, Mac, and Windows
-    cask 'herdr-app'           # Desktop app for terminals and coding agents
-    cask 'homebrew-app'        # Homebrew's official GUI
-    cask 'hovrly'              # Display and convert timezones time in different cities
-    cask 'iina'                # Free and open-source media player
-    cask 'imageoptim'          # Tool to optimise images to a smaller size
-    cask 'istat-menus'         # System monitoring app
-    cask 'iterm2'              # Terminal emulator as alternative to Apple's Terminal app
-    cask 'jordanbaird-ice'     # Menu bar manager
-    cask 'karabiner-elements'  # Keyboard customiser
-    cask 'keka'                # the macOS file archiver
-    cask 'keycastr'            # Open-source keystroke visualiser
-    cask 'latest'              # Utility that shows the latest app updates
-    cask 'leader-key'          # Keyboard Application launcher
-    cask 'macpacker'           # Archive manager
-    cask 'macusb'              # Tool to create bootable USB installers
-    cask 'monitorcontrol'      # Tool to control external monitor brightness & volume
-    cask 'moom'                # Utility to move and zoom windows—on one display
-    cask 'orbstack'            # Replacement for Docker Desktop
-    cask 'omnidisksweeper'     # Finds large, unwanted files and deletes them
-    cask 'opendisk'            # Disk space analyser
-    cask 'paste'               # Limitless clipboard
-    cask 'momenbasel/pesty/pesty' # Free, open-source clipboard manager inspired by Paste
-    cask 'peel'                # App uninstaller and disk space cleaner
-    cask 'pika'                # Colour picker for colours onscreen
-    cask 'puremac'             # Open-source application manager and system cleaner
-    cask 'purge'               # Clears caches and junk files by moving them to the Trash
-    cask 'raycast'             # Control your tools with a few keystrokes
-    cask 'repobar'             # Menu bar dashboard for GitHub repository health
-    cask 'sequel-ace'          # MySQL/MariaDB database management
-    cask 'driceroland/tap/search' # Browser with nothing in the way
-    cask 'saffsanity/sill/sill' # Streams windows to an iPhone or iPad with touch, Pencil and keyboard control
-    cask 'slack'               # Team communication and collaboration software
-    cask 'stats'               # System monitor for the menu bar
-    cask 'subler'              # Mux and tag mp4 files
-    cask 'tableplus'           # Native GUI tool for relational databases
-    cask 'tablepro'            # Native database client for many database types
-    cask 'tailscale-app'       # Mesh VPN based on WireGuard
+    cask '1password'                    # 1Password app
+    cask '1password-cli'                # Command-line interface for 1Password
+    cask 'appcleaner'                   # Application uninstaller
+    cask 'bartender'                    # Menu bar icon organiser
+    cask 'betterdisplay'                # Display management tool
+    cask 'boop'                         # Scriptable scratchpad for developers
+    cask 'bruno'                        # Open source IDE for exploring and testing APIs
+    cask 'dockdoor'                     # Window peeking utility app
+    cask 'clop'                         # Image, video and clipboard optimiser
+    cask 'easydmg'                      # One click DMG installs
+    cask 'finetune'                     # Per-application volume mixer, equalizer, and audio router
+    cask 'fluidvoice'                   # Offline voice-to-text dictation app with AI enhancement
+    cask 'dufu1991/tap/foldgit'         # Native, lightweight Git client with grouped repositories and worktrees
+    cask 'lab421/tap/forel'             # File-automation app that watches folders and runs rules
+    cask 'ghostty'                      # Terminal emulator that uses platform-native UI and GPU acceleration
+    cask 'github'                       # GitHub Desktop
+    cask 'google-chrome'                # Google Chrome browser
+    cask 'hammerspoon'                  # Desktop automation application
+    cask 'handbrake-app'                # Open-source video transcoder available for Linux, Mac, and Windows
+    cask 'herdr-app'                    # Desktop app for terminals and coding agents
+    cask 'homebrew-app'                 # Homebrew's official GUI
+    cask 'hovrly'                       # Display and convert timezones time in different cities
+    cask 'iina'                         # Free and open-source media player
+    cask 'imageoptim'                   # Tool to optimise images to a smaller size
+    cask 'istat-menus'                  # System monitoring app
+    cask 'iterm2'                       # Terminal emulator as alternative to Apple's Terminal app
+    cask 'jordanbaird-ice'              # Menu bar manager
+    cask 'karabiner-elements'           # Keyboard customiser
+    cask 'keka'                         # the macOS file archiver
+    cask 'keycastr'                     # Open-source keystroke visualiser
+    cask 'latest'                       # Utility that shows the latest app updates
+    cask 'leader-key'                   # Keyboard Application launcher
+    cask 'macpacker'                    # Archive manager
+    cask 'macusb'                       # Tool to create bootable USB installers
+    cask 'monitorcontrol'               # Tool to control external monitor brightness & volume
+    cask 'moom'                         # Utility to move and zoom windows—on one display
+    cask 'orbstack'                     # Replacement for Docker Desktop
+    cask 'omnidisksweeper'              # Finds large, unwanted files and deletes them
+    cask 'opendisk'                     # Disk space analyser
+    cask 'paste'                        # Limitless clipboard
+    cask 'momenbasel/pesty/pesty'       # Free, open-source clipboard manager inspired by Paste
+    cask 'peel'                         # App uninstaller and disk space cleaner
+    cask 'pika'                         # Colour picker for colours onscreen
+    cask 'puremac'                      # Open-source application manager and system cleaner
+    cask 'purge'                        # Clears caches and junk files by moving them to the Trash
+    cask 'raycast'                      # Control your tools with a few keystrokes
+    cask 'repobar'                      # Menu bar dashboard for GitHub repository health
+    cask 'sequel-ace'                   # MySQL/MariaDB database management
+    cask 'driceroland/tap/search'       # Browser with nothing in the way
+    cask 'saffsanity/sill/sill'         # Streams windows to an iPhone or iPad with touch, Pencil and keyboard control
+    cask 'slack'                        # Team communication and collaboration software
+    cask 'stats'                        # System monitor for the menu bar
+    cask 'subler'                       # Mux and tag mp4 files
+    cask 'tableplus'                    # Native GUI tool for relational databases
+    cask 'tablepro'                     # Native database client for many database types
+    cask 'tailscale-app'                # Mesh VPN based on WireGuard
     cask 'abue-ammar/tinycast/tinycast' # Tiny, fully native launcher, hotkeys, and clipboard history
-    cask 'transmit'            # File transfer application
-    cask 'tweakphp/tap/tweakphp' # Desktop application with a code editor to tweak your PHP code
-    cask 'utm'                 # Virtual machines UI using QEMU
-    cask 'vlc'                 # Multimedia player
-    # cask 'zoom'                # Video communication and virtual meeting platform
+    cask 'transmit'                     # File transfer application
+    cask 'tweakphp/tap/tweakphp'        # Desktop application with a code editor to tweak your PHP code
+    cask 'utm'                          # Virtual machines UI using QEMU
+    cask 'vlc'                          # Multimedia player
+    # cask 'zoom'                       # Video communication and virtual meeting platform
 
     # Fonts
     cask 'font-meslo-lg-nerd-font'
