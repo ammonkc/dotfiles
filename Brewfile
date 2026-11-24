@@ -32,7 +32,6 @@ brew 'git-lfs'                      # Git extension for versioning large files
 brew 'github-keygen'                # Bootstrap GitHub SSH configuration
 brew 'glow'                         # markdown viewer
 brew 'gnupg'                        # GNU Pretty Good Privacy (PGP) package
-brew 'go-task'                      # Task is a task runner/build tool thats simpler and easier to use
 brew 'grex'                         # Command-line tool for generating regular expressions
 brew 'gum'                          # Interactive terminal prompts for optional setup
 brew 'herdr'                        # Agent multiplexer that lives in your terminal
@@ -74,7 +73,6 @@ brew 'yq'                           # Process YAML, JSON, XML, CSV and propertie
 brew 'zlib'
 brew 'zoxide'                       # Shell extension to navigate your filesystem faster
 brew 'zimfw'                        # Zsh plugin manager
-brew 'zsh'                          # UNIX shell (command interpreter)
 brew 'zsh-autosuggestions'          # Fish-like fast/unobtrusive autosuggestions for zsh
 brew 'zsh-completions'              # Additional completion definitions for zsh
 brew 'zsh-fast-syntax-highlighting' # Feature-rich syntax highlighting for Zsh
