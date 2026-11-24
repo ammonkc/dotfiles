@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-15]
+        os: [ubuntu-latest, macos-26]
         suite: [shell, stow, config]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
@@ -92,7 +92,7 @@ jobs:
       - run: npm test
       - run: npm run build
   window-edges:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 20
     defaults:
       run:
@@ -110,10 +110,10 @@ jobs:
       - run: npm test
       - run: npm run build
   core-install:
-    name: Core install smoke (macos-15)
+    name: Core install smoke (macos-26)
     # Slow and network heavy, so run it on main only, not on every pull request.
     if: github.event_name == 'push'
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

@@ -1,7 +1,8 @@
 # Automated testing
 
 CI runs independent lint, shell, Stow, configuration, and extension jobs. Shell,
-Stow, and configuration suites run on Ubuntu and Apple Silicon macOS. Pushes to
+Stow, and configuration suites run on Ubuntu and Apple Silicon macOS (the
+`macos-26` runner image, pinned so `macos-latest` cannot change results). Pushes to
 `main` also run a core profile install smoke job on Apple Silicon macOS
 (`DOTFILES_PROFILE=core ./bin/install`, with the 1Password casks skipped). macOS
 suites use `/bin/bash` so helpers retain compatibility with the system Bash 3.2.
