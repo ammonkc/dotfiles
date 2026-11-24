@@ -55,7 +55,7 @@ For development, run `task lint` and `task test` in this checkout. See
 
 **What gets installed:**
 - Homebrew (macOS) or native package managers (Linux)
-- GNU Stow, Zsh, Neovim, Git, modern CLI tools
+- GNU Stow, Neovim, Git, and modern CLI tools (the login shell stays the system `/bin/zsh`)
 - Development runtimes via [mise](https://mise.jdx.dev/) (Node, Python, and other configured tools)
 - Optional: macOS apps via Cask, custom system preferences
 
@@ -95,10 +95,10 @@ dotfiles info               # Show environment information
 
 ```bash
 # Dotfile Management
-dotfiles install            # Install/update dotfiles
+dotfiles install            # Install base tools, link dotfiles, restore Neovim plugins
 dotfiles dot:list           # List available packages
 dotfiles dot:restow PACKAGE=zsh   # Re-stow one package
-dotfiles dot:plan            # Preview Stow links and conflicts without changing files
+dotfiles dot:plan            # Preview Stow links and conflicts without changing files (run from ~/.dotfiles; a dev checkout reports conflicts)
 dotfiles dot:verify          # Compare development and deployed commits; check managed links
 dotfiles system:check        # Strict, read-only core installation check
 
