@@ -194,7 +194,6 @@ if OS.mac?
     cask 'tweakphp/tap/tweakphp' # Desktop application with a code editor to tweak your PHP code
     cask 'utm'                 # Virtual machines UI using QEMU
     cask 'vlc'                 # Multimedia player
-    cask 'zen'                 # Gecko based privacy focused web browser
     # cask 'zoom'                # Video communication and virtual meeting platform
 
     # Fonts
