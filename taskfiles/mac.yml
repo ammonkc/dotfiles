@@ -10,6 +10,7 @@ includes:
 
 vars:
   MACOS_SCRIPT: '{{.ROOT_DIR}}/scripts/macos.sh'
+  SHORTCUTS_SCRIPT: '{{.ROOT_DIR}}/scripts/macos-shortcuts.sh'
 
 tasks:
   # ============================================================================
@@ -61,6 +62,35 @@ tasks:
       - bash "{{.ROOT_DIR}}/scripts/macos-preview.sh" "{{.MACOS_SCRIPT}}" "{{.PREVIEW_FILE}}"
       - defer: rm -f "{{.PREVIEW_FILE}}"
       - glow "{{.PREVIEW_FILE}}" | less -R
+
+  set:shortcuts:
+    desc: Move Spotlight and input switching so Tinycast can use Cmd+Space
+    summary: |
+      Optional. Not part of install, and not run by set:defaults.
+
+      Sets Tinycast's toggle shortcut to Cmd+Space, Spotlight to Ctrl+Space, and
+      the previous input source shortcut to Ctrl+Shift+Space (macOS defaults it to
+      Ctrl+Space, which would clash with Spotlight).
+
+      Preview first with: task mac:preview:shortcuts
+      Quit Tinycast before running this. Spotlight and input source changes may
+      need a logout to take effect. The formats written are undocumented, so
+      recheck after a macOS or Tinycast update.
+    platforms: [darwin]
+    preconditions:
+      - sh: test -f "{{.SHORTCUTS_SCRIPT}}"
+        msg: "Shortcuts script not found at {{.SHORTCUTS_SCRIPT}}"
+    cmds:
+      - bash "{{.SHORTCUTS_SCRIPT}}"
+
+  preview:shortcuts:
+    desc: Preview the keyboard shortcut changes without applying them
+    platforms: [darwin]
+    preconditions:
+      - sh: test -f "{{.SHORTCUTS_SCRIPT}}"
+        msg: "Shortcuts script not found at {{.SHORTCUTS_SCRIPT}}"
+    cmds:
+      - bash "{{.SHORTCUTS_SCRIPT}}" --dry-run
 
   github:force_ssh:
     desc: Force use of SSH for GitHub URLs

@@ -31,6 +31,7 @@ while true; do
     'Use SSH for GitHub URLs' \
     'Preview macOS preferences' \
     'Apply macOS preferences' \
+    'Move Spotlight so Tinycast can use Cmd+Space' \
     'Install or retry optional apps' \
     'Quit')" || break
 
@@ -51,6 +52,12 @@ while true; do
     'Apply macOS preferences')
       if gum confirm 'Apply macOS preferences and restart affected applications?'; then
         run_task mac:set:defaults
+      fi
+      ;;
+    'Move Spotlight so Tinycast can use Cmd+Space')
+      run_task mac:preview:shortcuts
+      if gum confirm 'Apply these keyboard shortcuts? Quit Tinycast first.'; then
+        run_task mac:set:shortcuts
       fi
       ;;
     'Install or retry optional apps') run_task brew:retry ;;
