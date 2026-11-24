@@ -110,6 +110,8 @@ dotfiles nvim:update        # Update Neovim plugins
 
 # macOS Specific
 dotfiles mac:set:defaults   # Apply macOS preferences
+dotfiles mac:preview:shortcuts  # Preview the optional Cmd+Space shortcut change
+dotfiles mac:set:shortcuts  # Tinycast on Cmd+Space, Spotlight on Ctrl+Space (optional)
 dotfiles mac:op:setup       # Setup 1Password SSH agent
 
 # Development
@@ -185,6 +187,7 @@ dotfiles dev:handoff SUMMARY='Implemented feature' CHECKS='task test passed' NEX
 1. **Check progress:** `dotfiles system:status`
 2. **Restart terminal:** `exec $SHELL`
 3. **[Optional] Apply macOS preferences:** Review `scripts/macos.sh`, then `dotfiles mac:set:defaults`
+   To put Tinycast on Cmd+Space, preview and then run `dotfiles mac:set:shortcuts`. It moves Spotlight to Ctrl+Space and input source switching to Ctrl+Shift+Space. Quit Tinycast first, and log out and back in if the old shortcuts remain. These settings use undocumented formats, so recheck them after a macOS or Tinycast update.
 4. **Sign In to 1Password**
     - **Enable Touch ID:** Settings > Security and turn on Touch ID
     - **Enable CLI integration:** Developer > Settings and select "Integrate with 1Password CLI"
