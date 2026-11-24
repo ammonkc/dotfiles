@@ -96,6 +96,8 @@ tasks:
         mkdir -p "$state_dir"
         touch "$state_dir/full-brew-complete"
         rm -f "$state_dir/full-brew-pending"
+        # Free the download cache between stages; small disks cannot hold every installer.
+        brew cleanup --prune=all || echo "Warning: brew cleanup failed; the download cache was not cleared" >&2
 
   # ============================================================================
   # Internal Tasks
@@ -145,6 +147,8 @@ tasks:
         set -e
         export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"
         brew bundle --file="{{.DOTFILES}}/Brewfile.core"
+        # Free the download cache between stages; small disks cannot hold every installer.
+        brew cleanup --prune=all || echo "Warning: brew cleanup failed; the download cache was not cleared" >&2
         case "${DOTFILES_PROFILE:-full}" in
           core) ;;
           full)
@@ -161,6 +165,7 @@ tasks:
             ;;
           *) echo "DOTFILES_PROFILE must be core or full" >&2; exit 1 ;;
         esac
+        brew cleanup --prune=all || echo "Warning: brew cleanup failed; the download cache was not cleared" >&2
 
   update_no_commit:
     internal: true
