@@ -3,6 +3,9 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 scratch="$(mktemp -d)"
 trap 'rm -rf "$scratch"' EXIT
+# The restore task reacts to Composer being installed; COMPOSER_BIN points it at a missing file
+# unless a test installs the stub below.
+export COMPOSER_BIN="$scratch/absent/composer"
 mkdir -p "$scratch/home/.config/nvim" "$scratch/data/nvim/lazy/lazy.nvim" "$scratch/brew/bin"
 cp "$root/packages/nvim/.config/nvim/lazy-lock.json" "$scratch/home/.config/nvim/lazy-lock.json"
 cat > "$scratch/brew/bin/nvim" <<'EOF'
@@ -58,4 +61,33 @@ test "$(grep -c nvim-treesitter "$NVIM_TEST_LOG")" -eq 2
 before="$(wc -l < "$NVIM_TEST_LOG")"
 HOME="$scratch/home" XDG_CONFIG_HOME="$scratch/home/.config" XDG_DATA_HOME="$scratch/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore
 test "$(wc -l < "$NVIM_TEST_LOG")" -eq "$before"
+
+# pint is installed through Composer, which only the full bundle provides. A core restore must
+# finish complete without it, and installing Composer later must trigger one more restore.
+mkdir -p "$scratch/composer-bin"
+printf '#!/bin/sh\nexit 0\n' > "$scratch/composer-bin/composer"
+chmod +x "$scratch/composer-bin/composer"
+before="$(wc -l < "$NVIM_TEST_LOG")"
+COMPOSER_BIN="$scratch/composer-bin/composer" HOME="$scratch/home" XDG_CONFIG_HOME="$scratch/home/.config" XDG_DATA_HOME="$scratch/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore
+test "$(wc -l < "$NVIM_TEST_LOG")" -gt "$before"
+mkdir -p "$scratch/data/nvim/mason/bin"
+: > "$scratch/data/nvim/mason/bin/pint"
+before="$(wc -l < "$NVIM_TEST_LOG")"
+COMPOSER_BIN="$scratch/composer-bin/composer" HOME="$scratch/home" XDG_CONFIG_HOME="$scratch/home/.config" XDG_DATA_HOME="$scratch/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore
+test "$(wc -l < "$NVIM_TEST_LOG")" -eq "$before"
+
+# With a real Neovim, the Mason tool list itself must depend on Composer.
+if command -v nvim >/dev/null 2>&1; then
+  cat > "$scratch/tools.lua" <<LUA
+local spec = dofile("$root/packages/nvim/.config/nvim/lua/plugins/mason.lua")
+local has = false
+for _, t in ipairs(spec[1].opts.ensure_installed) do if t == "pint" then has = true end end
+io.stdout:write(has and "pint" or "no-pint")
+LUA
+  nvim_bin="$(command -v nvim)"
+  without="$(env -i PATH="$scratch/absent" "$nvim_bin" --headless -u NONE -l "$scratch/tools.lua" 2>&1)"
+  with="$(env -i PATH="$scratch/composer-bin" "$nvim_bin" --headless -u NONE -l "$scratch/tools.lua" 2>&1)"
+  test "$without" = no-pint
+  test "$with" = pint
+fi
 printf 'Neovim restore failure check passed.\n'

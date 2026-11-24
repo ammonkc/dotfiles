@@ -31,6 +31,11 @@ if [[ -f "$lock" ]]; then
       failed=1
     fi
   done
+  # pint is installed by Mason only when Composer exists (see lua/plugins/mason.lua).
+  if command -v "${COMPOSER_BIN:-composer}" >/dev/null 2>&1 && [[ ! -e "$data/nvim/mason/bin/pint" ]]; then
+    printf '✗ Composer is installed but Mason pint is missing; run nvim:restore\n' >&2
+    failed=1
+  fi
 else
   printf '✗ Neovim lockfile missing: %s\n' "$lock" >&2
   failed=1
