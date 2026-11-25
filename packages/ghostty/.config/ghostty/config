@@ -29,6 +29,15 @@ copy-on-select                    = clipboard
 auto-update-channel               = stable
 
 #---------------------------------------------------
+# Cursor shader
+#---------------------------------------------------
+# Blaze cursor trail. Relative to this config file, so it follows the stow link.
+# The cursor and trail use Rex Cobalt Foundry's cursor blue (display-p3).
+cursor-color                      = #60a6ff
+custom-shader                     = shaders/cursor.glsl
+custom-shader-animation           = true
+
+#---------------------------------------------------
 # Macos
 #---------------------------------------------------
 macos-titlebar-style              = transparent
