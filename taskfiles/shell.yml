@@ -31,7 +31,12 @@ tasks:
       - echo "📦 Installing yazi plugins and flavors..."
       - |
         export PATH="${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shims:$PATH"
-        ya pkg install 2>/dev/null || ya pack -i
+        # Pick the subcommand by capability, not by failure: a failed install must show its own error.
+        if ya pkg --help >/dev/null 2>&1; then
+          ya pkg install
+        else
+          ya pack -i
+        fi
       - echo "✓ Yazi plugins installed"
 
   reload:
