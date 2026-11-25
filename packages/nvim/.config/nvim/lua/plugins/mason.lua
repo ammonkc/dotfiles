@@ -37,9 +37,20 @@ return {
   -- Mason package manager
   {
     "mason-org/mason.nvim",
-    opts = {
-      ensure_installed = tools,
-    },
+    -- LazyVim and its extras also list tools (stylua, shfmt, shellcheck, hadolint, ...), and
+    -- opts_extend concatenates the lists without removing duplicates. LazyVim's config calls
+    -- install() on every entry without checking for an install in progress, so on a fresh machine
+    -- a duplicated name fails with "package is already installing" and aborts mason's config.
+    opts = function(_, opts)
+      local seen, unique = {}, {}
+      for _, tool in ipairs(vim.list_extend(opts.ensure_installed or {}, tools)) do
+        if not seen[tool] then
+          seen[tool] = true
+          table.insert(unique, tool)
+        end
+      end
+      opts.ensure_installed = unique
+    end,
   },
 
   -- Mason tool installer - enables headless install/update of Mason packages
