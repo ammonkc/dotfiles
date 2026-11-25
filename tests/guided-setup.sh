@@ -160,7 +160,24 @@ assert_eq "$(menu_line work)" '· Set up work accounts' 'unchecked marker'
 GH_EXIT=1
 assert_eq "$(menu_line github)" '○ Sign in to GitHub and test SSH' 'pending marker'
 
-# GitHub sign in comes before the personal setup that needs it.
+# Dependencies decide the order: the GitHub SSH test uses the socket that the 1Password
+# agent link creates, and the personal setup syncs keys through the GitHub login.
+step_position() {
+  local pos=0 id
+  for id in $STEP_IDS; do
+    pos=$((pos + 1))
+    if [[ "$id" == "$1" ]]; then
+      echo "$pos"
+      return 0
+    fi
+  done
+  fail "step $1 is not in STEP_IDS"
+}
+[[ "$(step_position op-agent)" -lt "$(step_position github)" ]] \
+  || fail 'op-agent must come before github: the SSH test needs the agent socket'
+[[ "$(step_position github)" -lt "$(step_position personal)" ]] \
+  || fail 'github must come before personal: key sync needs the GitHub login'
+
 rm "$HOME/.gitconfig.local"
 assert_eq "$(next_pending_step)" github 'first pending step'
 GH_EXIT=0

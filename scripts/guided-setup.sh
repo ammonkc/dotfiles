@@ -8,9 +8,10 @@ repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck source=scripts/setup-checks.sh
 . "$repo_dir/scripts/setup-checks.sh"
 
-# Menu order follows dependencies: GitHub login comes before the personal setup
-# that syncs SSH keys, and Neovim and mise come after the dotfiles are stowed.
-STEP_IDS='status github personal work op-agent ssh-urls nvim mise brew preview-defaults apply-defaults shortcuts tinycast verify quit'
+# Menu order follows dependencies: the 1Password SSH agent link comes before the GitHub
+# SSH test that uses it, GitHub login comes before the personal setup that syncs SSH keys,
+# and Neovim and mise come after the dotfiles are stowed.
+STEP_IDS='status op-agent github personal work ssh-urls nvim mise brew preview-defaults apply-defaults shortcuts tinycast verify quit'
 
 # Keep in sync with the install links in README.md.
 TINYCAST_EXTENSION_URLS='https://github.com/ammonkc/tinycast-extensions/tree/main/developer-utilities

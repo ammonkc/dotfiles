@@ -73,7 +73,9 @@ tasks:
           gh auth status
         else
           echo "🔐 Starting GitHub authentication..."
-          gh auth login --web --git-protocol ssh
+          # gh only looks for key files in ~/.ssh, not in the SSH agent, so with 1Password keys it
+          # would offer to generate a new one. Keys are added with github:keys:add:1password.
+          gh auth login --web --git-protocol ssh --skip-ssh-key
         fi
 
   status:
