@@ -1,3 +1,8 @@
+# lazy.nvim rewrites its lockfile whenever it installs or updates a plugin. Keep the file out of the
+# Stow links so those writes do not land in the deployed checkout. `task nvim:restore` copies the
+# committed lockfile into ~/.config/nvim instead.
+^/\.config/nvim/lazy-lock\.json$
+
 
 # Preserve Stow's defaults when using a package-local ignore list.
 RCS

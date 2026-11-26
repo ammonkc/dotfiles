@@ -140,19 +140,29 @@ rm "$XDG_STATE_HOME/dotfiles/full-brew-pending"
 touch "$XDG_STATE_HOME/dotfiles/full-brew-complete"
 assert_eq "$(state_of brew)" 0 'brew bundle complete'
 
-# Neovim is done only when both markers match the current lockfile.
-assert_eq "$(state_of nvim)" 1 'neovim without a lockfile'
+# Neovim is done only when both markers match the committed lockfile and Neovim has its own copy
+# of it. lazy.nvim rewrites that copy, so its contents are not part of the check.
+export NVIM_LOCKFILE_SOURCE="$scratch/committed-lock.json"
+assert_eq "$(state_of nvim)" 1 'neovim without a committed lockfile'
+printf '{"plugin":"one"}\n' > "$NVIM_LOCKFILE_SOURCE"
 mkdir -p "$XDG_CONFIG_HOME/nvim" "$XDG_DATA_HOME/nvim/lazy/lazy.nvim"
-printf '{"plugin":"one"}\n' > "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+cp "$NVIM_LOCKFILE_SOURCE" "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
 assert_eq "$(state_of nvim)" 1 'neovim before restore'
-hash=$(shasum -a 256 "$XDG_CONFIG_HOME/nvim/lazy-lock.json" | cut -d' ' -f1)
+hash=$(shasum -a 256 "$NVIM_LOCKFILE_SOURCE" | cut -d' ' -f1)
 printf '%s' "$hash" > "$XDG_DATA_HOME/nvim/.lazy-restore-hash"
 assert_eq "$(state_of nvim)" 1 'neovim plugins restored but tools missing'
 printf '%s' "$hash" > "$XDG_DATA_HOME/nvim/.lazy-tools-hash"
 assert_eq "$(state_of nvim)" 0 'neovim fully restored'
-printf '{"plugin":"two"}\n' > "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
-assert_eq "$(state_of nvim)" 1 'neovim after the lockfile changed'
-printf '{"plugin":"one"}\n' > "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+printf '{"plugin":"rewritten"}\n' > "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+assert_eq "$(state_of nvim)" 0 'neovim after lazy.nvim rewrote its own lockfile copy'
+rm "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+ln -s "$NVIM_LOCKFILE_SOURCE" "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+assert_eq "$(state_of nvim)" 1 'neovim with the lockfile still linked into the checkout'
+rm "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+cp "$NVIM_LOCKFILE_SOURCE" "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+printf '{"plugin":"two"}\n' > "$NVIM_LOCKFILE_SOURCE"
+assert_eq "$(state_of nvim)" 1 'neovim after the committed lockfile changed'
+printf '{"plugin":"one"}\n' > "$NVIM_LOCKFILE_SOURCE"
 
 # --- Menu lines, ordering, and reverse lookup. ---
 assert_eq "$(menu_line nvim)" '✓ Restore Neovim plugins and tools' 'done marker'
@@ -200,11 +210,11 @@ assert_eq "$(step_for_line '  Quit')" '' 'unknown line'
 assert_eq "$(step_for_line "$(menu_line quit)")" quit 'quit line'
 
 # --- install-status.sh agrees with the shared checks. ---
-printf '{"plugin":"two"}\n' > "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+printf '{"plugin":"two"}\n' > "$NVIM_LOCKFILE_SOURCE"
 bash "$root/scripts/install-status.sh" > "$scratch/status.out" 2>&1 || true
 grep -q '○ Neovim plugins restored — run task nvim:restore' "$scratch/status.out" || fail 'status misses stale neovim restore'
 grep -q '○ Neovim parsers and tools installed' "$scratch/status.out" || fail 'status misses stale neovim tools'
-printf '{"plugin":"one"}\n' > "$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+printf '{"plugin":"one"}\n' > "$NVIM_LOCKFILE_SOURCE"
 bash "$root/scripts/install-status.sh" > "$scratch/status.out" 2>&1 || true
 grep -q '✓ Neovim plugins restored' "$scratch/status.out" || fail 'status misses restored neovim plugins'
 grep -q '✓ Neovim parsers and tools installed' "$scratch/status.out" || fail 'status misses installed neovim tools'

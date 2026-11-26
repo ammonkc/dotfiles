@@ -7,7 +7,9 @@ trap 'rm -rf "$scratch"' EXIT
 # unless a test installs the stub below.
 export COMPOSER_BIN="$scratch/absent/composer"
 mkdir -p "$scratch/home/.config/nvim" "$scratch/data/nvim/lazy/lazy.nvim" "$scratch/brew/bin"
-cp "$root/packages/nvim/.config/nvim/lazy-lock.json" "$scratch/home/.config/nvim/lazy-lock.json"
+# The committed lockfile seeds Neovim's own copy, so the restore task creates the copy itself.
+cp "$root/packages/nvim/.config/nvim/lazy-lock.json" "$scratch/committed-lock.json"
+export NVIM_LOCKFILE_SOURCE="$scratch/committed-lock.json"
 cat > "$scratch/brew/bin/nvim" <<'EOF'
 #!/bin/sh
 exit 13
@@ -56,7 +58,11 @@ test -s "$scratch/data/nvim/.lazy-restore-hash"
 test ! -e "$scratch/data/nvim/.lazy-tools-hash"
 HOME="$scratch/home" XDG_CONFIG_HOME="$scratch/home/.config" XDG_DATA_HOME="$scratch/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore
 test -s "$scratch/data/nvim/.lazy-tools-hash"
-test "$(grep -c 'Lazy! restore' "$NVIM_TEST_LOG")" -eq 1
+# Two passes: the second one, after putting the committed lockfile back, pins plugins that were
+# still being cloned during the first.
+test "$(grep -c 'Lazy! restore' "$NVIM_TEST_LOG")" -eq 2
+test -f "$scratch/home/.config/nvim/lazy-lock.json"
+test ! -L "$scratch/home/.config/nvim/lazy-lock.json"
 test "$(grep -c nvim-treesitter "$NVIM_TEST_LOG")" -eq 2
 before="$(wc -l < "$NVIM_TEST_LOG")"
 HOME="$scratch/home" XDG_CONFIG_HOME="$scratch/home/.config" XDG_DATA_HOME="$scratch/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore
@@ -75,6 +81,73 @@ mkdir -p "$scratch/data/nvim/mason/bin"
 before="$(wc -l < "$NVIM_TEST_LOG")"
 COMPOSER_BIN="$scratch/composer-bin/composer" HOME="$scratch/home" XDG_CONFIG_HOME="$scratch/home/.config" XDG_DATA_HOME="$scratch/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore
 test "$(wc -l < "$NVIM_TEST_LOG")" -eq "$before"
+
+# lazy.nvim rewrites its lockfile, so Neovim keeps its own copy and the markers hash the committed
+# file. The fake Neovim below rewrites the lockfile like lazy.nvim does on every restore pass.
+cat > "$scratch/brew/bin/nvim" <<'EOF'
+#!/bin/sh
+printf '%s\n' "$*" >> "$NVIM_TEST_LOG"
+case "$*" in
+  *"Lazy! restore"*)
+    lock="$XDG_CONFIG_HOME/nvim/lazy-lock.json"
+    printf 'pass sees: %s\n' "$(head -n 1 "$lock")" >> "$NVIM_PASS_LOG"
+    printf 'rewritten by lazy\n' > "$lock"
+    ;;
+esac
+exit 0
+EOF
+export NVIM_PASS_LOG="$scratch/passes.log"
+run_restore() { # run_restore DIR: run the restore task against the Neovim environment under DIR
+  local dir="$1"
+  HOME="$dir/home" XDG_CONFIG_HOME="$dir/home/.config" XDG_DATA_HOME="$dir/data" NVIM_BIN="$scratch/brew/bin/nvim" task -d "$root" nvim:restore > "$dir/out" 2>&1 \
+    || { cat "$dir/out" >&2; return 1; }
+}
+new_env() {
+  rm -rf "$1"
+  mkdir -p "$1/home/.config/nvim" "$1/data/nvim/lazy/lazy.nvim"
+}
+printf 'committed-v1\n' > "$scratch/committed-lock.json"
+cp "$scratch/committed-lock.json" "$scratch/committed-v1.json"
+
+# A fresh machine has no lockfile copy: it is seeded, and the second pass starts from the committed
+# contents again rather than from what the first pass left behind.
+env1="$scratch/lock-fresh"
+new_env "$env1"
+: > "$NVIM_PASS_LOG"
+run_restore "$env1"
+test ! -L "$env1/home/.config/nvim/lazy-lock.json"
+test "$(cat "$NVIM_PASS_LOG")" = "$(printf 'pass sees: committed-v1\npass sees: committed-v1')"
+cmp -s "$scratch/committed-lock.json" "$scratch/committed-v1.json"
+
+# lazy.nvim's rewrite of Neovim's copy must not make the restore look stale.
+before="$(wc -l < "$NVIM_TEST_LOG")"
+run_restore "$env1"
+test "$(wc -l < "$NVIM_TEST_LOG")" -eq "$before"
+test "$(cat "$env1/home/.config/nvim/lazy-lock.json")" = "rewritten by lazy"
+
+# A changed committed lockfile restores again, from the new contents.
+printf 'committed-v2\n' > "$scratch/committed-lock.json"
+: > "$NVIM_PASS_LOG"
+run_restore "$env1"
+test "$(head -n 1 "$NVIM_PASS_LOG")" = "pass sees: committed-v2"
+printf 'committed-v1\n' > "$scratch/committed-lock.json"
+
+# Installs from before the lockfile was unstowed have a link into the checkout. It is replaced by a
+# copy, even when the markers already match, and the checkout's file is never written through.
+checkout="$scratch/lock-checkout"
+mkdir -p "$checkout"
+printf 'checkout-version\n' > "$checkout/lazy-lock.json"
+cp "$checkout/lazy-lock.json" "$checkout/original"
+env2="$scratch/lock-linked"
+new_env "$env2"
+run_restore "$env2"
+rm "$env2/home/.config/nvim/lazy-lock.json"
+ln -s "$checkout/lazy-lock.json" "$env2/home/.config/nvim/lazy-lock.json"
+before="$(wc -l < "$NVIM_TEST_LOG")"
+run_restore "$env2"
+test "$(wc -l < "$NVIM_TEST_LOG")" -gt "$before"
+test ! -L "$env2/home/.config/nvim/lazy-lock.json"
+cmp -s "$checkout/lazy-lock.json" "$checkout/original"
 
 # With a real Neovim, the Mason tool list itself must depend on Composer.
 if command -v nvim >/dev/null 2>&1; then

@@ -15,7 +15,7 @@ check() {
 check 'Task available' 'command -v task' 'run bin/install'
 check 'Dotfiles stowed' "test -L \"\$HOME/.config/nvim\" -o -L \"\$HOME/.config/nvim/init.lua\"" 'run task dot:install'
 check 'mise available' 'command -v mise' 'run task mise:install after packages are installed'
-if [ -f "$(setup_nvim_lockfile)" ]; then
+if [ -f "$(setup_nvim_committed_lockfile)" ]; then
   check 'Neovim plugins restored' setup_check_nvim_plugins 'run task nvim:restore'
   check 'Neovim parsers and tools installed' setup_check_nvim_tools 'run task nvim:restore'
 fi

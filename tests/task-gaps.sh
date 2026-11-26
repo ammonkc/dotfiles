@@ -28,8 +28,11 @@ bash "$root/scripts/dotfiles-plan.sh" "$HOME/.dotfiles" "$HOME" > "$scratch/plan
 grep -q 'No files changed' "$scratch/plan.out"
 
 mkdir -p "$HOME/.config/nvim" "$HOME/.local/share/nvim"
-printf 'lock\n' > "$HOME/.config/nvim/lazy-lock.json"
-lock_hash=$(shasum -a 256 "$HOME/.config/nvim/lazy-lock.json" | cut -d' ' -f1)
+# The markers hash the committed lockfile. Neovim keeps its own copy, which lazy.nvim rewrites.
+printf 'lock\n' > "$scratch/committed-lock.json"
+export NVIM_LOCKFILE_SOURCE="$scratch/committed-lock.json"
+printf 'rewritten by lazy.nvim\n' > "$HOME/.config/nvim/lazy-lock.json"
+lock_hash=$(shasum -a 256 "$NVIM_LOCKFILE_SOURCE" | cut -d' ' -f1)
 printf '%s\n' "$lock_hash" > "$HOME/.local/share/nvim/.lazy-restore-hash"
 printf '%s\n' "$lock_hash" > "$HOME/.local/share/nvim/.lazy-tools-hash"
 for tool in mise nvim ya; do
@@ -56,6 +59,16 @@ mkdir -p "$HOME/.local/share/nvim/mason/bin"
 COMPOSER_BIN="$scratch/bin/composer" bash "$root/scripts/system-check.sh" "$root" > "$scratch/pint-ok.out"
 grep -q 'checks passed' "$scratch/pint-ok.out"
 rm "$HOME/.local/share/nvim/mason/bin/pint"
+# A lockfile that is still a link into the checkout would let lazy.nvim dirty it.
+rm "$HOME/.config/nvim/lazy-lock.json"
+ln -s "$NVIM_LOCKFILE_SOURCE" "$HOME/.config/nvim/lazy-lock.json"
+if bash "$root/scripts/system-check.sh" "$root" > "$scratch/linked.out" 2>&1; then
+  printf 'system:check accepted a lockfile linked into the checkout\n' >&2
+  exit 1
+fi
+grep -q 'still a link into the checkout' "$scratch/linked.out"
+rm "$HOME/.config/nvim/lazy-lock.json"
+printf 'rewritten by lazy.nvim\n' > "$HOME/.config/nvim/lazy-lock.json"
 printf 'stale\n' > "$HOME/.local/share/nvim/.lazy-tools-hash"
 if bash "$root/scripts/system-check.sh" "$root" > "$scratch/stale.out" 2>&1; then
   printf 'system:check accepted a stale Neovim tools marker\n' >&2

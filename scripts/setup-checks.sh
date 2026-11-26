@@ -4,8 +4,17 @@
 
 SETUP_SECRETS_MARKER='# --- 1Password secrets (do not edit below) ---'
 
+SETUP_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Neovim's own copy of the lockfile. lazy.nvim rewrites it, so it is not stowed.
 setup_nvim_lockfile() {
   printf '%s/nvim/lazy-lock.json' "${XDG_CONFIG_HOME:-$HOME/.config}"
+}
+
+# The committed lockfile. The restore and tools markers hash this file, not the local copy.
+# NVIM_LOCKFILE_SOURCE overrides the path for tests.
+setup_nvim_committed_lockfile() {
+  printf '%s' "${NVIM_LOCKFILE_SOURCE:-$SETUP_ROOT/packages/nvim/.config/nvim/lazy-lock.json}"
 }
 
 setup_nvim_data() {
@@ -13,22 +22,25 @@ setup_nvim_data() {
 }
 
 setup_nvim_lock_hash() {
-  shasum -a 256 "$(setup_nvim_lockfile)" | cut -d' ' -f1
+  shasum -a 256 "$(setup_nvim_committed_lockfile)" | cut -d' ' -f1
 }
 
-# Neovim plugins match lazy-lock.json. False when the lockfile is absent.
+# Neovim plugins match the committed lockfile and Neovim has its own copy of it. False when the
+# local lockfile is missing or is still a link into the checkout (installs from before it was unstowed).
 setup_check_nvim_plugins() {
-  local data hash
-  [ -f "$(setup_nvim_lockfile)" ] || return 1
+  local data hash local_lock
+  [ -f "$(setup_nvim_committed_lockfile)" ] || return 1
+  local_lock="$(setup_nvim_lockfile)"
+  [ -f "$local_lock" ] && [ ! -L "$local_lock" ] || return 1
   data="$(setup_nvim_data)"
   hash="$(setup_nvim_lock_hash)"
   [ -d "$data/lazy/lazy.nvim" ] && [ "$(cat "$data/.lazy-restore-hash" 2>/dev/null)" = "$hash" ]
 }
 
-# Neovim parsers and tools match lazy-lock.json. False when the lockfile is absent.
+# Neovim parsers and tools match the committed lockfile. False when it is absent.
 setup_check_nvim_tools() {
   local data hash
-  [ -f "$(setup_nvim_lockfile)" ] || return 1
+  [ -f "$(setup_nvim_committed_lockfile)" ] || return 1
   data="$(setup_nvim_data)"
   hash="$(setup_nvim_lock_hash)"
   [ "$(cat "$data/.lazy-tools-hash" 2>/dev/null)" = "$hash" ]

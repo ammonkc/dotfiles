@@ -4,8 +4,10 @@ version: 3
 silent: true
 
 vars:
+  # Neovim's own copy of the lockfile. lazy.nvim rewrites it, so it is not stowed.
   LAZY_LOCK: '${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lazy-lock.json'
-  LAZY_LOCK_REPO: 'packages/nvim/.config/nvim/lazy-lock.json'
+  # The committed lockfile that seeds LAZY_LOCK. NVIM_LOCKFILE_SOURCE overrides it for tests.
+  LAZY_LOCK_SRC: '{{if .NVIM_LOCKFILE_SOURCE}}{{.NVIM_LOCKFILE_SOURCE}}{{else}}{{.ROOT_DIR}}/packages/nvim/.config/nvim/lazy-lock.json{{end}}'
 
 tasks:
   # ============================================================================
@@ -15,15 +17,19 @@ tasks:
   restore:
     desc: Restore Neovim plugins to the state in lazy-lock.json
     summary: |
-      Restores Neovim plugins to the state specified in lazy-lock.json
+      Restores Neovim plugins to the state specified in the committed lazy-lock.json
       Useful for bootstrapping a fresh machine or after cloning dotfiles
+
+      Neovim gets its own copy of the lockfile (an older symlink into the checkout is
+      replaced), because lazy.nvim rewrites the file. The markers below hash the committed
+      file, so those rewrites never make the restore look stale.
 
       Tracks plugin restoration and parser/tool installation separately so failed
       maintenance steps are retried without restoring plugins again.
     vars:
       NVIM_DATA: '${XDG_DATA_HOME:-$HOME/.local/share}/nvim'
       LAZY_LOCK_HASH:
-        sh: test -f "{{.LAZY_LOCK}}" && shasum -a 256 "{{.LAZY_LOCK}}" | cut -d' ' -f1 || echo ""
+        sh: test -f "{{.LAZY_LOCK_SRC}}" && shasum -a 256 "{{.LAZY_LOCK_SRC}}" | cut -d' ' -f1 || echo ""
       LAST_RESTORE_HASH:
         sh: test -f "{{.NVIM_DATA}}/.lazy-restore-hash" && cat "{{.NVIM_DATA}}/.lazy-restore-hash" || echo ""
       LAST_TOOLS_HASH:
@@ -31,13 +37,13 @@ tasks:
     preconditions:
       - sh: if [ -n "${NVIM_BIN:-}" ]; then test -x "$NVIM_BIN"; else command -v nvim >/dev/null 2>&1 {{if ne .BREW_PREFIX ""}}|| test -x "{{.BREW_PREFIX}}/bin/nvim"{{end}}; fi
         msg: "Neovim is not installed. Run 'brew install neovim' first"
-      - sh: test -f "{{.LAZY_LOCK}}"
-        msg: "lazy-lock.json not found at {{.LAZY_LOCK}}"
+      - sh: test -f "{{.LAZY_LOCK_SRC}}"
+        msg: "Committed lazy-lock.json not found at {{.LAZY_LOCK_SRC}}"
     status:
       # pint is only requested when Composer exists, so it is also missing-work once Composer appears.
       - |
         {{if ne .BREW_PREFIX ""}}export PATH="{{.BREW_PREFIX}}/bin:{{.BREW_PREFIX}}/sbin:$PATH"{{end}}
-        test -d "{{.NVIM_DATA}}/lazy/lazy.nvim" && test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_TOOLS_HASH}}" && { ! command -v "${COMPOSER_BIN:-composer}" >/dev/null 2>&1 || test -e "{{.NVIM_DATA}}/mason/bin/pint"; }
+        test -d "{{.NVIM_DATA}}/lazy/lazy.nvim" && test -f "{{.LAZY_LOCK}}" && ! test -L "{{.LAZY_LOCK}}" && test -n "{{.LAZY_LOCK_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" && test "{{.LAZY_LOCK_HASH}}" = "{{.LAST_TOOLS_HASH}}" && { ! command -v "${COMPOSER_BIN:-composer}" >/dev/null 2>&1 || test -e "{{.NVIM_DATA}}/mason/bin/pint"; }
     cmds:
       - |
         set -e
@@ -48,13 +54,17 @@ tasks:
         export GIT_TERMINAL_PROMPT=0
         NVIM_BIN="${NVIM_BIN:-nvim}"
         LAZY_PATH="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim"
-        if [ -d "$LAZY_PATH" ] && [ -n "{{.LAZY_LOCK_HASH}}" ] && [ "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" ]; then
-          echo "✓ Neovim plugins already restored"
-        else
-          if [[ ! -d "$LAZY_PATH" ]]; then
-            git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
-          fi
-
+        # Neovim gets a copy of the committed lockfile. An existing link into the checkout (older
+        # installs) is replaced, so lazy.nvim's rewrites no longer dirty the deployed checkout.
+        seed_lockfile() {
+          mkdir -p "$(dirname "{{.LAZY_LOCK}}")"
+          rm -f "{{.LAZY_LOCK}}"
+          cp "{{.LAZY_LOCK_SRC}}" "{{.LAZY_LOCK}}"
+        }
+        if [ -L "{{.LAZY_LOCK}}" ] || [ ! -f "{{.LAZY_LOCK}}" ]; then
+          seed_lockfile
+        fi
+        restore_plugins() {
           RESTORE_OUTPUT=$(timeout 600 "$NVIM_BIN" --headless \
             +'lua if vim.fn.exists(":Lazy") == 0 then io.stderr:write("Lazy command unavailable\\n"); vim.cmd("cq") end' \
             +'Lazy! restore' +'qa' 2>&1) || {
@@ -66,6 +76,21 @@ tasks:
             echo "Neovim reported an error during Lazy restore" >&2
             exit 1
           fi
+        }
+        if [ -d "$LAZY_PATH" ] && [ -n "{{.LAZY_LOCK_HASH}}" ] && [ "{{.LAZY_LOCK_HASH}}" = "{{.LAST_RESTORE_HASH}}" ]; then
+          echo "✓ Neovim plugins already restored"
+        else
+          if [[ ! -d "$LAZY_PATH" ]]; then
+            git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$LAZY_PATH"
+          fi
+
+          seed_lockfile
+          restore_plugins
+          # Plugins that were still being cloned during the first pass are left on their branch tips,
+          # and lazy.nvim rewrites the lockfile to match them. Put the committed lockfile back and
+          # restore again so every plugin lands on its pinned commit.
+          seed_lockfile
+          restore_plugins
           mkdir -p "{{.NVIM_DATA}}"
           printf '%s\n' "{{.LAZY_LOCK_HASH}}" > "{{.NVIM_DATA}}/.lazy-restore-hash"
         fi
@@ -106,7 +131,11 @@ tasks:
     desc: Update Neovim plugins, CLI utils, and TreeSitter
     summary: |
       Updates Neovim plugins, CLI utils, and TreeSitter plugins
-      Automatically commits changes to lazy-lock.json if there are any
+
+      Plugin versions are recorded in Neovim's own copy of lazy-lock.json, which is not
+      stowed. The committed lockfile is not changed by this task. Run task nvim:lock:save
+      to copy the updated file into the development checkout, then review and commit it
+      when you want new machines to get the new versions.
     preconditions:
       - sh: command -v nvim >/dev/null 2>&1
         msg: "Neovim is not installed"
@@ -123,7 +152,17 @@ tasks:
           +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsUpdate") else vim.cmd("qa") end' \
           2>&1; then echo "⚠️  Mason tool update failed" >&2; fi
         echo "✓ Neovim plugins updated"
-      - task: commit
+
+  lock:save:
+    desc: Copy Neovim's lazy-lock.json into the development checkout
+    summary: |
+      Copies Neovim's own lazy-lock.json (the file lazy.nvim rewrites) over the committed one
+      in the development checkout and shows the diff, so you can review and commit it.
+
+      It writes only to the development checkout, never to the deployed one (~/.dotfiles),
+      and it never commits. Set DOTFILES_SOURCE_DIR to use a different development checkout.
+    cmds:
+      - bash "{{.ROOT_DIR}}/scripts/nvim-lock-save.sh"
 
   check:
     desc: Verify Neovim setup and configuration
@@ -156,15 +195,3 @@ tasks:
         else
           echo "✓ Neovim health check passed"
         fi
-
-  commit:
-    desc: Commit lazy-lock.json if changed
-    internal: true
-    preconditions:
-      - sh: test -f ./scripts/commit_changed_file.sh
-        msg: "commit script not found at ./scripts/commit_changed_file.sh"
-    cmds:
-      - |
-        ./scripts/commit_changed_file.sh \
-          '{{.LAZY_LOCK_REPO}}' \
-          "chore(nvim): update plugins $(date '+%Y-%m-%d %H:%M:%S')"
