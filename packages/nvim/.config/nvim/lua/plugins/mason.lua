@@ -14,7 +14,8 @@ local tools = {
   "hadolint",
   "html-lsp",
   "intelephense",
-  "nginx-language-server",
+  -- "nginx-language-server" is left out: it declares Requires-Python <3.14 (0.9.0), so pip refuses it
+  -- with the Python that mise pins (3.15). Add it back once it supports the pinned Python.
   "php-debug-adapter",
   "phpstan",
   "prettierd",

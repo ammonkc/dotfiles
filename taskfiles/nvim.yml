@@ -83,7 +83,7 @@ tasks:
           fi
         }
         TOOLS_OK=1
-        if ! run_nvim_step timeout 330 "$NVIM_BIN" --headless +'lua require("nvim-treesitter").update():wait(300000)' +'qa'; then
+        if ! run_nvim_step timeout 330 "$NVIM_BIN" --headless +'luafile {{.ROOT_DIR}}/scripts/nvim-treesitter-update.lua' +'qa'; then
           echo "⚠️  TreeSitter parser update failed or timed out" >&2
           TOOLS_OK=0
         fi
@@ -118,7 +118,7 @@ tasks:
         echo "📦 Updating Neovim plugins..."
         nvim --headless +'Lazy! sync' +'qa' 2>&1
         if ! nvim --headless +'Lazy! clean' +'qa' 2>&1; then echo "⚠️  Lazy cleanup failed" >&2; fi
-        if ! timeout 330 nvim --headless +'lua require("nvim-treesitter").update():wait(300000)' +'qa' 2>&1; then echo "⚠️  TreeSitter update failed" >&2; fi
+        if ! timeout 330 nvim --headless +'luafile {{.ROOT_DIR}}/scripts/nvim-treesitter-update.lua' +'qa' 2>&1; then echo "⚠️  TreeSitter update failed" >&2; fi
         if ! timeout 300 nvim --headless \
           +'lua if pcall(require, "mason-tool-installer") then vim.cmd("autocmd User MasonToolsUpdateCompleted qall!") vim.cmd("MasonToolsUpdate") else vim.cmd("qa") end' \
           2>&1; then echo "⚠️  Mason tool update failed" >&2; fi

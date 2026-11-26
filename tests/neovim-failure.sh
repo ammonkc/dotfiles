@@ -81,7 +81,8 @@ if command -v nvim >/dev/null 2>&1; then
   cat > "$scratch/tools.lua" <<LUA
 local spec = dofile("$root/packages/nvim/.config/nvim/lua/plugins/mason.lua")
 local has = false
-for _, t in ipairs(spec[1].opts.ensure_installed) do if t == "pint" then has = true end end
+-- spec[2] is mason-tool-installer, which receives the tool list as plain opts.
+for _, t in ipairs(spec[2].opts.ensure_installed) do if t == "pint" then has = true end end
 io.stdout:write(has and "pint" or "no-pint")
 LUA
   nvim_bin="$(command -v nvim)"
@@ -89,5 +90,22 @@ LUA
   with="$(env -i PATH="$scratch/composer-bin" "$nvim_bin" --headless -u NONE -l "$scratch/tools.lua" 2>&1)"
   test "$without" = no-pint
   test "$with" = pint
+
+  # LazyVim and its extras add their own tools to mason's ensure_installed, and opts_extend only
+  # concatenates the lists. LazyVim installs every entry without checking for an install in
+  # progress, so a repeated name fails a fresh machine with "package is already installing".
+  cat > "$scratch/dedupe.lua" <<LUA
+local spec = dofile("$root/packages/nvim/.config/nvim/lua/plugins/mason.lua")
+local opts = { ensure_installed = { "stylua", "shfmt", "shellcheck", "hadolint", "stylua" } }
+spec[1].opts(nil, opts)
+local seen, dup = {}, {}
+for _, t in ipairs(opts.ensure_installed) do
+  if seen[t] then dup[#dup + 1] = t end
+  seen[t] = true
+end
+io.stdout:write(#dup == 0 and "unique" or ("duplicates:" .. table.concat(dup, ",")))
+io.stdout:write(seen["stylua"] and seen["actionlint"] and " keeps-both" or " lost-entries")
+LUA
+  test "$(env -i PATH="$scratch/absent" "$nvim_bin" --headless -u NONE -l "$scratch/dedupe.lua" 2>&1)" = "unique keeps-both"
 fi
 printf 'Neovim restore failure check passed.\n'

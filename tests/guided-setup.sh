@@ -177,6 +177,8 @@ step_position() {
   || fail 'op-agent must come before github: the SSH test needs the agent socket'
 [[ "$(step_position github)" -lt "$(step_position personal)" ]] \
   || fail 'github must come before personal: key sync needs the GitHub login'
+[[ "$(step_position mise)" -lt "$(step_position nvim)" ]] \
+  || fail 'mise must come before nvim: Mason installs its npm and pip tools with the node and python from mise'
 
 rm "$HOME/.gitconfig.local"
 assert_eq "$(next_pending_step)" github 'first pending step'
